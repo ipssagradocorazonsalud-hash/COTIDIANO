@@ -935,6 +935,9 @@
     if(!('IntersectionObserver' in window)){hbs.forEach(function(h){h.classList.add('vis');});return;}
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});},{threshold:.25});
     hbs.forEach(function(h){io.observe(h);});
+    /* Videos de los heros: se cargan y reproducen solo cuando están en pantalla (el de celular o el de computador, según el ancho) */
+    var vids=[].slice.call(document.querySelectorAll('.ct-hb-vid video'));
+    if(vids.length){var vio=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){if(v.preload==='none')v.preload='auto';var p=v.play();if(p&&p.catch)p.catch(function(){});}else v.pause();});},{threshold:.1});vids.forEach(function(v){vio.observe(v);});}
     if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
     var words=hbs.map(function(h){return h.querySelector('.ct-hb-word');}).filter(Boolean),raf=0;
     if(!words.length)return;
@@ -1270,6 +1273,8 @@
         ] },
         { "type": "image_picker", "id": "imagen", "label": "Imagen / foto", "info": "Pantalla completa: horizontal, ej. 2400 × 1000 px. Tarjeta: foto de fondo opcional (el texto va encima)." },
         { "type": "image_picker", "id": "imagen_movil", "label": "Imagen para celular", "info": "Vertical, ej. 1080 × 1350 o 1080 × 1920 px. Si la dejas vacía se usa la misma imagen." },
+        { "type": "video", "id": "video", "label": "Video (pantalla completa, opcional)", "info": "Si subes un video, se muestra en bucle y sin sonido en lugar de la imagen. Ideal 5–10 s, MP4." },
+        { "type": "video", "id": "video_movil", "label": "Video para celular (opcional)", "info": "Vertical 9:16 o 4:5. Si lo dejas vacío se usa el mismo video." },
         { "type": "text", "id": "alt", "label": "Describe la imagen (pantalla completa)", "info": "Para buscadores y lectores de pantalla. Ej. Black Friday: 20% en todas las zapatillas" },
         { "type": "select", "id": "lado", "label": "Texto a la", "default": "izquierda", "options": [
           { "value": "izquierda", "label": "Izquierda" },

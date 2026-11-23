@@ -48,3 +48,8 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
   .ct-hb-full.vis img{scale:1;opacity:1}
 }
 @media(max-width:700px){.ct-hb-full{margin:18px calc(50% - 50vw)}}
+
+/* Video a pantalla completa */
+.ct-hb-vid video{display:block;width:100%;height:auto;pointer-events:none}
+.ct-hb-vid .ct-v-mov{display:none}
+@media(max-width:700px){.ct-hb-vid .ct-v-desk{display:none}.ct-hb-vid .ct-v-mov{display:block}}
