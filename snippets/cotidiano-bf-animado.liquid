@@ -1,0 +1,78 @@
+{%- comment -%}
+  Banner animado de campaña (formato "Black Friday animado" del bloque "Hero entre zapatillas").
+  Va de borde a borde: texto gigante en movimiento detrás, dos fotos de producto flotando,
+  sello giratorio "COMPRA YA" y cuenta regresiva opcional.
+  Recibe: block, href (enlace del botón), externo (true si es WhatsApp).
+  Estilos en assets/cotidiano-heros.css (busca "Black Friday animado"); el JS está en sections/cotidiano-home.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign bs = block.settings
+  assign t1 = bs.bf_linea1 | default: 'BLACK'
+  assign t2 = bs.bf_linea2 | default: 'FRIDAY'
+  assign cinta = t1 | append: ' ' | append: t2 | upcase
+  assign sello = bs.bf_sello | default: 'COMPRA YA' | upcase
+  assign boton = bs.boton | default: 'Comprar ahora'
+  if href == blank
+    assign href = '#ct-coleccion'
+  endif
+-%}
+{%- capture fila -%}
+  {%- for i in (1..4) -%}<span>{{ cinta | escape }}</span><i aria-hidden="true">✦</i>{%- endfor -%}
+{%- endcapture -%}
+<section class="ct-bfa ct-slot" aria-label="{{ cinta | escape }}" {{ block.shopify_attributes }}>
+  <div class="ct-bfa-glow" aria-hidden="true"></div>
+  <div class="ct-bfa-rows" aria-hidden="true">
+    <div class="ct-bfa-row ct-bfa-r1"><div class="ct-bfa-track">{{ fila }}{{ fila }}</div></div>
+    <div class="ct-bfa-row ct-bfa-r2"><div class="ct-bfa-track">{{ fila }}{{ fila }}</div></div>
+    <div class="ct-bfa-row ct-bfa-r3"><div class="ct-bfa-track">{{ fila }}{{ fila }}</div></div>
+  </div>
+
+  <div class="ct-bfa-in">
+    <div class="ct-bfa-copy">
+      {%- if bs.etiqueta != blank -%}<span class="ct-bfa-tag">{{ bs.etiqueta | escape }}</span>{%- endif -%}
+      <h2 class="ct-bfa-t"><span>{{ t1 | escape }}</span><em>{{ t2 | escape }}</em></h2>
+      {%- if bs.texto != blank -%}<p class="ct-bfa-p">{{ bs.texto | escape | newline_to_br }}</p>{%- endif -%}
+      {%- if bs.bf_fin != blank -%}
+        <div class="ct-bfa-cd" data-fin="{{ bs.bf_fin | escape }}" hidden>
+          <span class="ct-bfa-cd-l">Termina en</span>
+          <div class="ct-bfa-cd-n"><b data-u="d">00</b><small>días</small></div>
+          <div class="ct-bfa-cd-n"><b data-u="h">00</b><small>horas</small></div>
+          <div class="ct-bfa-cd-n"><b data-u="m">00</b><small>min</small></div>
+          <div class="ct-bfa-cd-n"><b data-u="s">00</b><small>seg</small></div>
+        </div>
+      {%- endif -%}
+      <a class="ct-bfa-btn" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %}>{{ boton | escape }} <span aria-hidden="true">→</span></a>
+    </div>
+
+    <div class="ct-bfa-stage">
+      {%- for n in (1..2) -%}
+        {%- liquid
+          if n == 1
+            assign img = bs.bf_foto_1
+            assign fallback = 'bf-samba.jpg'
+            assign alt = bs.bf_nombre_1
+          else
+            assign img = bs.bf_foto_2
+            assign fallback = 'bf-salomon-xt6.jpg'
+            assign alt = bs.bf_nombre_2
+          endif
+        -%}
+        <figure class="ct-bfa-card ct-bfa-c{{ n }}">
+          {%- if img -%}
+            {{ img | image_url: width: 900 | image_tag: loading: 'lazy', alt: alt, widths: '450, 700, 900', sizes: '(max-width: 700px) 60vw, 380px' }}
+          {%- else -%}
+            <img src="{{ fallback | asset_url }}" alt="{{ alt | escape }}" loading="lazy" width="900" height="900">
+          {%- endif -%}
+          {%- if alt != blank -%}<figcaption>{{ alt | escape }}</figcaption>{%- endif -%}
+        </figure>
+      {%- endfor -%}
+      <a class="ct-bfa-seal" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ sello | escape }}">
+        <svg viewBox="0 0 200 200" aria-hidden="true">
+          <defs><path id="ctBfaCirc{{ block.id }}" d="M100,100 m-74,0 a74,74 0 1,1 148,0 a74,74 0 1,1 -148,0"/></defs>
+          <text><textPath href="#ctBfaCirc{{ block.id }}" textLength="458" lengthAdjust="spacing">{{ sello | escape }} ✦ {{ sello | escape }} ✦ {{ sello | escape }} ✦&#160;</textPath></text>
+        </svg>
+        <span>→</span>
+      </a>
+    </div>
+  </div>
+</section>

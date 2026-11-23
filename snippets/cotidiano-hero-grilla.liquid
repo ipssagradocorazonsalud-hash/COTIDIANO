@@ -1,7 +1,8 @@
 {%- comment -%}
   Hero a lo ancho dentro de la grilla de la colección (inicio de Cotidiano).
   Recibe: block (bloque "hero" de la sección cotidiano-home), wa (número de WhatsApp).
-  Dos formatos: "pantalla" = imagen de borde a borde (un diseño ya hecho, toda clicable);
+  Formatos: "animado" = banner de campaña animado (snippet cotidiano-bf-animado);
+  "pantalla" = imagen o video de borde a borde (un diseño ya hecho, todo clicable);
   "tarjeta" = tarjeta con fondo de color o foto y textos encima.
   Estilos en assets/cotidiano-heros.css.
 {%- endcomment -%}
@@ -26,7 +27,9 @@
   assign vid = bs.video
   assign vid_m = bs.video_movil | default: bs.video
 -%}
-{%- if bs.formato == 'pantalla' and vid -%}
+{%- if bs.formato == 'animado' -%}
+  {%- render 'cotidiano-bf-animado', block: block, href: href, externo: externo -%}
+{%- elsif bs.formato == 'pantalla' and vid -%}
   {%- comment -%} Video en bucle, sin sonido: uno para computador y otro (opcional) para celular {%- endcomment -%}
   {%- if href != blank -%}
     <a class="ct-hb-full ct-hb-vid ct-slot" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ bs.alt | default: 'Black Friday' | escape }}" {{ block.shopify_attributes }}>
