@@ -670,6 +670,7 @@
         {%- assign ctjson = ctjson | append: pj | append: ',' -%}
         {%- comment -%}
           Cada 6 productos va un espacio especial. Se alternan: frase, hero, frase, hero…
+          Si las frases están apagadas, todos los espacios son heros (6 zapatillas, hero, 6 zapatillas, hero…).
           Cuando se acaban los heros (bloques "Hero entre zapatillas"), los espacios siguientes son frases.
           Las frases rotan los estilos 1·2·3 (la 3.ª lleva la guía de tallas).
         {%- endcomment -%}
@@ -677,11 +678,19 @@
         {%- if m6 == 0 and forloop.last == false -%}
           {%- assign k = forloop.index | divided_by: 6 | minus: 1 -%}
           {%- assign k2 = k | modulo: 2 -%}
-          {%- if k2 == 1 and nheros > hi -%}
+          {%- liquid
+            assign usar_hero = false
+            if nheros > hi
+              if k2 == 1 or section.settings.frases_activas == false
+                assign usar_hero = true
+              endif
+            endif
+          -%}
+          {%- if usar_hero -%}
             {%- assign hb = heros[hi] -%}
             {%- assign hi = hi | plus: 1 -%}
             {%- render 'cotidiano-hero-grilla', block: hb, wa: wa -%}
-          {%- elsif nfrases > 0 -%}
+          {%- elsif nfrases > 0 and section.settings.frases_activas -%}
             {%- assign ki = fi | modulo: nfrases -%}
             {%- assign est = fi | modulo: 3 | plus: 1 -%}
             {%- assign fi = fi | plus: 1 -%}
@@ -920,9 +929,9 @@
       document.getElementById('ctDichoX').addEventListener('click',function(){dicho.classList.remove('show');voz.pause();clearTimeout(dFirst);clearTimeout(dHide);clearInterval(dRep);try{sessionStorage.setItem('ctDichoOff','1');}catch(e){}});
     }
   }
-  /* ── Heros entre zapatillas: aparecen al entrar en pantalla y la palabra de fondo se desliza con el scroll ── */
+  /* ── Heros entre zapatillas (tarjeta y pantalla completa): aparecen al entrar en pantalla y la palabra de fondo se desliza con el scroll ── */
   (function(){
-    var hbs=[].slice.call(document.querySelectorAll('.ct-hb'));if(!hbs.length)return;
+    var hbs=[].slice.call(document.querySelectorAll('.ct-hb,.ct-hb-full'));if(!hbs.length)return;
     if(!('IntersectionObserver' in window)){hbs.forEach(function(h){h.classList.add('vis');});return;}
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});},{threshold:.25});
     hbs.forEach(function(h){io.observe(h);});
@@ -1239,6 +1248,7 @@
     { "type": "header", "content": "Colección" },
     { "type": "text", "id": "col_titulo", "label": "Título de la colección", "default": "Encuentra tu" },
     { "type": "text", "id": "col_acento", "label": "Título de la colección (parte resaltada en azul)", "default": "par ideal" },
+    { "type": "checkbox", "id": "frases_activas", "label": "Mostrar frases entre las zapatillas", "default": true, "info": "Si lo apagas, después de cada 6 zapatillas va un hero (imagen grande)." },
     { "type": "textarea", "id": "frases_grilla", "label": "Frases de la grilla (una por línea)", "info": "Aparecen como tarjetas grandes cada 6 zapatillas, en este orden.", "default": "Diciembre se recibe estrenando.\nPa'l 24 y pa'l 31 se estrena, así sea las medias.\nEsas no se prestan ni al primo.\nQue el año nuevo lo coja con pies nuevos.\nHágale, que estrenar no es pecado." },
     { "type": "text", "id": "promo_segundo_par", "label": "Oferta del segundo par (opcional)", "info": "Ej. 10% en el segundo par. Ponlo solo si ese descuento existe en Shopify → Descuentos. Si lo dejas vacío, la sugerencia dice \"Te puede gustar\"." }
   ],
@@ -1248,14 +1258,19 @@
       "name": "Hero entre zapatillas",
       "limit": 8,
       "settings": [
-        { "type": "paragraph", "content": "Se muestra a lo ancho de la colección, alternando con las frases: cada 12 zapatillas aparece el siguiente hero, en el orden de esta lista." },
+        { "type": "paragraph", "content": "Aparece entre las zapatillas, en el orden de esta lista: cada 12 zapatillas alternando con las frases, o cada 6 si apagas las frases." },
+        { "type": "select", "id": "formato", "label": "Formato", "default": "tarjeta", "options": [
+          { "value": "pantalla", "label": "Imagen a pantalla completa" },
+          { "value": "tarjeta", "label": "Tarjeta con texto" }
+        ], "info": "Pantalla completa: sube tu diseño ya hecho (con textos incluidos) y se ve de borde a borde. Los textos de abajo no se usan, solo el enlace o WhatsApp." },
         { "type": "select", "id": "estilo", "label": "Fondo", "default": "marino", "options": [
           { "value": "marino", "label": "Azul marino" },
           { "value": "celeste", "label": "Celeste" },
           { "value": "blanco", "label": "Blanco" }
         ] },
-        { "type": "image_picker", "id": "imagen", "label": "Foto (opcional)", "info": "Personas, lugares, ambiente… Si pones una foto, ocupa el fondo y el texto va encima. Ideal horizontal, mínimo 1600 px de ancho." },
-        { "type": "image_picker", "id": "imagen_movil", "label": "Foto para celular (opcional)", "info": "Vertical. Si la dejas vacía se usa la misma foto." },
+        { "type": "image_picker", "id": "imagen", "label": "Imagen / foto", "info": "Pantalla completa: horizontal, ej. 2400 × 1000 px. Tarjeta: foto de fondo opcional (el texto va encima)." },
+        { "type": "image_picker", "id": "imagen_movil", "label": "Imagen para celular", "info": "Vertical, ej. 1080 × 1350 o 1080 × 1920 px. Si la dejas vacía se usa la misma imagen." },
+        { "type": "text", "id": "alt", "label": "Describe la imagen (pantalla completa)", "info": "Para buscadores y lectores de pantalla. Ej. Black Friday: 20% en todas las zapatillas" },
         { "type": "select", "id": "lado", "label": "Texto a la", "default": "izquierda", "options": [
           { "value": "izquierda", "label": "Izquierda" },
           { "value": "centro", "label": "Centro" }

@@ -1,7 +1,9 @@
 {%- comment -%}
   Hero a lo ancho dentro de la grilla de la colección (inicio de Cotidiano).
   Recibe: block (bloque "hero" de la sección cotidiano-home), wa (número de WhatsApp).
-  Estilos en sections/cotidiano-home.liquid (busca "Heros entre zapatillas").
+  Dos formatos: "pantalla" = imagen de borde a borde (un diseño ya hecho, toda clicable);
+  "tarjeta" = tarjeta con fondo de color o foto y textos encima.
+  Estilos en assets/cotidiano-heros.css.
 {%- endcomment -%}
 {%- liquid
   assign bs = block.settings
@@ -20,6 +22,18 @@
     assign foco = 'object-position:' | append: foto.presentation.focal_point
   endif
 -%}
+{%- if bs.formato == 'pantalla' and foto -%}
+  {%- if href != blank -%}
+    <a class="ct-hb-full ct-slot" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} {{ block.shopify_attributes }}>
+  {%- else -%}
+    <div class="ct-hb-full ct-slot" {{ block.shopify_attributes }}>
+  {%- endif -%}
+    <picture>
+      {%- if bs.imagen_movil -%}<source media="(max-width: 700px)" srcset="{{ bs.imagen_movil | image_url: width: 750 }} 750w, {{ bs.imagen_movil | image_url: width: 1100 }} 1100w, {{ bs.imagen_movil | image_url: width: 1500 }} 1500w" sizes="100vw" width="{{ bs.imagen_movil.width }}" height="{{ bs.imagen_movil.height }}">{%- endif -%}
+      {{ foto | image_url: width: 2400 | image_tag: loading: 'lazy', alt: bs.alt, widths: '750, 1100, 1500, 1900, 2400', sizes: '100vw' }}
+    </picture>
+  {%- if href != blank -%}</a>{%- else -%}</div>{%- endif -%}
+{%- else -%}
 <section class="{{ clases }}" aria-label="{{ bs.titulo | append: ' ' | append: bs.titulo_acento | strip | escape }}" {{ block.shopify_attributes }}>
   {%- if foto -%}
     <picture class="ct-hb-bg" aria-hidden="true">
@@ -43,3 +57,4 @@
     {%- endif -%}
   </div>
 </section>
+{%- endif -%}
