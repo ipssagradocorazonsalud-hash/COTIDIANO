@@ -1,0 +1,45 @@
+{%- comment -%}
+  Hero a lo ancho dentro de la grilla de la colección (inicio de Cotidiano).
+  Recibe: block (bloque "hero" de la sección cotidiano-home), wa (número de WhatsApp).
+  Estilos en sections/cotidiano-home.liquid (busca "Heros entre zapatillas").
+{%- endcomment -%}
+{%- liquid
+  assign bs = block.settings
+  assign foto = bs.imagen
+  assign foto_m = bs.imagen_movil | default: bs.imagen
+  assign href = bs.enlace
+  assign externo = false
+  if bs.whatsapp_msg != blank
+    assign msg = bs.whatsapp_msg | url_encode
+    assign href = 'https://wa.me/' | append: wa | append: '?text=' | append: msg
+    assign externo = true
+  endif
+  assign clases = 'ct-hb ct-slot ct-hb-' | append: bs.estilo | append: ' ct-hb-' | append: bs.lado
+  if foto
+    assign clases = clases | append: ' ct-hb-foto'
+    assign foco = 'object-position:' | append: foto.presentation.focal_point
+  endif
+-%}
+<section class="{{ clases }}" aria-label="{{ bs.titulo | append: ' ' | append: bs.titulo_acento | strip | escape }}" {{ block.shopify_attributes }}>
+  {%- if foto -%}
+    <picture class="ct-hb-bg" aria-hidden="true">
+      {%- if foto_m -%}<source media="(max-width: 700px)" srcset="{{ foto_m | image_url: width: 800 }} 800w, {{ foto_m | image_url: width: 1200 }} 1200w" sizes="100vw">{%- endif -%}
+      {{ foto | image_url: width: 1800 | image_tag: loading: 'lazy', alt: '', widths: '900, 1200, 1500, 1800', sizes: '(max-width: 1240px) 100vw, 1200px', style: foco }}
+    </picture>
+  {%- elsif bs.palabra != blank -%}
+    <span class="ct-hb-word" aria-hidden="true">{{ bs.palabra | escape }}</span>
+  {%- endif -%}
+  <div class="ct-hb-in">
+    {%- if bs.etiqueta != blank -%}<span class="ct-hb-tag">{{ bs.etiqueta | escape }}</span>{%- endif -%}
+    {%- if bs.titulo != blank or bs.titulo_acento != blank -%}
+      <h2 class="ct-hb-t">{{ bs.titulo | escape }}{% if bs.titulo_acento != blank %} <em>{{ bs.titulo_acento | escape }}</em>{% endif %}</h2>
+    {%- endif -%}
+    {%- if bs.texto != blank -%}<p class="ct-hb-p">{{ bs.texto | escape | newline_to_br }}</p>{%- endif -%}
+    {%- if bs.boton != blank and href != blank -%}
+      <a class="ct-hb-btn{% if externo %} ct-hb-wa{% endif %}" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %}>
+        {%- if externo -%}<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2a8.8 8.8 0 0 0-7.6 13.2L3.2 20.8l4.5-1.2A8.8 8.8 0 1 0 12 3.2z"/><path d="M8.9 8.3c.2-.4.4-.4.7-.4h.5c.2 0 .4 0 .5.4l.7 1.7c.1.2 0 .4-.1.6l-.5.6c-.1.1-.2.3 0 .5.4.7 1 1.4 1.7 1.9.5.4 1 .6 1.3.7.2.1.4 0 .5-.1l.6-.7c.2-.2.4-.2.6-.1l1.6.8c.2.1.4.2.4.4 0 .4-.1 1-.5 1.4-.4.4-1.2.8-2 .7-.8-.1-2.4-.6-3.9-2-1.6-1.5-2.4-3.1-2.5-4-.1-.8.3-1.6.6-2z"/></svg>{%- endif -%}
+        {{ bs.boton | escape }} <span aria-hidden="true">→</span>
+      </a>
+    {%- endif -%}
+  </div>
+</section>

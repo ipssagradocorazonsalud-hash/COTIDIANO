@@ -1,5 +1,6 @@
 {%- comment -%} Cotidiano Shoes · Página de inicio (sección personalizada) {%- endcomment -%}
 {%- assign wa = section.settings.whatsapp | remove: '+' | remove: ' ' -%}
+{{ 'cotidiano-heros.css' | asset_url | stylesheet_tag }}
 <style>
   .ct{--azul:#0B63CE;--azul2:#0952AD;--marino:#0F2A47;--cielo:#7CC4FF;--suave:#5A6F88;--linea:rgba(15,42,71,.12);--fondo2:#F2F7FD;font-family:inherit;color:var(--marino)}
   .ct *{box-sizing:border-box}
@@ -526,6 +527,11 @@
       endif
       assign frases = section.settings.frases_grilla | strip | newline_to_br | split: '<br />'
       assign nfrases = frases.size
+      # Heros entre zapatillas (bloques de la sección) y contadores de frases/heros ya usados
+      assign heros = section.blocks | where: 'type', 'hero'
+      assign nheros = heros.size
+      assign hi = 0
+      assign fi = 0
       # "Más vendidos" solo si existe la colección mas-vendidos ordenada por ventas en Shopify
       assign mvc = collections['mas-vendidos']
       assign hay_mv = false
@@ -662,20 +668,32 @@
           {"h":{{ product.handle | json }},"t":{{ product.title | json }},"u":{{ product.url | json }},"vd":{{ product.vendor | json }},"p":{{ product.price | money_without_trailing_zeros | json }},"e":{{ estilo | json }},"i":[{%- for im in product.images limit: 6 -%}{{ im | image_url: width: 900 | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"s":[{%- for v in product.variants -%}{%- case topt -%}{%- when 2 -%}{%- assign vt = v.option2 -%}{%- when 3 -%}{%- assign vt = v.option3 -%}{%- else -%}{%- assign vt = v.option1 -%}{%- endcase -%}[{{ vt | json }},{{ v.id }},{{ v.available }},{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %}]{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
         {%- endcapture -%}
         {%- assign ctjson = ctjson | append: pj | append: ',' -%}
-        {%- comment -%} Tarjeta de frase cada 6 productos (estilos 1·2·3 en rotación; la 3.ª lleva la guía de tallas) {%- endcomment -%}
+        {%- comment -%}
+          Cada 6 productos va un espacio especial. Se alternan: frase, hero, frase, hero…
+          Cuando se acaban los heros (bloques "Hero entre zapatillas"), los espacios siguientes son frases.
+          Las frases rotan los estilos 1·2·3 (la 3.ª lleva la guía de tallas).
+        {%- endcomment -%}
         {%- assign m6 = forloop.index | modulo: 6 -%}
-        {%- if m6 == 0 and forloop.last == false and nfrases > 0 -%}
+        {%- if m6 == 0 and forloop.last == false -%}
           {%- assign k = forloop.index | divided_by: 6 | minus: 1 -%}
-          {%- assign ki = k | modulo: nfrases -%}
-          {%- assign est = k | modulo: 3 | plus: 1 -%}
-          {%- assign frase = frases[ki] | strip -%}
-          <div class="ct-frase ct-fr{{ est }}">
-            <span class="ct-fr-m" aria-hidden="true">“</span>
-            <p class="ct-fr-q">{{ frase | escape }}</p>
-            {%- if est == 3 -%}
-              <div class="ct-fr-guia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15.5 15.5 3l5.5 5.5L8.5 21z"/><path d="M7 12l2 2M10 9l1.5 1.5M13 6l2 2M8.5 15.5 10 17"/></svg><span>¿Entre dos tallas? Mide tu pie y te decimos cuál.</span><button type="button" class="ct-fr-btn" data-guia>Encuentra tu talla</button></div>
-            {%- endif -%}
-          </div>
+          {%- assign k2 = k | modulo: 2 -%}
+          {%- if k2 == 1 and nheros > hi -%}
+            {%- assign hb = heros[hi] -%}
+            {%- assign hi = hi | plus: 1 -%}
+            {%- render 'cotidiano-hero-grilla', block: hb, wa: wa -%}
+          {%- elsif nfrases > 0 -%}
+            {%- assign ki = fi | modulo: nfrases -%}
+            {%- assign est = fi | modulo: 3 | plus: 1 -%}
+            {%- assign fi = fi | plus: 1 -%}
+            {%- assign frase = frases[ki] | strip -%}
+            <div class="ct-frase ct-slot ct-fr{{ est }}">
+              <span class="ct-fr-m" aria-hidden="true">“</span>
+              <p class="ct-fr-q">{{ frase | escape }}</p>
+              {%- if est == 3 -%}
+                <div class="ct-fr-guia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15.5 15.5 3l5.5 5.5L8.5 21z"/><path d="M7 12l2 2M10 9l1.5 1.5M13 6l2 2M8.5 15.5 10 17"/></svg><span>¿Entre dos tallas? Mide tu pie y te decimos cuál.</span><button type="button" class="ct-fr-btn" data-guia>Encuentra tu talla</button></div>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
         {%- endif -%}
       {%- else -%}
         <p>Pronto verás aquí nuestros productos.</p>
@@ -902,6 +920,18 @@
       document.getElementById('ctDichoX').addEventListener('click',function(){dicho.classList.remove('show');voz.pause();clearTimeout(dFirst);clearTimeout(dHide);clearInterval(dRep);try{sessionStorage.setItem('ctDichoOff','1');}catch(e){}});
     }
   }
+  /* ── Heros entre zapatillas: aparecen al entrar en pantalla y la palabra de fondo se desliza con el scroll ── */
+  (function(){
+    var hbs=[].slice.call(document.querySelectorAll('.ct-hb'));if(!hbs.length)return;
+    if(!('IntersectionObserver' in window)){hbs.forEach(function(h){h.classList.add('vis');});return;}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});},{threshold:.25});
+    hbs.forEach(function(h){io.observe(h);});
+    if(window.matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+    var words=hbs.map(function(h){return h.querySelector('.ct-hb-word');}).filter(Boolean),raf=0;
+    if(!words.length)return;
+    function mover(){raf=0;var vh=window.innerHeight;words.forEach(function(w){var r=w.parentNode.getBoundingClientRect();if(0>r.bottom||r.top>vh)return;var p=(r.top+r.height/2-vh/2)/vh;w.style.setProperty('--hbx',Math.round(p*120)+'px');});}
+    window.addEventListener('scroll',function(){if(!raf)raf=requestAnimationFrame(mover);},{passive:true});mover();
+  })();
   /* ── Colección ── */
   var grid=document.getElementById('ctGrid');
   var RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -912,7 +942,7 @@
   var F={marca:'',genero:'',estilo:'',color:'',talla:'',q:'',orden:'dest'};
   var aplicar=function(){};
   if(grid){
-    var cards=[].slice.call(grid.querySelectorAll('.ct-it')),frs=[].slice.call(grid.querySelectorAll('.ct-frase'));
+    var cards=[].slice.call(grid.querySelectorAll('.ct-it')),frs=[].slice.call(grid.querySelectorAll('.ct-slot'));
     var fzone=document.getElementById('ct-coleccion'),elAct=document.getElementById('ctAct'),elActChips=document.getElementById('ctActChips');
     var fbar=document.getElementById('ctFBar'),fpanel=document.getElementById('ctFPanel'),fshade=document.getElementById('ctFShade'),fbtn=document.getElementById('ctFBtn');
     var elCount=document.getElementById('ctCount'),elCount2=document.getElementById('ctCount2'),elClear=document.getElementById('ctClear'),elEmpty=document.getElementById('ctEmpty'),elFNum=document.getElementById('ctFNum'),elQ=document.getElementById('ctQ'),elSort=document.getElementById('ctSort');
@@ -948,7 +978,7 @@
         cards.forEach(function(c){c._v=false;});vis.forEach(function(c){c._v=true;});
         var nuevos=[];
         cards.forEach(function(c){c.classList.toggle('ct-hide',!c._v);c.classList.remove('ct-in');});
-        /* Orden visual con CSS order: el producto j va en j + floor(j/6); la frase m va después de cada 6 productos */
+        /* Orden visual con CSS order: el producto j va en j + floor(j/6); el espacio m (frase o hero) va después de cada 6 productos */
         vis.forEach(function(c,j){c.style.order=j+Math.floor(j/6);if(F.talla)elegirTalla(c,F.talla);nuevos.push(c);});
         frs.forEach(function(f,m){var ok=n>=4&&6*(m+1)<n;f.classList.toggle('ct-hide',!ok);f.classList.remove('ct-in');f.style.order=7*m+6;if(ok)nuevos.push(f);});
         if(anim&&!RM){void grid.offsetWidth;nuevos.forEach(function(el){el.classList.add('ct-in');});}
@@ -1211,6 +1241,35 @@
     { "type": "text", "id": "col_acento", "label": "Título de la colección (parte resaltada en azul)", "default": "par ideal" },
     { "type": "textarea", "id": "frases_grilla", "label": "Frases de la grilla (una por línea)", "info": "Aparecen como tarjetas grandes cada 6 zapatillas, en este orden.", "default": "Diciembre se recibe estrenando.\nPa'l 24 y pa'l 31 se estrena, así sea las medias.\nEsas no se prestan ni al primo.\nQue el año nuevo lo coja con pies nuevos.\nHágale, que estrenar no es pecado." },
     { "type": "text", "id": "promo_segundo_par", "label": "Oferta del segundo par (opcional)", "info": "Ej. 10% en el segundo par. Ponlo solo si ese descuento existe en Shopify → Descuentos. Si lo dejas vacío, la sugerencia dice \"Te puede gustar\"." }
+  ],
+  "blocks": [
+    {
+      "type": "hero",
+      "name": "Hero entre zapatillas",
+      "limit": 8,
+      "settings": [
+        { "type": "paragraph", "content": "Se muestra a lo ancho de la colección, alternando con las frases: cada 12 zapatillas aparece el siguiente hero, en el orden de esta lista." },
+        { "type": "select", "id": "estilo", "label": "Fondo", "default": "marino", "options": [
+          { "value": "marino", "label": "Azul marino" },
+          { "value": "celeste", "label": "Celeste" },
+          { "value": "blanco", "label": "Blanco" }
+        ] },
+        { "type": "image_picker", "id": "imagen", "label": "Foto (opcional)", "info": "Personas, lugares, ambiente… Si pones una foto, ocupa el fondo y el texto va encima. Ideal horizontal, mínimo 1600 px de ancho." },
+        { "type": "image_picker", "id": "imagen_movil", "label": "Foto para celular (opcional)", "info": "Vertical. Si la dejas vacía se usa la misma foto." },
+        { "type": "select", "id": "lado", "label": "Texto a la", "default": "izquierda", "options": [
+          { "value": "izquierda", "label": "Izquierda" },
+          { "value": "centro", "label": "Centro" }
+        ] },
+        { "type": "text", "id": "etiqueta", "label": "Etiqueta superior" },
+        { "type": "text", "id": "titulo", "label": "Título", "default": "Hechas para tu" },
+        { "type": "text", "id": "titulo_acento", "label": "Título (parte resaltada)", "default": "día a día" },
+        { "type": "textarea", "id": "texto", "label": "Texto" },
+        { "type": "text", "id": "palabra", "label": "Palabra gigante de fondo (opcional)", "info": "Solo se ve sin foto. Ej. CALLE, DICIEMBRE" },
+        { "type": "text", "id": "boton", "label": "Texto del botón" },
+        { "type": "url", "id": "enlace", "label": "Enlace del botón" },
+        { "type": "text", "id": "whatsapp_msg", "label": "…o mensaje de WhatsApp", "info": "Si escribes un mensaje aquí, el botón abre WhatsApp con ese texto (en lugar del enlace)." }
+      ]
+    }
   ],
   "presets": [{ "name": "Cotidiano · Inicio" }]
 }
