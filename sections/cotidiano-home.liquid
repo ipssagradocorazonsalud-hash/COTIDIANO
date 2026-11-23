@@ -1,0 +1,1217 @@
+{%- comment -%} Cotidiano Shoes · Página de inicio (sección personalizada) {%- endcomment -%}
+{%- assign wa = section.settings.whatsapp | remove: '+' | remove: ' ' -%}
+<style>
+  .ct{--azul:#0B63CE;--azul2:#0952AD;--marino:#0F2A47;--cielo:#7CC4FF;--suave:#5A6F88;--linea:rgba(15,42,71,.12);--fondo2:#F2F7FD;font-family:inherit;color:var(--marino)}
+  .ct *{box-sizing:border-box}
+  .ct-wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+  .ct-hero{position:relative;min-height:min(86vh,760px);display:flex;align-items:center;overflow:hidden;color:#fff;background:radial-gradient(1200px 700px at 85% 20%,#1d74e0 0%,transparent 60%),linear-gradient(135deg,#0F2A47 0%,#0B3A7A 55%,#0B63CE 100%);--mx:.5;--my:.5;isolation:isolate}
+  .ct-hero::before{content:'';position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.06) 1px,transparent 1px);background-size:56px 56px;mask-image:radial-gradient(circle at calc(var(--mx)*100%) calc(var(--my)*100%),#000 0%,transparent 55%);-webkit-mask-image:radial-gradient(circle at calc(var(--mx)*100%) calc(var(--my)*100%),#000 0%,transparent 55%)}
+  .ct-spot{position:absolute;width:620px;height:620px;border-radius:50%;left:calc(var(--mx)*100% - 310px);top:calc(var(--my)*100% - 310px);background:radial-gradient(circle,rgba(124,196,255,.38),rgba(124,196,255,0) 65%);pointer-events:none;z-index:0;transition:left .25s ease-out,top .25s ease-out}
+  .ct-word{position:absolute;right:-2%;bottom:-6%;font-size:clamp(6rem,19vw,17rem);font-weight:900;letter-spacing:-.04em;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.12);white-space:nowrap;pointer-events:none;transform:translate(calc((var(--mx) - .5)*-40px),calc((var(--my) - .5)*-20px));z-index:0;text-transform:uppercase}
+  .ct-hero-grid{position:relative;z-index:2;width:100%;display:grid;grid-template-columns:1fr 1.05fr;gap:20px;align-items:center;padding:56px 20px}
+  .ct-logo-hero{display:block;height:auto;width:min(340px,70%);margin:0 0 18px;filter:drop-shadow(0 8px 20px rgba(0,0,0,.25))}
+  .ct-tag{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--cielo);border:1px solid rgba(124,196,255,.5);padding:7px 14px;border-radius:999px;margin-bottom:18px;background:rgba(124,196,255,.08)}
+  .ct-hero h1{font-size:clamp(2.6rem,6.2vw,5.6rem);line-height:.95;margin:0 0 18px;text-transform:uppercase;font-weight:900;letter-spacing:-.015em;color:#fff}
+  .ct-hero h1 em{font-style:normal;color:var(--cielo)}
+  .ct-hero p{color:#d3e2f5;font-size:1.08rem;max-width:460px;margin:0 0 22px}
+  .ct-pills{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:22px}
+  .ct-pills span{font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#b7c9e0;font-weight:700}
+  .ct-pill{padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,.45);color:#fff;font-weight:700;cursor:pointer;background:none;font-size:.95rem;transition:all .2s}
+  .ct-pill:hover{background:#fff;color:var(--marino)}
+  .ct-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:700;padding:15px 28px;border-radius:999px;text-decoration:none;border:none;cursor:pointer;font-size:1rem;transition:transform .2s,background .2s}
+  .ct-btn:hover{transform:translateY(-2px)}
+  .ct-btn-azul{background:#fff;color:var(--azul);box-shadow:0 14px 34px rgba(0,0,0,.25)}
+  .ct-btn-borde{border:1.5px solid rgba(255,255,255,.45);color:#fff;background:none}
+  .ct-btn-blanco{background:#fff;color:var(--azul)}
+  .ct-marcas{margin-top:24px;font-weight:700;font-size:.78rem;letter-spacing:.16em;color:#c3d4ea}
+  .ct-marcas b{color:var(--cielo);margin-right:8px}
+  /* Ruleta de diseños del hero: el JS posiciona cada tarjeta en un círculo (ver "Ruleta" en el script) */
+  .ct-stage{position:relative;height:min(62vh,560px);display:flex;flex-direction:column}
+  .ct-ruleta{position:relative;flex:1;min-height:0;perspective:1100px;touch-action:pan-y;cursor:grab;user-select:none;-webkit-user-select:none}
+  .ct-ruleta.drag{cursor:grabbing}
+  .ct-rueda{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform}
+  .ct-orbita{position:absolute;left:50%;top:58%;width:84%;height:30%;translate:-50% -50%;border:2px dashed rgba(124,196,255,.45);border-radius:50%;pointer-events:none}
+  .ct-rc{position:absolute;left:50%;top:50%;width:min(270px,46%);aspect-ratio:1/1;border-radius:28px;background:linear-gradient(150deg,#2a7fe6 0%,#0d4a9c 100%);border:1px solid rgba(255,255,255,.28);box-shadow:0 34px 64px rgba(4,16,36,.5),0 10px 22px rgba(4,16,36,.3);text-decoration:none;color:#fff;transform:translate(-50%,-50%);-webkit-user-drag:none;will-change:transform,opacity,filter;transition:border-color .3s,box-shadow .3s}
+  .ct-rc img{display:block;width:100%;height:100%;object-fit:contain;padding:9% 9% 17%;filter:drop-shadow(0 22px 24px rgba(4,16,36,.45));pointer-events:none;-webkit-user-drag:none;transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+  .ct-rc .lbl{position:absolute;left:16px;right:16px;bottom:14px;display:flex;justify-content:space-between;gap:10px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;opacity:0;translate:0 6px;transition:opacity .3s,translate .3s}
+  .ct-rc .lbl span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .ct-rc .lbl b{color:var(--cielo);flex-shrink:0}
+  .ct-rc.front{border-color:#7CC4FF;box-shadow:0 44px 90px rgba(4,16,36,.65),0 0 0 1px #7CC4FF,0 0 38px rgba(124,196,255,.35)}
+  .ct-rc.front img{transform:rotate(-6deg) scale(1.1)}
+  .ct-rc.front .lbl{opacity:1;translate:0 0}
+  .ct-ring-hold{position:absolute;left:50%;top:50%;width:min(270px,46%);aspect-ratio:1/1;translate:-50% -50%;pointer-events:none;z-index:200}
+  .ct-rctl{display:flex;align-items:center;justify-content:center;gap:16px;padding-top:14px}
+  .ct-rbtn{width:46px;height:46px;border-radius:50%;border:1.5px solid rgba(255,255,255,.45);background:rgba(255,255,255,.08);color:#fff;font-size:1.15rem;line-height:1;cursor:pointer;display:grid;place-items:center;transition:background .2s,color .2s,transform .2s}
+  .ct-rbtn:hover{background:#fff;color:var(--marino);transform:scale(1.06)}
+  .ct-rctl span{font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#b7c9e0}
+  .ct-hint-mouse{position:absolute;right:20px;bottom:64px;z-index:3;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#b7c9e0}
+  @media(max-width:900px){.ct-hero-grid{grid-template-columns:1fr;padding-top:36px}.ct-stage{height:auto}.ct-ruleta{flex:none;height:400px}.ct-rc,.ct-ring-hold{width:200px}.ct-hint-mouse{display:none}.ct-word{display:none}}
+  @media(prefers-reduced-motion:reduce){.ct-rc,.ct-rc img,.ct-rc .lbl,.ct-spot,.ct-word{transition:none}}
+  /* Animación de entrada del hero: usa translate/scale (no transform) para no pisar el efecto del mouse */
+  .ct-ring{position:absolute;left:50%;top:50%;width:100%;aspect-ratio:1/1;margin:-50% 0 0 -50%;border-radius:50%;border:3px solid #7CC4FF;box-shadow:0 0 24px rgba(124,196,255,.6);opacity:0;pointer-events:none}
+  @media(prefers-reduced-motion:no-preference){
+    .ct-intro .ct-logo-hero{animation:ctWrite 1.3s cubic-bezier(.65,0,.35,1) both}
+    .ct-intro .ct-word{animation:ctWord 1.2s cubic-bezier(.16,1,.3,1) .1s both}
+    .ct-intro .ct-stage{animation:ctDrop 1s 1.05s both}
+    .ct-intro .ct-ring{animation:ctRing .9s cubic-bezier(.2,.7,.3,1) 1.6s both}
+    .ct-intro .ct-tag,.ct-intro h1,.ct-intro .ct-hero-grid>div:first-child>p,.ct-intro .ct-pills,.ct-intro .ct-btn,.ct-intro .ct-marcas{animation:ctUp .6s cubic-bezier(.2,.7,.3,1) .45s both}
+    .ct-intro h1{animation-delay:.57s}
+    .ct-intro .ct-hero-grid>div:first-child>p{animation-delay:.69s}
+    .ct-intro .ct-pills{animation-delay:.81s}
+    .ct-intro .ct-btn-azul{animation-delay:.93s}
+    .ct-intro .ct-btn-borde{animation-delay:1.05s}
+    .ct-intro .ct-marcas{animation-delay:1.17s}
+  }
+  @keyframes ctWrite{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+  @keyframes ctWord{from{translate:60vw 0;opacity:0}to{translate:0 0;opacity:1}}
+  @keyframes ctDrop{
+    0%{translate:0 -110vh;scale:1;opacity:0;animation-timing-function:cubic-bezier(.55,0,1,.45)}
+    15%{opacity:1}
+    55%{translate:0 0;scale:1.05 .94;animation-timing-function:cubic-bezier(0,.55,.45,1)}
+    72%{translate:0 -22px;scale:.98 1.03;animation-timing-function:cubic-bezier(.55,0,1,.45)}
+    86%{translate:0 0;scale:1.02 .98;animation-timing-function:cubic-bezier(0,.55,.45,1)}
+    94%{translate:0 -5px;scale:1}
+    100%{translate:0 0;scale:1;opacity:1}}
+  @keyframes ctRing{from{scale:.5;opacity:.9}to{scale:1.7;opacity:0}}
+  @keyframes ctUp{from{translate:0 26px;opacity:0}to{translate:0 0;opacity:1}}
+  /* Cinta animada bajo el hero */
+  .ct-cinta-wrap{position:relative;z-index:3;margin-top:-56px;padding:26px 0;overflow:hidden;pointer-events:none}
+  .ct-cinta{width:110%;margin-left:-5%;background:#0F2A47;border-top:2px solid #7CC4FF;border-bottom:2px solid #7CC4FF;transform:rotate(-1.6deg);overflow:hidden;box-shadow:0 14px 34px rgba(4,16,36,.3);pointer-events:auto}
+  .ct-cinta-track{display:flex;width:max-content;will-change:transform}
+  .ct-cinta-set{display:flex;align-items:center;flex-shrink:0}
+  .ct-ci{display:inline-flex;align-items:center;gap:10px;padding:16px 0;color:#fff;text-transform:uppercase;font-weight:900;font-size:1.05rem;letter-spacing:.04em;white-space:nowrap;transition:color .25s}
+  .ct-ci small{font-size:.72rem;font-weight:900;letter-spacing:.08em;opacity:.6}
+  .ct-ci svg{width:26px;height:26px;flex-shrink:0;fill:none;stroke:#7CC4FF;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;transition:transform .5s cubic-bezier(.3,1.4,.5,1)}
+  .ct-ci:hover{color:#7CC4FF}.ct-ci:hover small{opacity:1}
+  .ct-ci:hover svg{transform:rotate(360deg)}
+  .ct-cs{color:#7CC4FF;padding:0 26px;font-size:1rem}
+  @media(max-width:900px){.ct-cinta-wrap{margin-top:-48px;padding:18px 0}.ct-ci{font-size:.8rem;gap:7px;padding:12px 0}.ct-ci small{font-size:.6rem}.ct-ci svg{width:20px;height:20px}.ct-cs{padding:0 16px;font-size:.8rem}}
+  /* Notificación "Dicho cotidiano" */
+  .ct-dicho{position:fixed;left:20px;bottom:24px;z-index:9400;width:min(340px,calc(100vw - 40px));background:#fff;border-radius:18px;box-shadow:0 18px 44px rgba(15,42,71,.22);padding:14px 40px 14px 14px;display:flex;gap:12px;align-items:center;color:#0F2A47;opacity:0;translate:0 24px;pointer-events:none;transition:opacity .4s,translate .4s cubic-bezier(.2,.7,.3,1)}
+  .ct-dicho.show{opacity:1;translate:0 0;pointer-events:auto}
+  /* .av: botón de play/pausa; el anillo celeste late para invitar a tocarlo y se detiene mientras suena */
+  .ct-dicho-ic{position:relative;width:44px;height:44px;flex-shrink:0;border:none;padding:0;border-radius:12px;background:linear-gradient(135deg,#0F2A47,#0B63CE);display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .ct-dicho-ic::after{content:'';position:absolute;inset:-4px;border-radius:15px;border:2px solid #7CC4FF;pointer-events:none;animation:ctLate 1.6s ease-out infinite}
+  .ct-dicho-ic.playing::after{animation:none;opacity:0}
+  .ct-dicho-ic svg{width:20px;height:20px;fill:#fff}
+  .ct-dicho-ic .i-pausa,.ct-dicho-ic.playing .i-play{display:none}
+  .ct-dicho-ic.playing .i-pausa{display:block}
+  .ct-dicho-ic:focus-visible{outline:2px solid #0B63CE;outline-offset:5px}
+  @keyframes ctLate{0%{scale:1;opacity:.95}100%{scale:1.35;opacity:0}}
+  .ct-dicho-txt{display:block;font-weight:700;font-size:.95rem;line-height:1.3}
+  .ct-dicho-hint{display:block;margin-top:3px;color:#5A6F88;font-size:.72rem;font-weight:600}
+  .ct-dicho-x{position:absolute;top:8px;right:8px;width:28px;height:28px;border:none;border-radius:50%;background:#eef3fa;color:#0F2A47;cursor:pointer;font-size:.8rem;line-height:1}
+  @media(max-width:900px){.ct-dicho{left:12px;bottom:96px;width:calc(100vw - 24px)}}
+  @media(prefers-reduced-motion:reduce){.ct-dicho{transition:opacity .2s;translate:none}.ct-dicho-ic::after{animation:none;opacity:.7}}
+  .ct-sec{padding:70px 0}
+  .ct-h2{font-size:clamp(2rem,4.5vw,3.4rem);text-transform:uppercase;font-weight:900;margin:0 0 26px;line-height:1}
+  .ct-h2 em{font-style:normal;color:var(--azul)}
+  /* ── Colección: barra de filtros, grilla con frases, vista rápida, comparar y "lleva otro par" ── */
+  .ct-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .ct-col-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px 20px;flex-wrap:wrap;margin-bottom:18px}
+  .ct-col-head .ct-h2{margin:0}
+  .ct-count{margin:0;color:var(--suave);font-weight:700;font-size:.95rem}
+  /* Barra visible: buscador · Todos/Hombre/Mujer · Filtros · Ordenar */
+  .ct-fbar{position:sticky;top:var(--ct-top,0px);z-index:50;display:flex;align-items:center;gap:10px;background:#fff;border-radius:20px;padding:10px;margin-bottom:12px;box-shadow:0 6px 22px rgba(15,42,71,.08);outline:8px solid var(--fondo2);transition:box-shadow .25s}
+  .ct-fbar.stuck{box-shadow:0 14px 34px rgba(15,42,71,.16)}
+  .ct-fl{font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;font-weight:800;color:var(--suave);margin-right:2px}
+  .ct-seg{display:flex;flex-shrink:0;padding:4px;border-radius:999px;background:var(--fondo2)}
+  .ct-seg button{padding:8px 16px;border:none;border-radius:999px;background:none;color:var(--suave);font-family:inherit;font-weight:700;font-size:.86rem;cursor:pointer;transition:background .2s,color .2s}
+  .ct-seg button:hover{color:var(--azul)}
+  .ct-seg button[aria-pressed="true"]{background:var(--azul);color:#fff}
+  .ct-fbtn{display:inline-flex;align-items:center;gap:8px;flex-shrink:0;padding:10px 16px;border-radius:999px;border:1px solid var(--linea);background:#fff;color:var(--marino);font-family:inherit;font-weight:700;font-size:.88rem;cursor:pointer;transition:border-color .2s}
+  .ct-fbtn:hover,.ct-fbtn[aria-expanded="true"]{border-color:var(--azul)}
+  .ct-fnum{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:var(--azul);color:#fff;font-size:.72rem;font-weight:800;line-height:1}
+  .ct-fnum:empty{display:none}
+  .ct-sort{position:relative;flex-shrink:0;margin:0}
+  .ct-sort select{appearance:none;-webkit-appearance:none;padding:10px 34px 10px 14px;border-radius:999px;border:1px solid var(--linea);background:#fff;font-family:inherit;font-weight:700;font-size:.88rem;color:var(--marino);cursor:pointer;max-width:100%;text-overflow:ellipsis}
+  .ct-sort::after{content:'';position:absolute;right:15px;top:50%;width:7px;height:7px;border-right:2px solid var(--marino);border-bottom:2px solid var(--marino);translate:0 -70%;rotate:45deg;pointer-events:none}
+  /* Chips de filtros activos bajo la barra */
+  .ct-act{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 22px}
+  .ct-act[hidden]{display:none}
+  .ct-act-chip{display:inline-flex;align-items:center;gap:7px;padding:7px 12px;border:none;border-radius:999px;background:var(--marino);color:#fff;font-family:inherit;font-weight:700;font-size:.8rem;cursor:pointer}
+  .ct-act-chip span{opacity:.7;font-size:.75rem}
+  .ct-act-chip:hover{background:var(--azul)}
+  .ct-clear{border:none;background:none;padding:4px;color:var(--azul);font-family:inherit;font-weight:700;font-size:.85rem;text-decoration:underline;cursor:pointer}
+  /* Panel de filtros: lateral derecho en escritorio, hoja inferior en celular */
+  .ct-fpanel{position:fixed;top:0;right:0;bottom:0;z-index:9350;width:min(380px,100vw);display:flex;flex-direction:column;background:#fff;color:var(--marino);box-shadow:-20px 0 50px rgba(15,42,71,.25);translate:105% 0;visibility:hidden;transition:translate .3s cubic-bezier(.2,.7,.3,1),visibility 0s .3s}
+  .ct-fpanel.open{translate:0 0;visibility:visible;transition:translate .3s cubic-bezier(.2,.7,.3,1)}
+  .ct-fpanel.drag{transition:none}
+  .ct-fpanel-top{position:relative;display:flex;justify-content:space-between;align-items:center;padding:20px 20px 12px;font-size:1.25rem;font-weight:800}
+  .ct-fgrab{display:none}
+  .ct-fpanel-top .ct-x{width:38px;height:38px;border-radius:50%;border:1px solid var(--linea);background:#fff;color:var(--marino);font-size:1rem;cursor:pointer}
+  .ct-fbody{flex:1;overflow:auto;overscroll-behavior:contain;padding:4px 20px 20px}
+  .ct-fg{margin:0;padding:16px 0;border-top:1px solid var(--linea)}
+  .ct-fg:first-child{border-top:none}
+  .ct-fh{display:block;margin:0 0 12px;font-size:1rem;font-weight:800;color:var(--marino)}
+  .ct-fopts{display:flex;flex-wrap:wrap;gap:8px}
+  .ct-fopts.ct-tallas{display:grid;grid-template-columns:repeat(5,1fr)}
+  .ct-chip{padding:9px 16px;border-radius:999px;border:1px solid var(--linea);background:#fff;color:var(--marino);font-weight:600;cursor:pointer;font-family:inherit;font-size:.88rem;transition:background .2s,color .2s,border-color .2s}
+  .ct-chip:hover{border-color:var(--azul);color:var(--azul)}
+  .ct-chip[aria-pressed="true"]{background:var(--azul);border-color:var(--azul);color:#fff}
+  .ct-fdone{display:block;margin:0 20px 20px;padding:15px;border:none;border-radius:14px;background:var(--azul);color:#fff;font-family:inherit;font-weight:800;font-size:1rem;cursor:pointer}
+  .ct-fdone:hover{background:var(--azul2)}
+  .ct-fshade{position:fixed;inset:0;z-index:9340;background:rgba(15,42,71,.45)}
+  .ct-fshade[hidden]{display:none}
+  .ct-sw{width:28px;height:28px;border-radius:50%;padding:0;border:1px solid rgba(15,42,71,.22);cursor:pointer;background:var(--c);transition:box-shadow .2s}
+  .ct-sw[aria-pressed="true"]{box-shadow:0 0 0 2px #fff,0 0 0 4px var(--azul)}
+  .ct-sw-blanco{--c:#fff}.ct-sw-negro{--c:#16181d}.ct-sw-gris{--c:#9aa3ad}.ct-sw-azul{--c:#1f5fbf}
+  .ct-sw-rosa{--c:linear-gradient(135deg,#f4a7c3 50%,#b9a2e8 50%)}.ct-sw-tierra{--c:linear-gradient(135deg,#a47551 50%,#d8c3a5 50%)}
+  .ct-sw-colores{--c:conic-gradient(#e5484d,#f5a524,#46a758,#0b63ce,#8e4ec6,#e5484d)}
+  .ct-tf{min-width:36px;height:42px;padding:0 6px;border-radius:10px;border:1px solid var(--linea);background:#fff;color:var(--marino);font-family:inherit;font-weight:700;font-size:.8rem;cursor:pointer}
+  .ct-tf[aria-pressed="true"]{background:var(--marino);border-color:var(--marino);color:#fff}
+  .ct-tf:disabled{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+  .ct-search{position:relative;flex:1 1 auto;min-width:0;margin:0}
+  .ct-search svg{position:absolute;left:13px;top:50%;translate:0 -50%;width:18px;height:18px;fill:none;stroke:var(--suave);stroke-width:2;stroke-linecap:round;pointer-events:none}
+  .ct-search input{width:100%;padding:10px 14px 10px 40px;border-radius:999px;border:1px solid var(--linea);background:var(--fondo2);font-family:inherit;font-size:.9rem;color:var(--marino)}
+  .ct-fbtn svg,.ct-qv svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round}
+  .ct-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:22px;transition:opacity .2s}
+  .ct-grid.ct-fading{opacity:.35;transition:opacity .12s}
+  .ct-grid[hidden]{display:none}
+  .ct-hide{display:none!important}
+  .ct-in{animation:ctIn .34s cubic-bezier(.2,.7,.3,1) both}
+  @keyframes ctIn{from{opacity:0;scale:.96}to{opacity:1;scale:1}}
+  .ct-card{position:relative;background:#fff;border:1px solid var(--linea);border-radius:24px;padding:10px 10px 16px;display:flex;flex-direction:column;cursor:pointer;transition:transform .25s,box-shadow .25s}
+  .ct-card:hover{transform:translateY(-5px);box-shadow:0 22px 46px rgba(15,42,71,.14);border-color:rgba(11,99,206,.4)}
+  .ct-img{position:relative;display:block;border-radius:18px;aspect-ratio:1/1;background:radial-gradient(circle at 50% 60%,#e6f0fd,#f6f9fe 70%);overflow:hidden;margin-bottom:14px}
+  .ct-img-a{position:absolute;inset:0;display:block}
+  .ct-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:6%;filter:drop-shadow(0 14px 16px rgba(15,42,71,.25));transition:transform .35s,opacity .4s}
+  .ct-card:not(.has-alt):hover .ct-img img{transform:scale(1.07) rotate(-3deg)}
+  .ct-grid .ct-img img{object-fit:cover;padding:0;filter:none}
+  .ct-img img.alt{opacity:0}
+  .ct-card.has-alt:hover .ct-img img.main{opacity:0}
+  .ct-card.has-alt:hover .ct-img img.alt{opacity:1}
+  .ct-new{position:absolute;top:10px;left:10px;z-index:2;background:var(--azul);color:#fff;font-size:.68rem;font-weight:700;letter-spacing:.08em;padding:4px 10px;border-radius:999px}
+  .ct-qv{position:absolute;left:50%;bottom:10px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border:none;border-radius:999px;background:rgba(15,42,71,.92);color:#fff;font-family:inherit;font-weight:700;font-size:.78rem;cursor:pointer;opacity:0;translate:-50% 8px;transition:opacity .2s,translate .2s}
+  .ct-card:hover .ct-qv,.ct-qv:focus-visible{opacity:1;translate:-50% 0}
+  .ct-cmp{position:absolute;top:10px;right:10px;z-index:3;display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid var(--linea);background:rgba(255,255,255,.94);color:var(--marino);font-size:.72rem;font-weight:700;cursor:pointer}
+  .ct-cmp input{width:14px;height:14px;margin:0;accent-color:var(--azul);cursor:pointer}
+  .ct-vend{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:var(--suave);font-weight:700}
+  .ct-card h3{font-size:1.25rem;margin:0 6px 6px;text-transform:uppercase;font-weight:800;line-height:1.1}
+  .ct-card h3 a{color:inherit;text-decoration:none}
+  .ct-card h3 a:focus-visible{outline:2px solid var(--azul);outline-offset:3px;border-radius:4px}
+  .ct-color{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0 6px;color:var(--suave);font-size:.88rem;font-weight:600}
+  .ct-color span{display:inline-flex;align-items:center;gap:6px}
+  .ct-dot{width:14px;height:14px;border-radius:50%;border:1px solid rgba(15,42,71,.22);background:var(--c)}
+  .ct-card .ct-hint{margin:4px 6px 0;min-height:0}
+  /* Guía de tallas con conversión (vista rápida y guía general) */
+  .ct-conv-wrap{overflow-x:auto;margin-top:8px}
+  .ct-conv{width:100%;border-collapse:collapse;font-size:.84rem}
+  .ct-conv th,.ct-conv td{padding:7px 8px;border-bottom:1px solid var(--linea);text-align:center;white-space:nowrap}
+  .ct-conv th{font-size:.72rem;color:var(--suave);font-weight:700}
+  .ct-conv th:first-child,.ct-conv td:first-child{text-align:left;font-weight:800;color:var(--marino)}
+  .ct-conv tr.hit td{background:rgba(11,99,206,.12);color:var(--azul);font-weight:800}
+  .ct-qv-guia{margin-top:6px;border:1px solid var(--linea);border-radius:16px;padding:12px 14px}
+  .ct-qv-guia summary{cursor:pointer;font-weight:800;color:var(--marino)}
+  .ct-qv-guia p{margin:8px 0 0;font-size:.78rem;color:var(--suave)}
+  .ct-price{font-size:1.25rem;font-weight:800;color:var(--azul);margin-bottom:6px}
+  .ct-trust{display:flex;align-items:center;flex-wrap:wrap;gap:4px 6px;margin-bottom:12px;font-size:.74rem;font-weight:600;color:var(--suave)}
+  .ct-trust svg{width:15px;height:15px;fill:none;stroke:var(--azul);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .ct-sizes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+  .ct-size{min-width:38px;height:34px;border-radius:10px;border:1px solid var(--linea);background:#fff;font-family:inherit;font-weight:600;font-size:.82rem;color:var(--suave);cursor:pointer}
+  .ct-size.on{background:var(--marino);color:#fff;border-color:var(--marino)}
+  .ct-size[disabled]{opacity:.35;text-decoration:line-through;cursor:not-allowed}
+  .ct-low{align-self:flex-start;margin:0 0 6px;padding:4px 9px;border-radius:8px;background:#FFF1E6;color:#C2410C;font-size:.76rem;font-weight:700}
+  .ct-low[hidden]{display:none}
+  .ct-links{display:flex;justify-content:space-between;gap:8px;margin:2px 0 8px;font-size:.78rem}
+  .ct-links a,.ct-links button{color:var(--azul);font-weight:700;text-decoration:underline;background:none;border:none;padding:0;cursor:pointer;font-family:inherit;font-size:.78rem}
+  .ct-hint{min-height:18px;font-size:.76rem;color:#D6452D;font-weight:600}
+  .ct-add{margin-top:auto;width:100%;padding:13px;border-radius:14px;border:none;background:var(--azul);color:#fff;font-family:inherit;font-weight:700;cursor:pointer;font-size:.95rem}
+  .ct-add:hover{background:var(--azul2)}
+  .ct-add:disabled{opacity:.7;cursor:wait}
+  .ct-shake{animation:ctsh .4s}@keyframes ctsh{25%,75%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
+  /* Tarjetas de frase (cada 6 productos): 1 marino→azul · 2 celeste · 3 blanco con texto en contorno + guía de tallas */
+  .ct-frase{grid-column:span 2;position:relative;overflow:hidden;min-height:260px;border-radius:24px;padding:34px 34px 30px;display:flex;flex-direction:column;justify-content:center;gap:20px}
+  .ct-fr-m{display:block;height:.5em;font-size:5rem;line-height:1;font-weight:900;opacity:.45}
+  .ct-fr-q{margin:0;font-size:clamp(1.6rem,3vw,2.5rem);line-height:1.04;font-weight:900;text-transform:uppercase;letter-spacing:-.01em}
+  .ct-fr1{background:linear-gradient(135deg,var(--marino) 0%,var(--azul) 100%);color:#fff}
+  .ct-fr2{background:var(--cielo);color:var(--marino)}
+  .ct-fr3{background:#fff;border:2px solid var(--azul);color:var(--azul)}
+  .ct-fr3 .ct-fr-q{color:transparent;-webkit-text-stroke:1.6px var(--azul)}
+  @supports not (-webkit-text-stroke:1px #000){.ct-fr3 .ct-fr-q{color:var(--azul)}}
+  .ct-fr-guia{display:flex;align-items:center;flex-wrap:wrap;gap:12px 16px;color:var(--marino);font-weight:600;font-size:.92rem}
+  .ct-fr-guia svg{width:34px;height:34px;flex-shrink:0;fill:none;stroke:var(--azul);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .ct-fr-btn{padding:12px 22px;border-radius:999px;border:none;background:var(--azul);color:#fff;font-family:inherit;font-weight:700;font-size:.92rem;cursor:pointer}
+  .ct-fr-btn:hover{background:var(--azul2)}
+  .ct-empty{text-align:center;padding:48px 20px;border-radius:24px;background:var(--fondo2)}
+  .ct-empty[hidden]{display:none}
+  .ct-empty svg{width:44px;height:44px;fill:none;stroke:var(--azul);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .ct-empty h3{margin:10px 0 6px;font-size:1.5rem;text-transform:uppercase;font-weight:900}
+  .ct-empty p{margin:0 0 18px;color:var(--suave)}
+  .ct-btn-wa{background:#25D366;color:#fff}
+  /* Vista rápida (panel lateral) */
+  .ct-qvw{position:fixed;inset:0;z-index:9450;visibility:hidden;transition:visibility 0s .35s}
+  .ct-qvw.open{visibility:visible;transition:none}
+  .ct-qvw-shade{position:absolute;inset:0;background:rgba(15,42,71,.5);opacity:0;transition:opacity .3s}
+  .ct-qvw.open .ct-qvw-shade{opacity:1}
+  .ct-qvw-panel{position:absolute;top:0;right:0;bottom:0;width:min(460px,100%);overflow:auto;background:#fff;color:var(--marino);padding:20px 22px 28px;display:flex;flex-direction:column;gap:12px;translate:100% 0;transition:translate .35s cubic-bezier(.2,.7,.3,1);box-shadow:-20px 0 50px rgba(15,42,71,.2)}
+  .ct-qvw.open .ct-qvw-panel{translate:0 0}
+  .ct-qv-top{display:flex;justify-content:space-between;align-items:center}
+  .ct-x{width:38px;height:38px;flex-shrink:0;border:none;border-radius:50%;background:#eef3fa;color:var(--marino);font-size:.95rem;cursor:pointer}
+  .ct-qv-main{position:relative;border-radius:20px;aspect-ratio:1.15/1;background:radial-gradient(circle at 50% 60%,#e6f0fd,#f6f9fe 70%)}
+  .ct-qv-main img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:7%;filter:drop-shadow(0 14px 16px rgba(15,42,71,.25))}
+  .ct-qv-th{display:flex;gap:8px;flex-wrap:wrap}
+  .ct-qv-th button{width:62px;height:56px;padding:3px;border-radius:12px;border:2px solid transparent;background:var(--fondo2);cursor:pointer}
+  .ct-qv-th button[aria-current="true"]{border-color:var(--azul)}
+  .ct-qv-th img{width:100%;height:100%;object-fit:contain}
+  .ct-qvw h3{margin:0;font-size:1.6rem;text-transform:uppercase;font-weight:900;line-height:1.05}
+  .ct-qv-buy{display:flex;flex-direction:column}
+  /* Comparar: barra inferior y modal */
+  .ct-cbar{position:fixed;left:50%;bottom:20px;z-index:9300;display:flex;align-items:center;gap:12px;max-width:calc(100vw - 32px);padding:10px 12px 10px 14px;border-radius:18px;background:var(--marino);color:#fff;box-shadow:0 16px 40px rgba(0,0,0,.3);translate:-50% 160%;transition:translate .3s cubic-bezier(.2,.7,.3,1)}
+  .ct-cbar.show{translate:-50% 0}
+  .ct-cbar-th{display:flex;gap:6px}
+  .ct-cbar-th img{width:44px;height:44px;object-fit:contain;border-radius:10px;background:#fff;padding:2px}
+  .ct-cbar b{font-size:.85rem;white-space:nowrap}
+  .ct-cbar-go{padding:10px 16px;border:none;border-radius:12px;background:#fff;color:var(--azul);font-family:inherit;font-weight:800;cursor:pointer}
+  .ct-cbar-x{border:none;background:none;color:#c9d8ec;font-family:inherit;font-weight:700;text-decoration:underline;cursor:pointer;font-size:.8rem}
+  .ct-modal.wide{width:min(980px,100%)}
+  .ct-ctab-wrap{overflow-x:auto;margin-top:12px}
+  .ct-modal .ct-ctab{table-layout:fixed;min-width:560px}
+  .ct-modal .ct-ctab th{width:120px;color:var(--suave);font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;vertical-align:top}
+  .ct-modal .ct-ctab td{vertical-align:top}
+  .ct-ctab img{display:block;width:100%;max-width:180px;aspect-ratio:1.15/1;object-fit:contain;border-radius:14px;background:radial-gradient(circle at 50% 60%,#e6f0fd,#f6f9fe 70%)}
+  .ct-ctab .nm{font-weight:900;text-transform:uppercase;line-height:1.1}
+  .ct-ctab .ct-price{margin:0}
+  /* Aviso de carrito con sugerencia "lleva otro par" */
+  .ct-up{flex-basis:100%;display:flex;align-items:center;gap:12px;padding-top:12px;border-top:1px solid rgba(255,255,255,.16)}
+  .ct-up[hidden]{display:none}
+  .ct-up img{width:56px;height:56px;object-fit:contain;border-radius:12px;background:#fff;padding:3px}
+  .ct-up-l{display:block;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cielo);font-weight:800}
+  .ct-up-n{display:block;font-weight:700;font-size:.9rem}
+  .ct-up-b{margin-left:auto;flex-shrink:0;padding:9px 14px;border:none;border-radius:12px;background:#fff;color:var(--azul);font-family:inherit;font-weight:800;cursor:pointer}
+  #ct-coleccion :focus-visible,.ct-qvw :focus-visible,#ctComp :focus-visible,#ctGuia :focus-visible{outline:2px solid var(--azul);outline-offset:2px}
+  .ct-cbar :focus-visible,.ct-toast :focus-visible{outline:2px solid var(--cielo);outline-offset:2px}
+  @media(hover:none),(max-width:900px){.ct-qv{opacity:1;translate:-50% 0;padding:6px 11px;font-size:.7rem}}
+  @media(max-width:900px){
+    .ct-cbar{left:12px;right:84px;max-width:none;translate:0 160%}
+    .ct-cbar.show{translate:0 0}
+    .ct-cbar b{display:none}
+  }
+  @media(max-width:600px){.ct-frase{grid-column:span 1;min-height:0;padding:28px 24px}.ct-fr-m{font-size:4rem}}
+  body.ct-cmp-on .ct-toast{bottom:96px}
+  @media(prefers-reduced-motion:reduce){.ct-in{animation:none}.ct-grid,.ct-fpanel,.ct-qvw-panel,.ct-qvw-shade,.ct-cbar,.ct-img img,.ct-qv,.ct-card{transition:none}.ct-card:hover{transform:none}.ct-card:not(.has-alt):hover .ct-img img{transform:none}}
+  .ct-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .ct-step{background:#fff;border:1px solid var(--linea);border-radius:22px;padding:26px}
+  .ct-step .n{font-size:3.6rem;font-weight:900;color:transparent;-webkit-text-stroke:2px var(--azul);line-height:1}
+  .ct-step h3{text-transform:uppercase;margin:8px 0 6px}.ct-step p{color:var(--suave);margin:0}
+  .ct-faq{max-width:760px;margin:0 auto}
+  .ct-faq details{border-bottom:1px solid var(--linea);padding:18px 4px}
+  .ct-faq summary{cursor:pointer;font-weight:700;font-size:1.02rem;list-style:none;display:flex;justify-content:space-between}
+  .ct-faq summary::after{content:'+';color:var(--azul);font-size:1.4rem}
+  .ct-faq details[open] summary::after{content:'–'}
+  .ct-faq p{color:var(--suave);margin:10px 0 0}
+  .ct-may{background:linear-gradient(120deg,var(--marino),var(--azul));color:#fff;border-radius:30px;padding:44px 38px;display:flex;gap:20px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .ct-may h2{margin:0 0 6px;font-size:clamp(1.8rem,4vw,2.8rem);text-transform:uppercase;color:#fff}.ct-may p{margin:0;color:#d7e6fb}
+  .ct-toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(160%);background:var(--marino);color:#fff;padding:14px 18px;border-radius:16px;display:flex;flex-wrap:wrap;gap:12px 14px;align-items:center;width:max-content;max-width:min(520px,calc(100vw - 32px));z-index:9999;box-shadow:0 16px 40px rgba(0,0,0,.3);opacity:0;visibility:hidden;transition:transform .35s,bottom .3s,opacity .3s,visibility 0s .35s}
+  .ct-toast.show{transform:translateX(-50%) translateY(0);opacity:1;visibility:visible;transition:transform .35s,bottom .3s,opacity .3s}
+  .ct-toast a{color:var(--cielo);font-weight:700}
+  .ct-fab{position:fixed;right:20px;bottom:20px;width:58px;height:58px;border-radius:50%;background:#25D366;display:flex;align-items:center;justify-content:center;z-index:9000;box-shadow:0 12px 28px rgba(37,211,102,.45)}
+  .ct-fab svg{width:30px;height:30px;fill:#fff}
+  .ct-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:16px;z-index:9500}
+  .ct-ov.show{display:flex}
+  .ct-modal{background:#fff;border-radius:24px;width:min(620px,100%);max-height:90vh;overflow:auto;padding:24px}
+  .ct-modal table{width:100%;border-collapse:collapse}.ct-modal td,.ct-modal th{padding:8px 10px;border-bottom:1px solid var(--linea);text-align:left}
+  .ct-modal .hit td{background:rgba(11,99,206,.12);color:var(--azul);font-weight:700}
+  .ct-modal input{padding:11px 13px;border:1px solid var(--linea);border-radius:12px;font-size:1rem;width:130px}
+  @media(max-width:900px){.ct-steps{grid-template-columns:1fr}}
+  /* Hero compacto para celular: logo → título → ruleta → Comprar ahora */
+  @media(max-width:700px){
+    .ct-hero{min-height:auto}
+    .ct-hero-grid{display:flex;flex-direction:column;align-items:stretch;gap:0;padding:18px 16px 28px}
+    .ct-hero-grid>div:first-child{display:contents}
+    .ct-logo-hero{order:1;width:150px;margin:0 auto 8px}
+    .ct-hero h1{order:2;font-size:1.9rem;line-height:.95;margin:0;text-align:center}
+    .ct-stage{order:3;height:auto;margin:4px 0 0}
+    .ct-ruleta{flex:none;height:240px}
+    .ct-rc,.ct-ring-hold{width:165px;border-radius:22px}
+    .ct-rc .lbl{font-size:.66rem;left:12px;right:12px;bottom:10px;flex-direction:column;gap:2px}
+    .ct-hero h1 br{display:none}.ct-hero h1 em{display:block}
+    .ct-rctl{padding-top:4px}.ct-rbtn{width:38px;height:38px}.ct-rctl span{font-size:.62rem}
+    .ct-hero-grid>div:first-child>.ct-btn-azul{order:4;align-self:center;margin-top:14px;width:100%;max-width:320px}
+    .ct-tag,.ct-hero p,.ct-pills,.ct-marcas,.ct-btn-borde,.ct-word,.ct-ring{display:none!important}
+    .ct-cinta-wrap{margin-top:-18px}
+  }
+  /* Hero limpio para escritorio: menos texto, ruleta protagonista */
+  @media(min-width:701px){
+    .ct-hero{min-height:min(88vh,720px)}
+    .ct-hero-grid{grid-template-columns:.8fr 1.2fr;padding:30px 20px}
+    .ct-logo-hero{width:min(260px,60%);margin-bottom:22px}
+    .ct-hero h1{font-size:clamp(2.6rem,5vw,4.6rem);margin-bottom:28px}
+    .ct-tag,.ct-hero p,.ct-pills,.ct-marcas,.ct-btn-borde{display:none!important}
+    .ct-stage{height:min(70vh,600px)}
+    .ct-ruleta{flex:1;height:auto}
+    .ct-rc,.ct-ring-hold{width:min(320px,44%)}
+  }
+  /* Navidad (setting "modo_navidad"): nieve, guirnalda de luces y etiqueta. Solo transform/opacity, sin bloquear clics */
+  .ct-snow{position:absolute;inset:0;pointer-events:none;z-index:1;overflow:hidden}
+  .ct-snow i{position:absolute;top:-10px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;background:#fff;opacity:var(--o);will-change:transform;animation:ctSnow var(--d) linear var(--dl) infinite}
+  @keyframes ctSnow{from{transform:translate3d(0,0,0)}to{transform:translate3d(var(--dx),var(--h,800px),0)}}
+  .ct-lights{position:absolute;left:0;top:0;width:100%;height:60px;pointer-events:none;z-index:3;overflow:visible}
+  .ct-lights path{fill:none;stroke:rgba(255,255,255,.35);stroke-width:1.5}
+  .ct-lights circle{animation:ctBlink 1.6s ease-in-out infinite alternate}
+  .ct-lights .b1{animation-delay:.4s}.ct-lights .b2{animation-delay:.8s}.ct-lights .b3{animation-delay:1.2s}
+  @keyframes ctBlink{from{opacity:.35}to{opacity:1}}
+  .ct-xmas{display:inline-flex;align-items:center;gap:8px;align-self:flex-start;padding:7px 14px;margin:0 0 18px;border-radius:999px;background:rgba(124,196,255,.14);border:1px solid rgba(124,196,255,.5);color:#fff;font-weight:800;font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;line-height:1.2}
+  .ct-xmas svg{width:15px;height:15px;flex-shrink:0;color:#7CC4FF}
+  @media(max-width:700px){.ct-xmas{order:1;align-self:center;font-size:.66rem;gap:6px;padding:5px 11px;margin:0 auto 10px}.ct-xmas svg{width:12px;height:12px}}
+  @media(prefers-reduced-motion:reduce){.ct-snow i{animation:none;top:var(--y)}.ct-lights circle{animation:none;opacity:1}}
+  /* Filtros en celular: barra en 2 filas y panel como hoja inferior */
+  @media(max-width:700px){
+    .ct-fbar{flex-wrap:wrap;gap:6px;padding:6px;border-radius:16px;outline-width:6px}
+    .ct-search{flex:1 1 100%}
+    .ct-seg{padding:3px}
+    .ct-seg button{padding:7px 9px;font-size:.8rem}
+    .ct-seg button[data-val=""]{display:none}
+    .ct-fbtn{padding:8px 11px;gap:5px;font-size:.8rem}
+    .ct-fbtn svg{width:15px;height:15px}
+    .ct-sort{flex:1 1 0;min-width:0}
+    .ct-sort select{width:100%;padding:8px 20px 8px 9px;font-size:.8rem}
+    .ct-sort::after{right:8px;width:6px;height:6px}
+    .ct-fpanel{top:auto;left:0;width:100%;height:85vh;border-radius:22px 22px 0 0;box-shadow:0 -20px 50px rgba(15,42,71,.25);translate:0 105%}
+    .ct-fpanel-top{padding-top:26px;touch-action:none}
+    .ct-fgrab{display:block;position:absolute;left:50%;top:9px;width:44px;height:5px;margin-left:-22px;border-radius:999px;background:rgba(15,42,71,.2)}
+    .ct-fdone{margin:0 16px calc(16px + env(safe-area-inset-bottom))}
+  }
+  @media(prefers-reduced-motion:reduce){.ct-fpanel,.ct-fpanel.open{transition:none}}
+</style>
+
+<div class="ct">
+  {%- liquid
+    assign rcol = section.settings.hero_coleccion
+    if rcol == blank
+      assign rcol = collections.all
+    endif
+    assign rmax = section.settings.hero_cantidad | default: 10
+    # rvistos guarda los handles ya mostrados como ",a,b,c,"; se busca ",handle," para no confundir un handle con otro que lo contenga
+    assign rvistos = ','
+    assign rn = 0
+  -%}
+  <section class="ct-hero ct-intro" id="ctHero">
+    {%- if section.settings.modo_navidad -%}
+      <div class="ct-snow" id="ctSnow" aria-hidden="true"></div>
+      <svg class="ct-lights" id="ctLights" preserveAspectRatio="none" aria-hidden="true" focusable="false"></svg>
+      <script>
+      (function(){
+        /* Nieve y guirnalda navideña del hero (se quitan apagando "Activar decoración navideña") */
+        function iniciar(){
+          var hero=document.getElementById('ctHero'),snow=document.getElementById('ctSnow'),svg=document.getElementById('ctLights');
+          if(!hero||!snow||!svg)return;
+          var n=window.matchMedia('(max-width:700px)').matches?35:70,html='';
+          for(var i=0;i<n;i++){
+            var d=8+Math.random()*10;
+            html+='<i style="--x:'+(Math.random()*100).toFixed(2)+'%;--y:'+(Math.random()*100).toFixed(2)+'%;--s:'+(2+Math.random()*4).toFixed(1)+'px;--o:'+(.3+Math.random()*.6).toFixed(2)+';--d:'+d.toFixed(2)+'s;--dl:-'+(Math.random()*d).toFixed(2)+'s;--dx:'+Math.round(Math.random()*120-60)+'px"></i>';
+          }
+          snow.innerHTML=html;
+          var colores=['#7CC4FF','#FFFFFF','#FFD36E'];
+          function medir(){
+            var H=hero.offsetHeight;snow.style.setProperty('--h',Math.round(H*1.1+10)+'px');
+            var W=Math.max(svg.clientWidth,1),P=110,d='M0 8',c='';
+            svg.setAttribute('viewBox','0 0 '+W+' 60');
+            for(var x=0;x<W;x+=P)d+=' Q'+(x+P/2)+' 34 '+(x+P)+' 8';
+            for(var k=0,bx=0;bx<=W;k++,bx+=55){
+              var cy=(k%2?21:8)+7;
+              c+='<circle class="b'+(k%4)+'" cx="'+bx+'" cy="'+cy+'" r="5" fill="'+colores[k%3]+'"/>';
+            }
+            svg.innerHTML='<path d="'+d+'"/>'+c;
+          }
+          medir();
+          var t;window.addEventListener('resize',function(){clearTimeout(t);t=setTimeout(medir,150);});
+        }
+        if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',iniciar);else iniciar();
+      })();
+      </script>
+    {%- endif -%}
+    <div class="ct-spot"></div>
+    <div class="ct-word">Cotidiano</div>
+    <div class="ct-wrap ct-hero-grid">
+      <div>
+        {%- if section.settings.logo_hero != blank -%}
+          <img class="ct-logo-hero" src="{{ section.settings.logo_hero | file_url }}" alt="Cotidiano Shoes">
+        {%- endif -%}
+        {%- if section.settings.modo_navidad and section.settings.texto_navidad != blank -%}
+          <span class="ct-xmas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>{{ section.settings.texto_navidad }}</span>
+        {%- endif -%}
+        <span class="ct-tag">{{ section.settings.tag }}</span>
+        <h1>{{ section.settings.titulo }}<br><em>{{ section.settings.titulo_acento }}</em></h1>
+        <p>{{ section.settings.subtitulo }}</p>
+        <div class="ct-pills"><span>Comprar para</span>
+          <button class="ct-pill" data-go="hombre">Hombre</button>
+          <button class="ct-pill" data-go="mujer">Mujer</button>
+        </div>
+        <a class="ct-btn ct-btn-azul" href="#ct-coleccion">Comprar ahora →</a>
+        <a class="ct-btn ct-btn-borde" href="#ct-como" style="margin-left:8px">¿Cómo funciona?</a>
+        {%- assign marcas = section.settings.marcas | strip -%}
+        {%- if marcas != blank -%}
+          <div class="ct-marcas"><b>Disponibles</b>{{ marcas }}</div>
+        {%- endif -%}
+      </div>
+      <div class="ct-stage">
+        <div class="ct-ruleta" id="ctRuleta" role="region" aria-roledescription="carrusel" aria-label="Diseños destacados">
+          <div class="ct-orbita" aria-hidden="true"></div>
+          <div class="ct-rueda" id="ctRueda">
+            {%- comment -%} Primero las zapatillas destacadas (opcionales), luego la colección, sin repetir y solo con imagen {%- endcomment -%}
+            {%- for hp in (1..3) -%}
+              {%- case hp -%}
+                {%- when 1 -%}{%- assign p = section.settings.hero_p1 -%}
+                {%- when 2 -%}{%- assign p = section.settings.hero_p2 -%}
+                {%- else -%}{%- assign p = section.settings.hero_p3 -%}
+              {%- endcase -%}
+              {%- if rn < rmax and p != blank and p.featured_image -%}
+                {%- assign rclave = ',' | append: p.handle | append: ',' -%}
+                {%- unless rvistos contains rclave -%}
+                  {%- assign rvistos = rvistos | append: p.handle | append: ',' -%}
+                  <a class="ct-rc{% if rn == 0 %} front{% endif %}" href="{{ p.url }}" draggable="false">
+                    {{ p.featured_image | image_url: width: 700 | image_tag: alt: p.title, loading: 'eager', draggable: 'false', sizes: '(max-width: 900px) 200px, 270px' }}
+                    <span class="lbl"><span>{{ p.title }}</span><b>{{ p.price | money_without_trailing_zeros }}</b></span>
+                  </a>
+                  {%- assign rn = rn | plus: 1 -%}
+                {%- endunless -%}
+              {%- endif -%}
+            {%- endfor -%}
+            {%- for p in rcol.products -%}
+              {%- if rn >= rmax -%}{%- break -%}{%- endif -%}
+              {%- if p.featured_image -%}
+                {%- assign rclave = ',' | append: p.handle | append: ',' -%}
+                {%- unless rvistos contains rclave -%}
+                  {%- assign rvistos = rvistos | append: p.handle | append: ',' -%}
+                  <a class="ct-rc{% if rn == 0 %} front{% endif %}" href="{{ p.url }}" draggable="false">
+                    {{ p.featured_image | image_url: width: 700 | image_tag: alt: p.title, loading: 'eager', draggable: 'false', sizes: '(max-width: 900px) 200px, 270px' }}
+                    <span class="lbl"><span>{{ p.title }}</span><b>{{ p.price | money_without_trailing_zeros }}</b></span>
+                  </a>
+                  {%- assign rn = rn | plus: 1 -%}
+                {%- endunless -%}
+              {%- endif -%}
+            {%- endfor -%}
+          </div>
+          <span class="ct-ring-hold" aria-hidden="true"><span class="ct-ring"></span></span>
+        </div>
+        {%- if rn > 1 -%}
+          <div class="ct-rctl">
+            <button type="button" class="ct-rbtn" id="ctRPrev" aria-label="Zapatilla anterior">←</button>
+            <span>Arrastra para girar</span>
+            <button type="button" class="ct-rbtn" id="ctRNext" aria-label="Zapatilla siguiente">→</button>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="ct-hint-mouse">Mueve el mouse ↔</div>
+  </section>
+
+  {%- capture cinta_items -%}
+    <span class="ct-ci"><svg viewBox="0 0 24 24"><path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 9.5h4l3 3.2v3.8h-7"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Envío nacional <small>con guía de rastreo</small></span><span class="ct-cs">✦</span>
+    <span class="ct-ci"><svg viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.2c0 4.6-3.2 8.2-7.5 9.8-4.3-1.6-7.5-5.2-7.5-9.8V6z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.4"/></svg>Compra protegida <small>en línea o contra entrega</small></span><span class="ct-cs">✦</span>
+    <span class="ct-ci"><svg viewBox="0 0 24 24"><path d="M4 8h15l-3.5-3.5"/><path d="M20 16H5l3.5 3.5"/></svg>Cambio de talla <small>si no te queda</small></span><span class="ct-cs">✦</span>
+    <span class="ct-ci"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg>Asesoría por WhatsApp <small>te ayudamos a elegir</small></span><span class="ct-cs">✦</span>
+    <span class="ct-ci"><svg viewBox="0 0 24 24"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5"/></svg>Tallas 35 a 44 <small>hombre y mujer</small></span><span class="ct-cs">✦</span>
+  {%- endcapture -%}
+  <div class="ct-cinta-wrap"><div class="ct-cinta" id="ctCinta">
+    <div class="ct-cinta-track" id="ctCintaTrack">
+      <div class="ct-cinta-set">{{ cinta_items }}</div>
+      <div class="ct-cinta-set" aria-hidden="true">{{ cinta_items }}</div>
+      <div class="ct-cinta-set" aria-hidden="true">{{ cinta_items }}</div>
+    </div>
+  </div></div>
+
+  <section class="ct-sec" id="ct-coleccion"><div class="ct-wrap">
+    {%- liquid
+      # Etiquetas existentes en la tienda como ",a,b,c," para mostrar solo los filtros que tienen productos
+      assign gtags = ','
+      for t in collections.all.all_tags
+        assign tl = t | downcase
+        assign gtags = gtags | append: tl | append: ','
+      endfor
+      # En la tienda publicada all_tags puede llegar vacío: se imprimen todas las opciones y el JS quita las que no tienen productos
+      if gtags == ','
+        assign gtags = ',hombre,mujer,running,trail,urbanas,color-blanco,color-negro,color-gris,color-azul,color-rosa,color-tierra,color-colores,'
+      endif
+      assign frases = section.settings.frases_grilla | strip | newline_to_br | split: '<br />'
+      assign nfrases = frases.size
+      # "Más vendidos" solo si existe la colección mas-vendidos ordenada por ventas en Shopify
+      assign mvc = collections['mas-vendidos']
+      assign hay_mv = false
+      if mvc != blank and mvc.default_sort_by == 'best-selling' and mvc.products_count > 0
+        assign hay_mv = true
+      endif
+      assign colores = 'blanco:Blanco,negro:Negro,gris:Gris,azul:Azul,rosa:Rosa / lila,tierra:Tierra / café,colores:Colores' | split: ','
+      assign svg_qv = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'
+      capture trust
+        echo '<div class="ct-trust"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2.5" y="6.5" width="19" height="11" rx="2"/><circle cx="12" cy="12" r="2.6"/><path d="M6 10v4M18 10v4"/></svg>Contra entrega <span aria-hidden="true">·</span> <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 9.5h4l3 3.2v3.8h-7"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Envío nacional</div>'
+      endcapture
+    -%}
+    <div class="ct-col-head">
+      <h2 class="ct-h2">{{ section.settings.col_titulo }} <em>{{ section.settings.col_acento }}</em></h2>
+      <p class="ct-count" id="ctCount" aria-live="polite"></p>
+    </div>
+    <div class="ct-fbar" id="ctFBar" role="search" aria-label="Filtros de la colección">
+      <label class="ct-search"><span class="ct-sr">Buscar zapatillas</span><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg><input type="search" id="ctQ" placeholder="Buscar zapatillas" autocomplete="off"></label>
+      {%- if gtags contains ',hombre,' or gtags contains ',mujer,' -%}
+        <div class="ct-seg" role="group" aria-label="Para quién">
+          <button type="button" data-k="genero" data-val="" aria-pressed="true">Todos</button>
+          {%- if gtags contains ',hombre,' -%}<button type="button" data-k="genero" data-val="hombre" aria-pressed="false">Hombre</button>{%- endif -%}
+          {%- if gtags contains ',mujer,' -%}<button type="button" data-k="genero" data-val="mujer" aria-pressed="false">Mujer</button>{%- endif -%}
+        </div>
+      {%- endif -%}
+      <button type="button" class="ct-fbtn" id="ctFBtn" aria-expanded="false" aria-controls="ctFPanel" aria-haspopup="dialog"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Filtros<span class="ct-fnum" id="ctFNum"></span></button>
+      <label class="ct-sort"><span class="ct-sr">Ordenar por</span>
+        <select id="ctSort">
+          <option value="dest">Destacados</option>
+          {%- if hay_mv -%}<option value="mv">Más vendidos</option>{%- endif -%}
+          <option value="nuevos">Nuevos</option>
+          <option value="asc">Menor precio</option>
+          <option value="desc">Mayor precio</option>
+        </select>
+      </label>
+    </div>
+    <div class="ct-act" id="ctAct" aria-label="Filtros aplicados" hidden><span id="ctActChips" style="display:contents"></span><button type="button" class="ct-clear" id="ctClear">Limpiar</button></div>
+
+    <div class="ct-fpanel" id="ctFPanel" role="dialog" aria-modal="true" aria-labelledby="ctFTitle">
+      <div class="ct-fpanel-top" id="ctFTop"><span class="ct-fgrab" aria-hidden="true"></span><b id="ctFTitle">Filtros</b><button type="button" class="ct-x" data-fclose aria-label="Cerrar filtros">✕</button></div>
+      <div class="ct-fbody">
+        {%- comment -%} Marca = campo "Proveedor" del producto en Shopify; sin selección se muestran todas {%- endcomment -%}
+        {%- assign marcas_f = collections.all.all_vendors | sort_natural -%}
+        {%- if marcas_f.size > 1 -%}
+          <div class="ct-fg" role="group" aria-labelledby="ctFhMarca"><span class="ct-fh" id="ctFhMarca">Marca</span><div class="ct-fopts">
+            {%- for mv in marcas_f -%}<button type="button" class="ct-chip" data-k="marca" data-val="{{ mv | handleize }}" aria-pressed="false">{{ mv }}</button>{%- endfor -%}
+          </div></div>
+        {%- endif -%}
+        {%- if gtags contains ',running,' or gtags contains ',trail,' or gtags contains ',urbanas,' -%}
+          <div class="ct-fg" role="group" aria-labelledby="ctFhEstilo"><span class="ct-fh" id="ctFhEstilo">Estilo</span><div class="ct-fopts">
+            {%- if gtags contains ',running,' -%}<button type="button" class="ct-chip" data-k="estilo" data-val="running" aria-pressed="false">Running</button>{%- endif -%}
+            {%- if gtags contains ',trail,' -%}<button type="button" class="ct-chip" data-k="estilo" data-val="trail" aria-pressed="false">Trail</button>{%- endif -%}
+            {%- if gtags contains ',urbanas,' -%}<button type="button" class="ct-chip" data-k="estilo" data-val="urbanas" aria-pressed="false">Urbanas</button>{%- endif -%}
+          </div></div>
+        {%- endif -%}
+        <div class="ct-fg" role="group" aria-labelledby="ctFhTalla"><span class="ct-fh" id="ctFhTalla">Talla (EU)</span><div class="ct-fopts ct-tallas">
+          {%- for t in (35..44) -%}<button type="button" class="ct-tf" data-k="talla" data-val="{{ t }}" aria-pressed="false" aria-label="Talla {{ t }}">{{ t }}</button>{%- endfor -%}
+        </div></div>
+        {%- capture circulos -%}
+          {%- for c in colores -%}
+            {%- assign cp = c | split: ':' -%}
+            {%- assign ck = ',color-' | append: cp[0] | append: ',' -%}
+            {%- if gtags contains ck -%}<button type="button" class="ct-sw ct-sw-{{ cp[0] }}" data-k="color" data-val="{{ cp[0] }}" aria-pressed="false" aria-label="Color {{ cp[1] }}" title="{{ cp[1] }}"></button>{%- endif -%}
+          {%- endfor -%}
+        {%- endcapture -%}
+        {%- if circulos != blank -%}
+          <div class="ct-fg" role="group" aria-labelledby="ctFhColor"><span class="ct-fh" id="ctFhColor">Color</span><div class="ct-fopts">{{ circulos }}</div></div>
+        {%- endif -%}
+      </div>
+      <button type="button" class="ct-fdone" data-fclose>Ver <span id="ctCount2"></span></button>
+    </div>
+    <div class="ct-fshade" id="ctFShade" hidden></div>
+
+    {%- assign ctjson = '' -%}
+    {%- paginate collections.all.products by 120 -%}
+    <div class="ct-grid" id="ctGrid" data-wa="{{ wa }}" data-promo="{{ section.settings.promo_segundo_par | strip | escape }}">
+      {%- for product in collections.all.products -%}
+        {%- liquid
+          assign ptc = product.tags | join: ',' | downcase
+          assign ptc = ',' | append: ptc | append: ','
+          assign estilo = ''
+          if ptc contains ',cloud,'
+            assign estilo = 'Cloud'
+          elsif ptc contains ',trail,'
+            assign estilo = 'Trail'
+          elsif ptc contains ',running,'
+            assign estilo = 'Running'
+          endif
+          assign topt = 1
+          for o in product.options_with_values
+            assign onm = o.name | downcase
+            if onm contains 'talla' or onm contains 'size'
+              assign topt = forloop.index
+            endif
+          endfor
+          assign tdisp = ','
+          for v in product.variants
+            case topt
+              when 2
+                assign vt = v.option2
+              when 3
+                assign vt = v.option3
+              else
+                assign vt = v.option1
+            endcase
+            if v.available
+              assign tdisp = tdisp | append: vt | append: ','
+            endif
+          endfor
+          assign alt_img = product.images[1]
+        -%}
+        <article class="ct-card ct-it{% if alt_img %} has-alt{% endif %}" data-buy data-h="{{ product.handle }}" data-marca="{{ product.vendor | handleize }}" data-tags="{{ ptc | escape }}" data-tallas="{{ tdisp | escape }}" data-precio="{{ product.price }}" data-pub="{{ product.published_at | date: '%s' }}" data-nombre="{{ product.title | escape }}">
+          <div class="ct-img">
+            <a class="ct-img-a" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
+              {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', alt: '', class: 'main' }}{%- endif -%}
+              {%- if alt_img -%}{{ alt_img | image_url: width: 700 | image_tag: loading: 'lazy', alt: '', class: 'alt' }}{%- endif -%}
+            </a>
+            {%- if ptc contains ',nuevo,' -%}<span class="ct-new">NUEVO</span>{%- endif -%}
+            <label class="ct-cmp"><input type="checkbox" class="ct-cmp-in" aria-label="Comparar {{ product.title | escape }}">Comparar</label>
+          </div>
+          {%- comment -%} Tarjeta limpia: solo nombre y color. Al tocarla se abre la vista rápida con precio, tallas y guía de conversión {%- endcomment -%}
+          <h3><a class="ct-open" href="{{ product.url }}" aria-haspopup="dialog">{{ product.title }}</a></h3>
+          {%- capture ccol -%}
+            {%- for c in colores -%}
+              {%- assign cp = c | split: ':' -%}
+              {%- assign ck = ',color-' | append: cp[0] | append: ',' -%}
+              {%- if ptc contains ck -%}<span><i class="ct-dot ct-sw-{{ cp[0] }}" aria-hidden="true"></i>{{ cp[1] }}</span>{%- endif -%}
+            {%- endfor -%}
+          {%- endcapture -%}
+          {%- if ccol != blank -%}<div class="ct-color"><span class="ct-sr">Color:</span>{{ ccol }}</div>{%- endif -%}
+          <div class="ct-hint" aria-live="polite"></div>
+        </article>
+        {%- capture pj -%}
+          {"h":{{ product.handle | json }},"t":{{ product.title | json }},"u":{{ product.url | json }},"vd":{{ product.vendor | json }},"p":{{ product.price | money_without_trailing_zeros | json }},"e":{{ estilo | json }},"i":[{%- for im in product.images limit: 6 -%}{{ im | image_url: width: 900 | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"s":[{%- for v in product.variants -%}{%- case topt -%}{%- when 2 -%}{%- assign vt = v.option2 -%}{%- when 3 -%}{%- assign vt = v.option3 -%}{%- else -%}{%- assign vt = v.option1 -%}{%- endcase -%}[{{ vt | json }},{{ v.id }},{{ v.available }},{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %}]{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+        {%- endcapture -%}
+        {%- assign ctjson = ctjson | append: pj | append: ',' -%}
+        {%- comment -%} Tarjeta de frase cada 6 productos (estilos 1·2·3 en rotación; la 3.ª lleva la guía de tallas) {%- endcomment -%}
+        {%- assign m6 = forloop.index | modulo: 6 -%}
+        {%- if m6 == 0 and forloop.last == false and nfrases > 0 -%}
+          {%- assign k = forloop.index | divided_by: 6 | minus: 1 -%}
+          {%- assign ki = k | modulo: nfrases -%}
+          {%- assign est = k | modulo: 3 | plus: 1 -%}
+          {%- assign frase = frases[ki] | strip -%}
+          <div class="ct-frase ct-fr{{ est }}">
+            <span class="ct-fr-m" aria-hidden="true">“</span>
+            <p class="ct-fr-q">{{ frase | escape }}</p>
+            {%- if est == 3 -%}
+              <div class="ct-fr-guia"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15.5 15.5 3l5.5 5.5L8.5 21z"/><path d="M7 12l2 2M10 9l1.5 1.5M13 6l2 2M8.5 15.5 10 17"/></svg><span>¿Entre dos tallas? Mide tu pie y te decimos cuál.</span><button type="button" class="ct-fr-btn" data-guia>Encuentra tu talla</button></div>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+      {%- else -%}
+        <p>Pronto verás aquí nuestros productos.</p>
+      {%- endfor -%}
+    </div>
+    {%- endpaginate -%}
+    <template id="ctTrustTpl">{{ trust }}</template>
+    <script type="application/json" id="ctData">[{{ ctjson | remove_last: ',' }}]</script>
+    <script type="application/json" id="ctMV">[{%- if hay_mv -%}{%- for p in mvc.products -%}{{ p.handle | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}{%- endif -%}]</script>
+    <div class="ct-empty" id="ctEmpty" hidden>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 17.5h20v1.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M2 17.5V9l3.5-3 3 3.5 3-1 1.5 3c2.5.8 5 1.3 6.5 2.3 1 .7 1.5 1.8 1.5 3.7"/></svg>
+      <h3>¿No ves tu talla? Escríbenos</h3>
+      <p>No encontramos zapatillas con esos filtros, pero podemos ayudarte a conseguirla.</p>
+      <a class="ct-btn ct-btn-wa" id="ctEmptyWa" target="_blank" rel="noopener" href="https://wa.me/{{ wa }}">Escribir por WhatsApp</a>
+      <button type="button" class="ct-btn ct-btn-borde" data-limpiar style="color:var(--azul);border-color:var(--azul);margin-left:8px">Limpiar filtros</button>
+    </div>
+  </div></section>
+
+  <section class="ct-sec" id="ct-como" style="background:var(--fondo2)"><div class="ct-wrap">
+    <h2 class="ct-h2">Compra en <em>3 pasos</em></h2>
+    <div class="ct-steps">
+      <div class="ct-step"><div class="n">01</div><h3>Elige tu par</h3><p>Escoge el modelo y tu talla. Usa la guía si tienes dudas.</p></div>
+      <div class="ct-step"><div class="n">02</div><h3>Agrégalo al carrito</h3><p>Puedes llevar varios pares en un mismo pedido.</p></div>
+      <div class="ct-step"><div class="n">03</div><h3>Paga y recibe</h3><p>Paga en línea de forma segura o escríbenos por WhatsApp.</p></div>
+    </div>
+  </div></section>
+
+  <section class="ct-sec" id="ct-faq"><div class="ct-wrap">
+    <h2 class="ct-h2" style="text-align:center">Preguntas <em>frecuentes</em></h2>
+    <div class="ct-faq">
+      <details><summary>¿Cómo sé cuál es mi talla?</summary><p>Usa nuestra guía de tallas: mides tu pie en centímetros y te decimos la talla. Si estás entre dos tallas, elige la mayor.</p></details>
+      <details><summary>¿Cuánto tarda el envío?</summary><p>Te confirmamos el tiempo exacto según tu ciudad al momento de la compra.</p></details>
+      <details><summary>¿Puedo cambiar la talla?</summary><p>Sí. Escríbenos por WhatsApp y te indicamos el proceso de cambio.</p></details>
+      <details><summary>¿Qué medios de pago aceptan?</summary><p>Puedes pagar en línea en nuestra tienda o coordinar el pago por WhatsApp.</p></details>
+    </div>
+  </div></section>
+
+  <section class="ct-sec" style="padding-top:0"><div class="ct-wrap">
+    <div class="ct-may">
+      <div><h2>¿Compras por mayor?</h2><p>Escríbenos y te cotizamos para tu tienda o negocio.</p></div>
+      <a class="ct-btn ct-btn-blanco" target="_blank" rel="noopener" href="https://wa.me/{{ wa }}?text={{ 'Hola Cotidiano Shoes, quiero información para compras al por mayor' | url_encode }}">Cotizar por WhatsApp →</a>
+    </div>
+  </div></section>
+</div>
+
+<div class="ct ct-ov" id="ctGuia"><div class="ct-modal">
+  <div style="display:flex;justify-content:space-between;align-items:center"><h3 style="margin:0;text-transform:uppercase">Guía de tallas</h3><button id="ctGuiaX" style="border:none;background:#eef3fa;border-radius:50%;width:36px;height:36px;cursor:pointer">✕</button></div>
+  <p style="color:#5A6F88">1) Pisa una hoja con el talón contra la pared · 2) Marca tu dedo más largo · 3) Mide en cm.</p>
+  <label style="font-weight:700">¿Cuánto mide tu pie? (cm) </label><input id="ctLen" type="number" step="0.1" placeholder="Ej. 25.5"> <b id="ctRes" style="color:#0B63CE"></b>
+  <div id="ctTabla" style="margin-top:14px"></div>
+  <p style="font-size:.8rem;color:#5A6F88">Medidas aproximadas: cada marca calza un poco distinto. Escríbenos y te ayudamos.</p>
+</div></div>
+
+<div class="ct ct-dicho" id="ctDicho" role="status" aria-live="polite">
+  <button class="ct-dicho-ic av" id="ctDichoPlay" type="button" aria-label="Escuchar el dicho"><svg class="i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13a1 1 0 0 0 1.5.86l10.6-6.5a1 1 0 0 0 0-1.72L9.5 4.64A1 1 0 0 0 8 5.5z"/></svg><svg class="i-pausa" viewBox="0 0 24 24" aria-hidden="true"><rect x="6.5" y="5" width="4" height="14" rx="1.2"/><rect x="13.5" y="5" width="4" height="14" rx="1.2"/></svg></button>
+  <div><span class="ct-dicho-txt" id="ctDichoTxt"></span><span class="ct-dicho-hint">▶ Toca para escucharlo</span></div>
+  <button class="ct-dicho-x" id="ctDichoX" type="button" aria-label="Cerrar">✕</button>
+</div>
+<div class="ct ct-qvw" id="ctQvw" aria-hidden="true">
+  <div class="ct-qvw-shade" data-qvclose></div>
+  <div class="ct-qvw-panel" role="dialog" aria-modal="true" aria-labelledby="ctQvT" id="ctQvPanel"></div>
+</div>
+<div class="ct ct-cbar" id="ctCBar" aria-hidden="true">
+  <div class="ct-cbar-th" id="ctCBarTh"></div>
+  <b id="ctCBarN"></b>
+  <button type="button" class="ct-cbar-go" id="ctCBarGo">Comparar</button>
+  <button type="button" class="ct-cbar-x" id="ctCBarX" aria-label="Quitar todas de la comparación">Quitar</button>
+</div>
+<div class="ct ct-ov" id="ctComp"><div class="ct-modal wide" role="dialog" aria-modal="true" aria-labelledby="ctCompT">
+  <div style="display:flex;justify-content:space-between;align-items:center"><h3 id="ctCompT" style="margin:0;text-transform:uppercase">Comparar zapatillas</h3><button type="button" class="ct-x" data-compclose aria-label="Cerrar comparación">✕</button></div>
+  <div class="ct-ctab-wrap" id="ctCompBody"></div>
+</div></div>
+<div class="ct ct-toast" id="ctToast" role="status"><span id="ctToastTxt">Agregado al carrito</span><a href="{{ routes.cart_url }}">Ver carrito</a><a href="/checkout">Pagar →</a>
+  <div class="ct-up" id="ctUp" hidden></div>
+</div>
+<a class="ct-fab" target="_blank" rel="noopener" aria-label="WhatsApp" href="https://wa.me/{{ wa }}?text={{ 'Hola Cotidiano Shoes, quiero más información' | url_encode }}"><svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.39 1.26 4.81L2 22l5.42-1.42a9.9 9.9 0 0 0 4.62 1.18c5.46 0 9.9-4.45 9.9-9.91C21.95 6.45 17.5 2 12.04 2Zm5.8 14.09c-.24.68-1.4 1.32-1.93 1.36-.51.05-1.02.24-3.44-.75-2.92-1.2-4.8-4.13-4.94-4.32-.14-.19-1.19-1.58-1.19-3.02 0-1.44.75-2.14 1.02-2.43.27-.29.59-.36.78-.36l.56.01c.18.01.42-.07.65.5.24.58.83 2 .9 2.15.07.15.12.32.02.51-.1.19-.15.31-.3.48-.15.17-.31.38-.44.51-.15.15-.3.31-.13.6.17.29.76 1.26 1.64 2.04 1.13 1.01 2.08 1.32 2.37 1.47.29.15.46.13.63-.08.17-.2.72-.84.91-1.13.19-.29.39-.24.65-.14.27.1 1.68.79 1.97.93.29.15.48.22.55.34.07.13.07.75-.17 1.43Z"/></svg></a>
+
+<script>
+(function(){
+  var hero=document.getElementById('ctHero');
+  if(hero){
+    var tx=.5,ty=.5,cx=.5,cy=.5,active=false,t0=performance.now();
+    var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setTimeout(function(){hero.classList.remove('ct-intro');},reduce?0:3200);
+    hero.addEventListener('pointermove',function(e){var r=hero.getBoundingClientRect();tx=(e.clientX-r.left)/r.width;ty=(e.clientY-r.top)/r.height;active=true;});
+    hero.addEventListener('pointerleave',function(){active=false;});
+    (function loop(t){
+      if(!active&&!reduce){var k=(t-t0)/1000;tx=.5+Math.sin(k*.6)*.18;ty=.5+Math.cos(k*.45)*.14;}
+      cx+=(tx-cx)*.08;cy+=(ty-cy)*.08;
+      hero.style.setProperty('--mx',cx.toFixed(4));hero.style.setProperty('--my',cy.toFixed(4));
+      requestAnimationFrame(loop);
+    })(t0);
+  }
+  /* Ruleta de diseños: arrastre con inercia, flechas, scroll horizontal, inclinación con el mouse y giro solo en reposo */
+  var rul=document.getElementById('ctRuleta'),rueda=document.getElementById('ctRueda');
+  var rcs=rueda?[].slice.call(rueda.querySelectorAll('.ct-rc')):[];
+  if(rul&&rcs.length){
+    var rN=rcs.length,rRed=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var paso=2*Math.PI/rN,ang=0,vel=0,meta=null,R=1,arr=false,px=0,pt=0,mov=0,ultimo=-1e9,tX=0,tY=0,iX=0,iY=0,frente=0,rlt=performance.now();
+    function medirR(){R=rul.clientWidth*.33||1;}
+    medirR();window.addEventListener('resize',medirR);
+    function tocarR(){ultimo=performance.now();}
+    function pintarR(){
+      var best=-2,bi=0;
+      for(var i=0;i<rN;i++){
+        var t=ang+i*paso,x=Math.sin(t)*R,z=Math.cos(t),d=(z+1)/2,s=.5+.5*Math.pow(d,1.3),c=rcs[i],b=(1-d)*2;
+        c.style.transform='translate(-50%,-50%) translate3d('+x.toFixed(1)+'px,0,0) scale('+s.toFixed(3)+')';
+        c.style.opacity=(.25+.75*d).toFixed(3);
+        c.style.zIndex=Math.round(d*100);
+        c.style.filter=b>.05?'blur('+b.toFixed(2)+'px)':'none';
+        if(z>best){best=z;bi=i;}
+      }
+      if(bi!==frente){rcs[frente].classList.remove('front');rcs[bi].classList.add('front');frente=bi;}
+    }
+    (function giroR(t){
+      var f=Math.min((t-rlt)/16.667,3);rlt=t;
+      if(!arr){
+        if(meta!==null){var dd=meta-ang;if(Math.abs(dd)<.0005){ang=meta;meta=null;}else ang+=dd*(1-Math.pow(.86,f));}
+        else if(Math.abs(vel)>.00005){ang+=vel*f;vel*=Math.pow(.94,f);}
+        else if(!rRed&&t-ultimo>1500){ang-=.0018*f;}
+      }
+      if(!rRed){var k=Math.min(1,.08*f);iX+=(tX-iX)*k;iY+=(tY-iY)*k;rueda.style.transform='rotateX('+(iY*-7).toFixed(2)+'deg) rotateY('+(iX*9).toFixed(2)+'deg)';}
+      pintarR();
+      requestAnimationFrame(giroR);
+    })(rlt);
+    /* Arrastre: se escucha en window (sin setPointerCapture) para que un toque normal siga abriendo el producto */
+    rul.addEventListener('pointerdown',function(e){if(e.button!==0)return;arr=true;meta=null;vel=0;px=e.clientX;pt=performance.now();mov=0;tocarR();rul.classList.add('drag');});
+    window.addEventListener('pointermove',function(e){
+      if(!arr)return;var now=performance.now(),dx=e.clientX-px,d=dx/R;px=e.clientX;mov+=Math.abs(dx);
+      ang+=d;vel=vel*.6+(d/(Math.max(now-pt,1)/16.667))*.4;pt=now;tocarR();
+    });
+    function soltarR(){if(!arr)return;arr=false;rul.classList.remove('drag');if(rRed||performance.now()-pt>90)vel=0;tocarR();}
+    window.addEventListener('pointerup',soltarR);window.addEventListener('pointercancel',soltarR);
+    /* Si arrastró más de 6px no abre el producto (los clics de teclado, detail 0, siempre pasan) */
+    rul.addEventListener('click',function(e){if(e.detail&&mov>6){e.preventDefault();e.stopPropagation();}mov=0;},true);
+    rul.addEventListener('dragstart',function(e){e.preventDefault();});
+    rul.addEventListener('wheel',function(e){if(Math.abs(e.deltaX)>Math.abs(e.deltaY)){e.preventDefault();meta=null;vel=0;ang-=e.deltaX/R;tocarR();}},{passive:false});
+    rul.addEventListener('pointermove',function(e){if(e.pointerType!=='mouse')return;var r=rul.getBoundingClientRect();tX=(e.clientX-r.left)/r.width-.5;tY=(e.clientY-r.top)/r.height-.5;});
+    rul.addEventListener('pointerleave',function(){tX=0;tY=0;});
+    function moverR(s){var base=meta!==null?meta:Math.round(ang/paso)*paso;vel=0;meta=base-s*paso;if(rRed){ang=meta;meta=null;}tocarR();}
+    var rPrev=document.getElementById('ctRPrev'),rNext=document.getElementById('ctRNext');
+    if(rPrev)rPrev.addEventListener('click',function(){moverR(-1);});
+    if(rNext)rNext.addEventListener('click',function(){moverR(1);});
+  }
+  /* Cinta: desplazamiento infinito; el scroll la acelera y su dirección la cambia; hover la frena */
+  var cinta=document.getElementById('ctCinta'),track=document.getElementById('ctCintaTrack');
+  if(cinta&&track&&!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    var setW=track.firstElementChild.offsetWidth,cxp=0,dir=-1,boost=0,slow=false,lastY=window.scrollY,lt=performance.now();
+    window.addEventListener('resize',function(){setW=track.firstElementChild.offsetWidth;});
+    window.addEventListener('scroll',function(){var y=window.scrollY,dy=y-lastY;lastY=y;if(dy){dir=dy>0?-1:1;boost=Math.min(boost+Math.abs(dy)*6,900);}},{passive:true});
+    cinta.addEventListener('pointerenter',function(){slow=true;});
+    cinta.addEventListener('pointerleave',function(){slow=false;});
+    (function run(t){
+      var dt=Math.min((t-lt)/1000,.05);lt=t;
+      boost*=Math.pow(.93,dt*60);
+      cxp+=dir*(55+boost)*(slow?.25:1)*dt;
+      if(setW){while(cxp<=-setW)cxp+=setW;while(cxp>0)cxp-=setW;}
+      track.style.transform='translate3d('+cxp.toFixed(2)+'px,0,0)';
+      requestAnimationFrame(run);
+    })(lt);
+  }
+  /* Notificación "Dicho cotidiano" con voz: aparece a los 7 s, se repite cada 22 s y dura 8 s.
+     Cada vez que aparece intenta sonar sola. Los navegadores bloquean el sonido hasta que la persona toca la página:
+     si está bloqueado queda el botón .av, y con el primer toque/clic/tecla en cualquier parte se desbloquea y
+     desde ahí cada dicho suena solo. No se oculta mientras suena; al terminar se oculta 2.5 s después. La X la apaga por la visita. */
+  var dicho=document.getElementById('ctDicho');
+  if(dicho){
+    var off=false;try{off=sessionStorage.getItem('ctDichoOff')==='1';}catch(e){}
+    if(!off){
+      var dichos=[
+        {t:"Pa'l 24 y pa'l 31 se estrena... ¡así sea las medias!",a:"{{ 'dicho-1.mp3' | asset_url }}"},
+        {t:"Uy, ¿y esas zapatillas? ¿Se ganó el chance o qué?",a:"{{ 'dicho-2.mp3' | asset_url }}"},
+        {t:"Esas no se prestan... ni al primo.",a:"{{ 'dicho-3.mp3' | asset_url }}"},
+        {t:"Mijo, esas son pa' salir, no pa' jugar fútbol.",a:"{{ 'dicho-4.mp3' | asset_url }}"},
+        {t:"Guárdelas en la caja, que todavía no es diciembre.",a:"{{ 'dicho-5.mp3' | asset_url }}"},
+        {t:"Que el año nuevo lo coja... con pies nuevos.",a:"{{ 'dicho-6.mp3' | asset_url }}"}
+      ];
+      var dTxt=document.getElementById('ctDichoTxt'),dBtn=document.getElementById('ctDichoPlay'),dHint=dicho.querySelector('.ct-dicho-hint');
+      var fi=Math.floor(Math.random()*dichos.length),dHide,dRep,dFirst,voz=new Audio(),desbloqueando=false,vozLista=false;
+      /* Sonido automático solo durante los primeros 20 s en la página; después solo suena si la persona toca ▶ */
+      var autoHasta=Date.now()+20000,vozAuto=false;
+      function autoPermitido(){return Date.now()<autoHasta;}
+      setTimeout(function(){if(vozAuto&&!voz.paused)voz.pause();},20000);
+      voz.preload='none';
+      function sonando(){return !voz.paused&&!voz.ended;}
+      function ocultarEn(ms){clearTimeout(dHide);dHide=setTimeout(function(){if(!sonando())dicho.classList.remove('show');},ms);}
+      function marcar(on){dBtn.classList.toggle('playing',on);dBtn.setAttribute('aria-label',on?'Pausar el dicho':'Escuchar el dicho');dHint.style.visibility=on?'hidden':'';}
+      voz.addEventListener('play',function(){if(desbloqueando)return;marcar(true);clearTimeout(dHide);});
+      voz.addEventListener('pause',function(){if(desbloqueando)return;marcar(false);if(!voz.ended)ocultarEn(8000);});
+      voz.addEventListener('ended',function(){marcar(false);ocultarEn(2500);});
+      voz.addEventListener('error',function(){if(desbloqueando)return;marcar(false);ocultarEn(8000);});
+      function reproducir(){
+        try{
+          desbloqueando=false;voz.muted=false;
+          if(voz.getAttribute('src')!==dichos[fi].a){voz.src=dichos[fi].a;}
+          var pr=voz.play();if(pr&&pr.catch)pr.catch(function(){marcar(false);}); /* bloqueado o falló: queda el botón, sin error */
+        }catch(e){marcar(false);}
+      }
+      function mostrarDicho(){
+        if(sonando())return; /* no cambia la frase mientras suena */
+        fi=(fi+1)%dichos.length;dTxt.textContent=dichos[fi].t;
+        voz.removeAttribute('src');marcar(false);
+        dicho.classList.add('show');ocultarEn(8000);
+        if(autoPermitido()){vozAuto=true;reproducir();} /* intenta sonar sola, solo en los primeros 20 s */
+      }
+      dBtn.addEventListener('click',function(){if(sonando()){voz.pause();}else{vozAuto=false;reproducir();}});
+      /* Primer toque/clic/tecla en cualquier parte: desbloquea el audio. Si el dicho está a la vista, suena ya;
+         si no, se "estrena" el elemento en silencio (necesario en iPhone) para que los siguientes suenen solos.
+         Los toques sobre el botón o la X los manejan sus propios eventos. */
+      var evDesbloqueo=['pointerdown','touchend','click','keydown'];
+      function desbloquearVoz(e){
+        if(vozLista)return;vozLista=true;
+        evDesbloqueo.forEach(function(ev){document.removeEventListener(ev,desbloquearVoz,true);});
+        if(e.target&&e.target.closest&&e.target.closest('#ctDichoPlay,#ctDichoX'))return;
+        if(dicho.classList.contains('show')){if(!sonando()&&autoPermitido()){vozAuto=true;reproducir();}return;}
+        try{
+          desbloqueando=true;voz.muted=true;voz.src=dichos[(fi+1)%dichos.length].a;
+          var p=voz.play(),listo=function(){if(!desbloqueando)return;voz.pause();voz.currentTime=0;voz.muted=false;voz.removeAttribute('src');desbloqueando=false;};
+          if(p&&p.then){p.then(listo,listo);}else{listo();}
+        }catch(err){voz.muted=false;desbloqueando=false;}
+      }
+      evDesbloqueo.forEach(function(ev){document.addEventListener(ev,desbloquearVoz,{capture:true,passive:true});});
+      dFirst=setTimeout(function(){mostrarDicho();dRep=setInterval(mostrarDicho,22000);},7000);
+      document.getElementById('ctDichoX').addEventListener('click',function(){dicho.classList.remove('show');voz.pause();clearTimeout(dFirst);clearTimeout(dHide);clearInterval(dRep);try{sessionStorage.setItem('ctDichoOff','1');}catch(e){}});
+    }
+  }
+  /* ── Colección ── */
+  var grid=document.getElementById('ctGrid');
+  var RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var DATA={};try{JSON.parse(document.getElementById('ctData').textContent).forEach(function(p){DATA[p.h]=p;});}catch(e){}
+  var MV=[];try{MV=JSON.parse(document.getElementById('ctMV').textContent);}catch(e){}
+  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+  function norm(s){return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');}
+  var F={marca:'',genero:'',estilo:'',color:'',talla:'',q:'',orden:'dest'};
+  var aplicar=function(){};
+  if(grid){
+    var cards=[].slice.call(grid.querySelectorAll('.ct-it')),frs=[].slice.call(grid.querySelectorAll('.ct-frase'));
+    var fzone=document.getElementById('ct-coleccion'),elAct=document.getElementById('ctAct'),elActChips=document.getElementById('ctActChips');
+    var fbar=document.getElementById('ctFBar'),fpanel=document.getElementById('ctFPanel'),fshade=document.getElementById('ctFShade'),fbtn=document.getElementById('ctFBtn');
+    var elCount=document.getElementById('ctCount'),elCount2=document.getElementById('ctCount2'),elClear=document.getElementById('ctClear'),elEmpty=document.getElementById('ctEmpty'),elFNum=document.getElementById('ctFNum'),elQ=document.getElementById('ctQ'),elSort=document.getElementById('ctSort');
+    cards.forEach(function(c,i){c._i=i;c._n=norm(c.dataset.nombre);c._t=c.dataset.tags||'';c._s=c.dataset.tallas||'';c._p=+c.dataset.precio||0;c._d=+c.dataset.pub||0;var r=MV.indexOf(c.dataset.h);c._mv=r<0?1e6:r;});
+    /* Tallas del filtro sin ningún producto disponible: deshabilitadas */
+    /* Opciones de etiqueta (Para, Estilo, Color) sin ningún producto: se quitan, y su grupo si queda vacío */
+    fzone.querySelectorAll('[data-k="genero"],[data-k="estilo"],[data-k="color"]').forEach(function(b){
+      if(!b.dataset.val)return;var tg=','+(b.dataset.k==='color'?'color-':'')+b.dataset.val+',';
+      if(!cards.some(function(c){return c._t.indexOf(tg)>=0;})){var g=b.closest('.ct-fg,.ct-seg');b.remove();if(g&&!g.querySelector('[data-k][data-val]:not([data-val=""])'))g.remove();}
+    });
+    fpanel.querySelectorAll('[data-k="talla"]').forEach(function(b){if(!cards.some(function(c){return c._s.indexOf(','+b.dataset.val+',')>=0;})){b.disabled=true;b.setAttribute('aria-label','Talla '+b.dataset.val+' sin disponibilidad');}});
+    var ORD={
+      dest:function(a,b){return a._i-b._i;},
+      mv:function(a,b){return a._mv-b._mv||a._i-b._i;},
+      nuevos:function(a,b){return b._d-a._d||a._i-b._i;},
+      asc:function(a,b){return a._p-b._p||a._i-b._i;},
+      desc:function(a,b){return b._p-a._p||a._i-b._i;}
+    };
+    function pasa(c){
+      if(F.marca&&c.dataset.marca!==F.marca)return false;
+      if(F.genero&&c._t.indexOf(','+F.genero+',')<0)return false;
+      if(F.estilo&&c._t.indexOf(','+F.estilo+',')<0)return false;
+      if(F.color&&c._t.indexOf(',color-'+F.color+',')<0)return false;
+      if(F.talla&&c._s.indexOf(','+F.talla+',')<0)return false;
+      if(F.q&&c._n.indexOf(F.q)<0)return false;
+      return true;
+    }
+    function activos(){return (F.marca?1:0)+(F.genero?1:0)+(F.estilo?1:0)+(F.color?1:0)+(F.talla?1:0)+(F.q?1:0);}
+    var tFade;
+    aplicar=function(anim){
+      var vis=cards.filter(pasa).sort(ORD[F.orden]||ORD.dest),n=vis.length;
+      function render(){
+        cards.forEach(function(c){c._v=false;});vis.forEach(function(c){c._v=true;});
+        var nuevos=[];
+        cards.forEach(function(c){c.classList.toggle('ct-hide',!c._v);c.classList.remove('ct-in');});
+        /* Orden visual con CSS order: el producto j va en j + floor(j/6); la frase m va después de cada 6 productos */
+        vis.forEach(function(c,j){c.style.order=j+Math.floor(j/6);if(F.talla)elegirTalla(c,F.talla);nuevos.push(c);});
+        frs.forEach(function(f,m){var ok=n>=4&&6*(m+1)<n;f.classList.toggle('ct-hide',!ok);f.classList.remove('ct-in');f.style.order=7*m+6;if(ok)nuevos.push(f);});
+        if(anim&&!RM){void grid.offsetWidth;nuevos.forEach(function(el){el.classList.add('ct-in');});}
+        var txt=n+(n===1?' zapatilla':' zapatillas');elCount.textContent=txt;elCount2.textContent=txt;
+        elEmpty.hidden=n>0;grid.hidden=n===0;
+        /* Chips de filtros aplicados (los del panel) y número en el botón Filtros */
+        var chips='',np=0;
+        ['marca','estilo','talla','color'].forEach(function(k){
+          if(!F[k])return;np++;
+          var b=fpanel.querySelector('[data-k="'+k+'"][data-val="'+F[k]+'"]');
+          var lbl=k==='talla'?'Talla EU '+F[k]:(b?(b.title||b.textContent):F[k]);
+          chips+='<button type="button" class="ct-act-chip" data-rm="'+k+'" aria-label="Quitar filtro '+esc(lbl)+'">'+esc(lbl)+'<span aria-hidden="true">✕</span></button>';
+        });
+        elActChips.innerHTML=chips;elAct.hidden=np===0;elFNum.textContent=np?np:'';
+        fbtn.setAttribute('aria-label',np?'Filtros, '+np+' activos':'Filtros');
+        var mb=F.marca&&fpanel.querySelector('[data-k="marca"][data-val="'+F.marca+'"]');
+        var wa='Hola Cotidiano Shoes, busco zapatillas'+(mb?' '+mb.textContent:'')+(F.estilo?' estilo '+F.estilo:'')+(F.talla?' en talla '+F.talla:'')+'. ¿Me ayudan?';
+        document.getElementById('ctEmptyWa').href='https://wa.me/'+grid.dataset.wa+'?text='+encodeURIComponent(wa);
+        fzone.querySelectorAll('[data-k]').forEach(function(b){b.setAttribute('aria-pressed',String(F[b.dataset.k]===b.dataset.val));});
+      }
+      clearTimeout(tFade);
+      if(anim&&!RM){grid.classList.add('ct-fading');tFade=setTimeout(function(){render();grid.classList.remove('ct-fading');},120);}else render();
+    };
+    fzone.addEventListener('click',function(e){
+      var r=e.target.closest('[data-rm]');
+      if(r){F[r.dataset.rm]='';aplicar(true);var n=elActChips.querySelector('.ct-act-chip')||elClear;if(!elAct.hidden&&n)n.focus();else fbtn.focus();return;}
+      var b=e.target.closest('[data-k]');if(!b||b.disabled)return;
+      var k=b.dataset.k,v=b.dataset.val;
+      F[k]=F[k]===v?'':v; /* tocar otra vez el filtro activo lo quita (sin selección = todos) */
+      aplicar(true);
+    });
+    var tQ;elQ.addEventListener('input',function(){clearTimeout(tQ);tQ=setTimeout(function(){F.q=norm(elQ.value.trim());aplicar(true);},150);});
+    elSort.addEventListener('change',function(){F.orden=elSort.value;aplicar(true);});
+    function limpiar(){F.marca=F.genero=F.estilo=F.color=F.talla=F.q='';elQ.value='';aplicar(true);}
+    elClear.addEventListener('click',limpiar);
+    document.querySelector('[data-limpiar]').addEventListener('click',limpiar);
+    /* Botones Hombre / Mujer del hero */
+    document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){F.genero=b.dataset.go;aplicar(false);document.getElementById('ct-coleccion').scrollIntoView({behavior:RM?'auto':'smooth'});});});
+    /* Barra fija: se ubica bajo el encabezado si este es fijo, y toma sombra al quedar pegada */
+    var rafB=0;
+    function ubicarBarra(){
+      rafB=0;var off=0;
+      document.querySelectorAll('header-component,.header-section,#header-group').forEach(function(h){var cs=getComputedStyle(h);if(cs.position==='sticky'||cs.position==='fixed'){var r=h.getBoundingClientRect();if(r.bottom>off)off=Math.max(0,r.bottom);}});
+      fbar.style.setProperty('--ct-top',Math.round(off)+'px');
+      var r=fbar.getBoundingClientRect(),g=grid.getBoundingClientRect();
+      fbar.classList.toggle('stuck',r.top<=off+1&&g.top<r.bottom+40&&g.bottom>r.bottom);
+    }
+    window.addEventListener('scroll',function(){if(!rafB)rafB=requestAnimationFrame(ubicarBarra);},{passive:true});
+    window.addEventListener('resize',ubicarBarra);
+    ubicarBarra();
+    /* Panel de filtros: lateral en escritorio, hoja inferior en celular. Foco atrapado (pila de diálogos), Esc y fondo cierran */
+    function abrirPanel(){
+      if(fpanel.classList.contains('open'))return;
+      fpanel.style.translate='';fpanel.classList.add('open');fshade.hidden=false;fbtn.setAttribute('aria-expanded','true');document.body.style.overflow='hidden';
+      abrirDialogo(fpanel,fpanel,fbtn,function(){cerrarPanel();});
+    }
+    function cerrarPanel(){
+      if(!fpanel.classList.contains('open'))return;
+      fpanel.classList.remove('open','drag');fpanel.style.translate='';fshade.hidden=true;fbtn.setAttribute('aria-expanded','false');document.body.style.overflow='';
+      cerrarDialogo(fpanel);
+    }
+    fbtn.addEventListener('click',abrirPanel);
+    fshade.addEventListener('click',function(){cerrarPanel();});
+    fpanel.querySelectorAll('[data-fclose]').forEach(function(b){b.addEventListener('click',function(){cerrarPanel();});});
+    /* Arrastrar la hoja hacia abajo para cerrarla (celular) */
+    var ftop=document.getElementById('ctFTop'),dy0=null,dy=0;
+    ftop.addEventListener('touchstart',function(e){if(innerWidth>700)return;dy0=e.touches[0].clientY;dy=0;fpanel.classList.add('drag');},{passive:true});
+    ftop.addEventListener('touchmove',function(e){if(dy0===null)return;dy=Math.max(0,e.touches[0].clientY-dy0);fpanel.style.translate='0 '+dy+'px';},{passive:true});
+    ftop.addEventListener('touchend',function(){if(dy0===null)return;dy0=null;fpanel.classList.remove('drag');if(dy>90)cerrarPanel();else fpanel.style.translate='';});
+    aplicar(false);
+  }
+  /* ── Selector de talla, "quedan pocas" real y agregar al carrito (tarjetas, vista rápida y comparar) ── */
+  function elegirTalla(scope,t){var b=scope.querySelector('.ct-size[data-t="'+String(t).replace(/"/g,'')+'"]:not([disabled])');if(b)marcarTalla(scope,b);}
+  /* Conversión de tallas: Colombia/EU · USA hombre · USA mujer · UK · largo del pie (cm). Aproximada, varía por marca */
+  var CONV=[[35,'3.5','5','2.5',22.0],[36,'4','5.5','3.5',22.8],[37,'5','6.5','4',23.5],[38,'5.5','7','5',24.1],[39,'6.5','8','6',24.8],[40,'7','8.5','6',25.4],[41,'8','9.5','7',26.0],[42,'8.5','10','7.5',26.7],[43,'9.5','11','8.5',27.3],[44,'10','11.5','9',28.0]];
+  function convHTML(hit){
+    return '<div class="ct-conv-wrap"><table class="ct-conv"><thead><tr><th scope="col">EU</th><th scope="col">USA hombre</th><th scope="col">USA mujer</th><th scope="col">UK</th><th scope="col">Pie (cm)</th></tr></thead><tbody>'+
+      CONV.map(function(r){return '<tr data-eu="'+r[0]+'"'+(String(r[0])===String(hit)?' class="hit"':'')+'><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4].toFixed(1)+'</td></tr>';}).join('')+'</tbody></table></div>';
+  }
+  function marcarTalla(scope,b){
+    scope.querySelectorAll('.ct-size').forEach(function(x){var on=x===b;x.classList.toggle('on',on);x.setAttribute('aria-pressed',String(on));});
+    if(qvp&&qvp.contains(scope))qvp.querySelectorAll('.ct-conv tr[data-eu]').forEach(function(r){r.classList.toggle('hit',r.dataset.eu===b.dataset.t);});
+    var h=scope.querySelector('.ct-hint');if(h)h.textContent='';
+    var low=scope.querySelector('.ct-low');if(!low)return;
+    var q=b.dataset.q===undefined?NaN:+b.dataset.q;
+    if(q>=1&&q<=2){low.textContent=(q===1?'Última en talla ':'Últimas 2 en talla ')+b.dataset.t;low.hidden=false;}else{low.hidden=true;low.textContent='';}
+  }
+  function tallasHTML(p){
+    return '<div class="ct-sizes" role="group" aria-label="Tallas de '+esc(p.t)+'">'+p.s.map(function(s){
+      return '<button type="button" class="ct-size" data-v="'+s[1]+'" data-t="'+esc(s[0])+'"'+(s[3]!==null?' data-q="'+s[3]+'"':'')+' aria-pressed="false"'+(s[2]?'':' disabled aria-label="Talla '+esc(s[0])+' agotada"')+'>'+esc(s[0])+'</button>';
+    }).join('')+'</div><p class="ct-low" hidden></p><div class="ct-hint" aria-live="polite"></div>';
+  }
+  var toast=document.getElementById('ctToast'),upEl=document.getElementById('ctUp'),tt,toastPausa=false;
+  function cerrarToastEn(ms){clearTimeout(tt);tt=setTimeout(function(){if(!toastPausa)toast.classList.remove('show');else cerrarToastEn(1500);},ms);}
+  toast.addEventListener('mouseenter',function(){toastPausa=true;});toast.addEventListener('mouseleave',function(){toastPausa=false;});
+  toast.addEventListener('focusin',function(){toastPausa=true;});toast.addEventListener('focusout',function(){toastPausa=false;});
+  function agregar(id){
+    return fetch('/cart/add.js',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({items:[{id:Number(id),quantity:1}]})})
+      .then(function(r){if(!r.ok)throw r;return r.json();})
+      .then(function(j){document.dispatchEvent(new CustomEvent('cart:refresh'));return j;});
+  }
+  /* "Lleva otro par": sugiere 1 zapatilla del mismo estilo, priorizando la misma talla disponible */
+  function sugerir(h,talla){
+    var p=DATA[h];upEl.hidden=true;upEl.innerHTML='';
+    if(!p||!p.e)return false;
+    var cand=Object.keys(DATA).map(function(k){return DATA[k];}).filter(function(o){return o.h!==h&&o.e===p.e&&o.s.some(function(s){return s[2];});});
+    if(!cand.length)return false;
+    var misma=cand.filter(function(o){return o.s.some(function(s){return s[2]&&String(s[0])===String(talla);});});
+    var pool=misma.length?misma:cand,o=pool[Math.floor(Math.random()*pool.length)];
+    var v=null;o.s.forEach(function(s){if(s[2]&&String(s[0])===String(talla))v=s[1];});
+    var promo=grid?grid.dataset.promo:'';
+    upEl.innerHTML=(o.i[0]?'<img src="'+esc(o.i[0])+'" alt="" loading="lazy">':'')+
+      '<span><span class="ct-up-l">'+(promo?esc(promo):'Te puede gustar')+'</span><span class="ct-up-n">'+esc(o.t)+' · '+esc(o.p)+'</span></span>'+
+      (v?'<button type="button" class="ct-up-b" data-upv="'+v+'" data-uph="'+esc(o.h)+'" data-upt="'+esc(talla)+'" aria-label="Agregar '+esc(o.t)+' talla '+esc(talla)+'">Agregar</button>'
+        :'<button type="button" class="ct-up-b" data-upqv="'+esc(o.h)+'" aria-label="Ver tallas de '+esc(o.t)+'">Ver tallas</button>');
+    upEl.hidden=false;return true;
+  }
+  function avisar(h,talla){
+    var p=DATA[h];
+    document.getElementById('ctToastTxt').textContent=(p?p.t:'Zapatilla')+' · talla '+talla+' agregada';
+    var con=sugerir(h,talla);
+    toast.classList.add('show');cerrarToastEn(con?9000:5000);
+  }
+  upEl.addEventListener('click',function(e){
+    var b=e.target.closest('.ct-up-b');if(!b)return;
+    if(b.dataset.upqv){toast.classList.remove('show');abrirQV(b.dataset.upqv,null);return;}
+    b.disabled=true;b.textContent='Agregando…';
+    agregar(b.dataset.upv).then(function(){var p=DATA[b.dataset.uph];document.getElementById('ctToastTxt').textContent=(p?p.t:'Zapatilla')+' · talla '+b.dataset.upt+' agregada';upEl.hidden=true;cerrarToastEn(5000);})
+      .catch(function(){b.disabled=false;b.textContent='Agregar';});
+  });
+  document.addEventListener('click',function(e){
+    var t=e.target;
+    var g=t.closest('[data-guia]');if(g){abrirGuia();return;}
+    /* Tocar la zapatilla (imagen, nombre o tarjeta) abre la vista rápida; Ctrl/Cmd+clic sigue abriendo la página del producto */
+    var card=t.closest('.ct-it');
+    if(card&&!t.closest('.ct-cmp')){
+      if(t.closest('a')&&(e.ctrlKey||e.metaKey||e.shiftKey||e.button!==0))return;
+      e.preventDefault();abrirQV(card.dataset.h,card.querySelector('.ct-open'));return;
+    }
+    var scope=t.closest('[data-buy]');if(!scope)return;
+    var s=t.closest('.ct-size');if(s&&!s.disabled){marcarTalla(scope,s);return;}
+    var qvb=t.closest('.ct-qv,.ct-pick');if(qvb){abrirQV(scope.dataset.h,qvb);return;}
+    var btn=t.closest('.ct-add');if(!btn||btn.disabled)return;
+    var sel=scope.querySelector('.ct-size.on'),hint=scope.querySelector('.ct-hint');
+    if(!sel){var r=scope.querySelector('.ct-sizes');if(r){r.classList.remove('ct-shake');void r.offsetWidth;r.classList.add('ct-shake');}if(hint)hint.textContent='Elige tu talla para continuar';var f=scope.querySelector('.ct-size:not([disabled])');if(f)f.focus();return;}
+    var lbl=btn.textContent;btn.disabled=true;btn.textContent='Agregando…';
+    agregar(sel.dataset.v).then(function(){avisar(scope.dataset.h,sel.dataset.t);})
+      .catch(function(){if(hint)hint.textContent='No hay unidades disponibles de esta talla';})
+      .then(function(){btn.disabled=false;btn.textContent=lbl;});
+  });
+  /* ── Diálogos: foco dentro, Esc y foco de regreso ── */
+  var pila=[];
+  function enfocables(el){return [].slice.call(el.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select,[tabindex]:not([tabindex="-1"])')).filter(function(x){return x.offsetParent!==null||x===document.activeElement;});}
+  function abrirDialogo(el,cont,volver,cerrar){pila.push({el:el,cont:cont,volver:volver,cerrar:cerrar});var f=enfocables(cont);if(f[0])f[0].focus();}
+  function cerrarDialogo(el){for(var i=pila.length-1;i>=0;i--){if(pila[i].el===el){var d=pila.splice(i,1)[0];if(d.volver&&d.volver.focus)d.volver.focus();return;}}}
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){
+      if(ov.classList.contains('show')){ov.classList.remove('show');return;}
+      if(pila.length){pila[pila.length-1].cerrar();return;}
+      if(fpanel&&fpanel.classList.contains('open'))cerrarPanel();
+      return;
+    }
+    if(e.key==='Tab'&&pila.length&&!ov.classList.contains('show')){
+      var c=pila[pila.length-1].cont,f=enfocables(c);if(!f.length)return;
+      var a=f[0],z=f[f.length-1];
+      if(e.shiftKey&&document.activeElement===a){e.preventDefault();z.focus();}
+      else if(!e.shiftKey&&document.activeElement===z){e.preventDefault();a.focus();}
+      else if(!c.contains(document.activeElement)){e.preventDefault();a.focus();}
+    }
+  });
+  /* ── Vista rápida ── */
+  var qvw=document.getElementById('ctQvw'),qvp=document.getElementById('ctQvPanel');
+  function abrirQV(h,volver){
+    var p=DATA[h];if(!p)return;
+    var th=p.i.length>1?'<div class="ct-qv-th">'+p.i.map(function(src,i){return '<button type="button" data-qi="'+i+'" aria-label="Imagen '+(i+1)+'"'+(i===0?' aria-current="true"':'')+'><img src="'+esc(src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'';
+    qvp.innerHTML='<div class="ct-qv-top"><span class="ct-vend">'+esc(p.vd)+'</span><button type="button" class="ct-x" data-qvclose aria-label="Cerrar vista rápida">✕</button></div>'+
+      '<div class="ct-qv-main">'+(p.i[0]?'<img id="ctQvImg" src="'+esc(p.i[0])+'" alt="'+esc(p.t)+'">':'')+'</div>'+th+
+      '<h3 id="ctQvT">'+esc(p.t)+'</h3><div class="ct-price" style="margin:0">'+esc(p.p)+'</div>'+
+      (document.getElementById('ctTrustTpl')?document.getElementById('ctTrustTpl').innerHTML:'')+
+      '<div class="ct-qv-buy" data-buy data-h="'+esc(p.h)+'"><span class="ct-fl" style="margin-bottom:8px">Elige tu talla (EU)</span>'+tallasHTML(p)+
+      '<button type="button" class="ct-add">Agregar al carrito</button></div>'+
+      '<details class="ct-qv-guia"><summary>Guía de tallas · EU, USA, UK</summary>'+convHTML(null)+
+      '<p>Medidas aproximadas: cada marca calza un poco distinto. ¿Dudas? Escríbenos por WhatsApp. <button type="button" data-guia style="border:none;background:none;padding:0;color:var(--azul);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer">Calcular por largo del pie</button></p></details>'+
+      '<div class="ct-links"><a href="'+esc(p.u)+'">Ver producto completo →</a></div>';
+    if(F.talla)elegirTalla(qvp,F.talla);
+    qvw.classList.add('open');qvw.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
+    abrirDialogo(qvw,qvp,volver,cerrarQV);
+  }
+  function cerrarQV(){if(!qvw.classList.contains('open'))return;qvw.classList.remove('open');qvw.setAttribute('aria-hidden','true');document.body.style.overflow='';cerrarDialogo(qvw);}
+  qvw.addEventListener('click',function(e){
+    if(e.target.closest('[data-qvclose]')){cerrarQV();return;}
+    var b=e.target.closest('[data-qi]');if(!b)return;
+    var img=document.getElementById('ctQvImg');if(img)img.src=b.querySelector('img').src;
+    qvp.querySelectorAll('[data-qi]').forEach(function(x){x.setAttribute('aria-current',String(x===b));});
+  });
+  /* ── Comparar (máximo 3) ── */
+  var cmp=[],cbar=document.getElementById('ctCBar'),comp=document.getElementById('ctComp'),compBody=document.getElementById('ctCompBody');
+  function pintarBarra(){
+    var on=cmp.length>=2;cbar.classList.toggle('show',on);cbar.setAttribute('aria-hidden',String(!on));document.body.classList.toggle('ct-cmp-on',on);
+    document.getElementById('ctCBarTh').innerHTML=cmp.map(function(h){var p=DATA[h];return p&&p.i[0]?'<img src="'+esc(p.i[0])+'" alt="'+esc(p.t)+'">':'';}).join('');
+    document.getElementById('ctCBarN').textContent=cmp.length+' para comparar';
+    cbar.querySelectorAll('button').forEach(function(b){b.tabIndex=on?0:-1;});
+  }
+  if(grid)grid.addEventListener('change',function(e){
+    var cb=e.target.closest('.ct-cmp-in');if(!cb)return;
+    var card=cb.closest('[data-h]'),h=card.dataset.h,i=cmp.indexOf(h);
+    if(cb.checked){if(cmp.length>=3){cb.checked=false;var hi=card.querySelector('.ct-hint');if(hi)hi.textContent='Puedes comparar hasta 3 zapatillas';return;}if(i<0)cmp.push(h);}
+    else if(i>=0)cmp.splice(i,1);
+    pintarBarra();
+  });
+  function quitarComparar(){cmp=[];if(grid)grid.querySelectorAll('.ct-cmp-in').forEach(function(c){c.checked=false;});pintarBarra();}
+  document.getElementById('ctCBarX').addEventListener('click',quitarComparar);
+  document.getElementById('ctCBarGo').addEventListener('click',function(){
+    var ps=cmp.map(function(h){return DATA[h];}).filter(Boolean);
+    function fila(nombre,fn){return '<tr><th scope="row">'+nombre+'</th>'+ps.map(function(p){return '<td>'+fn(p)+'</td>';}).join('')+'</tr>';}
+    compBody.innerHTML='<table class="ct-ctab">'+
+      fila('<span class="ct-sr">Imagen</span>',function(p){return p.i[0]?'<img src="'+esc(p.i[0])+'" alt="" loading="lazy">':'';})+
+      fila('Nombre',function(p){return '<a class="nm" href="'+esc(p.u)+'" style="color:inherit;text-decoration:none">'+esc(p.t)+'</a>';})+
+      fila('Estilo',function(p){return p.e?esc(p.e):'—';})+
+      fila('Precio',function(p){return '<span class="ct-price">'+esc(p.p)+'</span>';})+
+      fila('Tallas disponibles',function(p){return '<div data-buy data-h="'+esc(p.h)+'" style="display:flex;flex-direction:column">'+tallasHTML(p)+'<button type="button" class="ct-add">Agregar</button></div>';})+
+      '</table>';
+    if(F.talla)compBody.querySelectorAll('[data-buy]').forEach(function(s){elegirTalla(s,F.talla);});
+    comp.classList.add('show');abrirDialogo(comp,comp.querySelector('.ct-modal'),this,cerrarComp);
+  });
+  function cerrarComp(){if(!comp.classList.contains('show'))return;comp.classList.remove('show');cerrarDialogo(comp);}
+  comp.addEventListener('click',function(e){if(e.target===comp||e.target.closest('[data-compclose]'))cerrarComp();});
+  var ov=document.getElementById('ctGuia'),len=document.getElementById('ctLen');
+  function tabla(){var v=parseFloat(String(len.value).replace(',','.')),hit=-1;if(!isNaN(v))for(var i=0;i < CONV.length;i++){if(v<=CONV[i][4]){hit=i;break;}}
+    document.getElementById('ctTabla').innerHTML=convHTML(hit < 0?null:CONV[hit][0]);
+    var c=hit < 0?null:CONV[hit];
+    document.getElementById('ctRes').textContent=isNaN(v)?'':(hit < 0?'Escríbenos por WhatsApp':'Tu talla: EU '+c[0]+' (USA hombre '+c[1]+' · USA mujer '+c[2]+' · UK '+c[3]+')');}
+  function abrirGuia(){ov.classList.add('show');tabla();}
+  document.getElementById('ctGuiaX').onclick=function(){ov.classList.remove('show');};
+  ov.addEventListener('click',function(e){if(e.target===ov)ov.classList.remove('show');});
+  len.addEventListener('input',tabla);
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Cotidiano · Inicio",
+  "settings": [
+    { "type": "text", "id": "whatsapp", "label": "WhatsApp (con código de país, ej. 573001234567)", "default": "573000000000" },
+    { "type": "text", "id": "logo_hero", "label": "Logo blanco del hero (nombre del archivo en Contenido → Archivos)", "default": "cotidiano-blanco.png" },
+    { "type": "collection", "id": "hero_coleccion", "label": "Colección de la ruleta del hero", "info": "Si la dejas vacía se usan todos los productos" },
+    { "type": "range", "id": "hero_cantidad", "label": "Cantidad de zapatillas en la ruleta", "min": 4, "max": 16, "step": 1, "default": 10 },
+    { "type": "product", "id": "hero_p1", "label": "Zapatilla destacada 1 (opcional)" },
+    { "type": "product", "id": "hero_p2", "label": "Zapatilla destacada 2 (opcional)" },
+    { "type": "product", "id": "hero_p3", "label": "Zapatilla destacada 3 (opcional)" },
+    { "type": "checkbox", "id": "modo_navidad", "label": "Activar decoración navideña", "default": true },
+    { "type": "text", "id": "texto_navidad", "label": "Texto de la etiqueta navideña", "default": "PA'L 24 Y PA'L 31 SE ESTRENA" },
+    { "type": "text", "id": "tag", "label": "Etiqueta superior", "default": "Nueva colección 2026" },
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Comodidad para cada" },
+    { "type": "text", "id": "titulo_acento", "label": "Título (parte resaltada)", "default": "paso." },
+    { "type": "text", "id": "subtitulo", "label": "Subtítulo", "default": "Livianas, con amortiguación real y colores que se notan. Elige la tuya y recíbela en casa." },
+    { "type": "text", "id": "marcas", "label": "Marcas", "default": "ON · SALOMON" },
+    { "type": "header", "content": "Colección" },
+    { "type": "text", "id": "col_titulo", "label": "Título de la colección", "default": "Encuentra tu" },
+    { "type": "text", "id": "col_acento", "label": "Título de la colección (parte resaltada en azul)", "default": "par ideal" },
+    { "type": "textarea", "id": "frases_grilla", "label": "Frases de la grilla (una por línea)", "info": "Aparecen como tarjetas grandes cada 6 zapatillas, en este orden.", "default": "Diciembre se recibe estrenando.\nPa'l 24 y pa'l 31 se estrena, así sea las medias.\nEsas no se prestan ni al primo.\nQue el año nuevo lo coja con pies nuevos.\nHágale, que estrenar no es pecado." },
+    { "type": "text", "id": "promo_segundo_par", "label": "Oferta del segundo par (opcional)", "info": "Ej. 10% en el segundo par. Ponlo solo si ese descuento existe en Shopify → Descuentos. Si lo dejas vacío, la sugerencia dice \"Te puede gustar\"." }
+  ],
+  "presets": [{ "name": "Cotidiano · Inicio" }]
+}
+{% endschema %}

@@ -1,0 +1,130 @@
+{%- comment -%}
+  Guía de tallas de Cotidiano para la página de producto.
+  Enlace bajo el selector de tallas que abre un diálogo con la tabla (misma que la portada)
+  y una calculadora por largo del pie. "Usar talla X" marca esa talla en el selector si está disponible.
+{%- endcomment -%}
+<div class="ctg" {{ block.shopify_attributes }}>
+  <button type="button" class="ctg-link" data-ctg-open aria-haspopup="dialog">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15.5 15.5 3l5.5 5.5L8.5 21z"/><path d="M7 12l2 2M10 9l1.5 1.5M13 6l2 2M8.5 15.5 10 17"/></svg>
+    <span>{{ block.settings.texto }}</span>
+  </button>
+
+  <dialog class="ctg-dlg" aria-labelledby="ctgT-{{ block.id }}">
+    <div class="ctg-head">
+      <h2 id="ctgT-{{ block.id }}">Guía de tallas</h2>
+      <button type="button" class="ctg-x" data-ctg-close aria-label="Cerrar guía de tallas">✕</button>
+    </div>
+    <p class="ctg-help">1) Pisa una hoja con el talón contra la pared · 2) Marca tu dedo más largo · 3) Mide en cm.</p>
+    <div class="ctg-calc">
+      <label for="ctgL-{{ block.id }}">¿Cuánto mide tu pie? (cm)</label>
+      <input id="ctgL-{{ block.id }}" type="number" inputmode="decimal" step="0.1" min="15" max="35" placeholder="Ej. 25.5" data-ctg-len>
+      <p class="ctg-res" aria-live="polite" data-ctg-res></p>
+    </div>
+    <div class="ctg-tw"><table>
+      <thead><tr><th scope="col">EU</th><th scope="col">USA hombre</th><th scope="col">USA mujer</th><th scope="col">UK</th><th scope="col">Pie (cm)</th></tr></thead>
+      <tbody data-ctg-body></tbody>
+    </table></div>
+    <p class="ctg-note">Medidas aproximadas: cada marca calza un poco distinto. Escríbenos y te ayudamos.</p>
+  </dialog>
+</div>
+
+{% stylesheet %}
+  .ctg{--ctg-azul:#0B63CE;--ctg-marino:#0F2A47;--ctg-suave:#5A6F88;--ctg-linea:rgba(15,42,71,.12);--ctg-fondo:#F2F7FD}
+  .ctg-link{display:inline-flex;align-items:center;gap:8px;padding:6px 0;border:none;background:none;color:var(--ctg-azul);font:inherit;font-weight:700;font-size:.92rem;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+  .ctg-link svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .ctg-dlg{width:min(560px,calc(100vw - 32px));max-height:90vh;padding:24px;border:none;border-radius:24px;color:var(--ctg-marino);box-shadow:0 30px 80px rgba(15,42,71,.35)}
+  .ctg-dlg::backdrop{background:rgba(15,42,71,.55)}
+  .ctg-head{display:flex;justify-content:space-between;align-items:center;gap:12px}
+  .ctg-head h2{margin:0;font-size:1.3rem;text-transform:uppercase}
+  .ctg-x{flex-shrink:0;width:38px;height:38px;border:none;border-radius:50%;background:var(--ctg-fondo);color:var(--ctg-marino);font-size:1rem;cursor:pointer}
+  .ctg-help,.ctg-note{color:var(--ctg-suave);font-size:.9rem}
+  .ctg-note{font-size:.8rem;margin-bottom:0}
+  .ctg-calc{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:6px 0 14px}
+  .ctg-calc label{font-weight:700}
+  .ctg-calc input{width:130px;padding:11px 13px;border:1px solid var(--ctg-linea);border-radius:12px;font:inherit;font-size:1rem;color:var(--ctg-marino)}
+  .ctg-res{flex-basis:100%;display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0;min-height:1px;color:var(--ctg-azul);font-weight:800}
+  .ctg-res:empty{display:none}
+  .ctg-use{padding:8px 14px;border:none;border-radius:999px;background:var(--ctg-azul);color:#fff;font:inherit;font-weight:700;font-size:.85rem;cursor:pointer}
+  .ctg-dlg table{width:100%;border-collapse:collapse}
+  .ctg-tw{overflow-x:auto}
+  .ctg-dlg th,.ctg-dlg td{padding:8px;border-bottom:1px solid var(--ctg-linea);text-align:center;white-space:nowrap;font-size:.88rem}
+  .ctg-dlg th{font-size:.74rem;color:var(--ctg-suave)}
+  .ctg-dlg th:first-child,.ctg-dlg td:first-child{text-align:left;font-weight:800}
+  .ctg-dlg tr.hit td{background:rgba(11,99,206,.12);color:var(--ctg-azul);font-weight:700}
+  .ctg :focus-visible{outline:2px solid var(--ctg-azul);outline-offset:2px}
+{% endstylesheet %}
+
+{% javascript %}
+  (function () {
+    /* Colombia/EU · USA hombre · USA mujer · UK · largo del pie (cm). Tallas de la tienda en EU. Misma tabla que la portada (cotidiano-home: CONV) */
+    var T = [[35, '3.5', '5', '2.5', 22.0], [36, '4', '5.5', '3.5', 22.8], [37, '5', '6.5', '4', 23.5], [38, '5.5', '7', '5', 24.1], [39, '6.5', '8', '6', 24.8],
+             [40, '7', '8.5', '6', 25.4], [41, '8', '9.5', '7', 26.0], [42, '8.5', '10', '7.5', 26.7], [43, '9.5', '11', '8.5', 27.3], [44, '10', '11.5', '9', 28.0]];
+
+    function iniciar(root) {
+      if (root.dataset.ctgOk) return;
+      root.dataset.ctgOk = '1';
+      var dlg = root.querySelector('.ctg-dlg'), len = root.querySelector('[data-ctg-len]'),
+          res = root.querySelector('[data-ctg-res]'), body = root.querySelector('[data-ctg-body]');
+
+      /* Radio de la talla en el selector de variantes de este producto (si existe y está disponible) */
+      function radioTalla(t) {
+        var scope = root.closest('.product-information, .shopify-section') || document;
+        var rs = scope.querySelectorAll('variant-picker input[type="radio"], .variant-picker input[type="radio"]');
+        for (var i = 0; i < rs.length; i++) if (String(rs[i].value).trim() === String(t)) return rs[i];
+        return null;
+      }
+
+      function pintar() {
+        var v = parseFloat(String(len.value).replace(',', '.')), hit = -1;
+        if (!isNaN(v)) for (var i = 0; i < T.length; i++) if (v <= T[i][4]) { hit = i; break; }
+        body.innerHTML = T.map(function (r, i) {
+          return '<tr' + (i === hit ? ' class="hit"' : '') + '><td>' + r[0] + '</td><td>' + r[1] + '</td><td>' + r[2] + '</td><td>' + r[3] + '</td><td>' + r[4].toFixed(1) + '</td></tr>';
+        }).join('');
+        res.innerHTML = '';
+        if (isNaN(v)) return;
+        if (hit < 0) { res.textContent = 'Tu pie es más largo que nuestra tabla: escríbenos por WhatsApp y te ayudamos.'; return; }
+        var t = T[hit][0], s = document.createElement('span');
+        s.textContent = 'Tu talla: EU ' + t + ' (USA H ' + T[hit][1] + ' · USA M ' + T[hit][2] + ' · UK ' + T[hit][3] + ')';
+        res.appendChild(s);
+        var r = radioTalla(t);
+        if (r && !r.disabled && r.getAttribute('aria-disabled') !== 'true' && !r.closest('[data-option-available="false"]')) {
+          var b = document.createElement('button');
+          b.type = 'button'; b.className = 'ctg-use'; b.textContent = 'Usar talla EU ' + t;
+          b.addEventListener('click', function () { r.click(); dlg.close(); });
+          res.appendChild(b);
+        } else if (r) {
+          var a = document.createElement('span');
+          a.style.cssText = 'color:var(--ctg-suave);font-weight:600';
+          a.textContent = '(agotada en este modelo)';
+          res.appendChild(a);
+        }
+      }
+
+      root.querySelector('[data-ctg-open]').addEventListener('click', function () { pintar(); dlg.showModal(); len.focus(); });
+      root.querySelector('[data-ctg-close]').addEventListener('click', function () { dlg.close(); });
+      dlg.addEventListener('click', function (e) { /* clic en el fondo oscuro, fuera de la caja */
+        if (e.target !== dlg) return;
+        var r = dlg.getBoundingClientRect();
+        if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dlg.close();
+      });
+      len.addEventListener('input', pintar);
+    }
+
+    function todos() { document.querySelectorAll('.ctg').forEach(iniciar); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', todos); else todos();
+    document.addEventListener('shopify:section:load', todos);
+  })();
+{% endjavascript %}
+
+{% schema %}
+{
+  "name": "Guía de tallas",
+  "tag": null,
+  "settings": [
+    { "type": "text", "id": "texto", "label": "Texto del enlace", "default": "Guía de tallas: encuentra tu talla" }
+  ],
+  "presets": [
+    { "name": "Guía de tallas" }
+  ]
+}
+{% endschema %}
