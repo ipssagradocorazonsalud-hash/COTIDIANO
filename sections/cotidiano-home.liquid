@@ -544,14 +544,7 @@
       assign frases = section.settings.frases_grilla | strip | newline_to_br | split: '<br />'
       assign nfrases = frases.size
       # Heros entre zapatillas (bloques de la sección) y contadores de frases/heros ya usados
-      # Heros: bloques "hero" y "efecto" en el orden del editor (se guardan sus posiciones, ej. "3,5,8")
-      assign hidx = ''
-      for b in section.blocks
-        if b.type == 'hero' or b.type == 'efecto'
-          assign hidx = hidx | append: forloop.index0 | append: ','
-        endif
-      endfor
-      assign heros = hidx | split: ','
+      assign heros = section.blocks | where: 'type', 'hero'
       assign nheros = heros.size
       assign hi = 0
       assign fi = 0
@@ -695,7 +688,7 @@
         {%- endcapture -%}
         {%- assign ctjson = ctjson | append: pj | append: ',' -%}
         {%- comment -%}
-          Cada 6 productos va un espacio especial. Se alternan: hero, frase, hero, frase… (el primero es un hero)
+          Cada 6 productos va un espacio especial. Se alternan: frase, hero, frase, hero…
           Si las frases están apagadas, todos los espacios son heros (6 zapatillas, hero, 6 zapatillas, hero…).
           Cuando se acaban los heros (bloques "Hero entre zapatillas"), los espacios siguientes son frases.
           Las frases rotan los estilos 1·2·3 (la 3.ª lleva la guía de tallas).
@@ -707,20 +700,15 @@
           {%- liquid
             assign usar_hero = false
             if nheros > hi
-              if k2 == 0 or section.settings.frases_activas == false
+              if k2 == 1 or section.settings.frases_activas == false
                 assign usar_hero = true
               endif
             endif
           -%}
           {%- if usar_hero -%}
-            {%- assign hbi = heros[hi] | plus: 0 -%}
-            {%- assign hb = section.blocks[hbi] -%}
+            {%- assign hb = heros[hi] -%}
             {%- assign hi = hi | plus: 1 -%}
-            {%- if hb.type == 'efecto' -%}
-              {%- render 'cotidiano-hero-avalancha', block: hb, wa: wa -%}
-            {%- else -%}
-              {%- render 'cotidiano-hero-grilla', block: hb, wa: wa -%}
-            {%- endif -%}
+            {%- render 'cotidiano-hero-grilla', block: hb, wa: wa -%}
           {%- elsif nfrases > 0 and section.settings.frases_activas -%}
             {%- assign ki = fi | modulo: nfrases -%}
             {%- assign est = fi | modulo: 3 | plus: 1 -%}
@@ -962,7 +950,7 @@
   }
   /* ── Heros entre zapatillas (tarjeta y pantalla completa): aparecen al entrar en pantalla y la palabra de fondo se desliza con el scroll ── */
   (function(){
-    var hbs=[].slice.call(document.querySelectorAll('.ct-hb,.ct-hb-full,.ct-bfa,.ct-av'));if(!hbs.length)return;
+    var hbs=[].slice.call(document.querySelectorAll('.ct-hb,.ct-hb-full,.ct-bfa'));if(!hbs.length)return;
     if(!('IntersectionObserver' in window)){hbs.forEach(function(h){h.classList.add('vis');});return;}
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});},{threshold:.25});
     hbs.forEach(function(h){io.observe(h);});
@@ -1337,24 +1325,6 @@
   ],
   "blocks": [
     {
-      "type": "efecto",
-      "name": "Banner con efecto",
-      "limit": 6,
-      "settings": [
-        { "type": "paragraph", "content": "Un diseño ya hecho (una imagen) con animación: avalancha de polvo y piedras, o nieve. Sale entre las zapatillas, en el orden de la lista junto a los \"Hero entre zapatillas\"." },
-        { "type": "select", "id": "efecto", "label": "Efecto", "default": "avalancha", "options": [
-          { "value": "avalancha", "label": "Avalancha (polvo, piedras y temblor)" },
-          { "value": "nieve", "label": "Nieve cayendo" }
-        ] },
-        { "type": "image_picker", "id": "imagen", "label": "Imagen (computador)" },
-        { "type": "image_picker", "id": "imagen_movil", "label": "Imagen para celular (opcional)" },
-        { "type": "text", "id": "alt", "label": "Describe la imagen" },
-        { "type": "url", "id": "enlace", "label": "Enlace (opcional)", "info": "Vacío = baja a la colección." },
-        { "type": "text", "id": "whatsapp_msg", "label": "…o mensaje de WhatsApp" },
-        { "type": "text", "id": "archivo_tema", "label": "Imagen del tema (avanzado)", "info": "Se usa si no subes imagen." }
-      ]
-    },
-    {
       "type": "slide",
       "name": "Banner del hero",
       "limit": 8,
@@ -1364,9 +1334,7 @@
         { "type": "text", "id": "alt", "label": "Describe el banner", "info": "Ej. Samba, un clásico que nunca pasa de moda" },
         { "type": "text", "id": "marca", "label": "Marca (para el enlace)", "info": "Igual que en \"Proveedor\". Al tocar el banner se abre esa marca." },
         { "type": "url", "id": "enlace", "label": "Enlace (opcional)", "info": "Si lo pones, reemplaza al de la marca." },
-        { "type": "text", "id": "archivo_tema", "label": "Archivo del tema (avanzado)", "info": "Se usa solo si no subes imagen. Déjalo como está." },
-        { "type": "text", "id": "video_tema", "label": "Video del tema (avanzado)", "info": "Si tiene un video (archivo del tema), la diapositiva muestra el video en vez de la imagen." },
-        { "type": "text", "id": "poster_tema", "label": "Póster del video (avanzado)" }
+        { "type": "text", "id": "archivo_tema", "label": "Archivo del tema (avanzado)", "info": "Se usa solo si no subes imagen. Déjalo como está." }
       ]
     },
     {
