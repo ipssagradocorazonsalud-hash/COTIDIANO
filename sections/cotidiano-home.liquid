@@ -240,6 +240,10 @@
   .ct-fr-guia svg{width:34px;height:34px;flex-shrink:0;fill:none;stroke:var(--azul);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
   .ct-fr-btn{padding:12px 22px;border-radius:999px;border:none;background:var(--azul);color:#fff;font-family:inherit;font-weight:700;font-size:.92rem;cursor:pointer}
   .ct-fr-btn:hover{background:var(--azul2)}
+  .ct-mas-wrap{text-align:center;margin-top:30px}
+  .ct-mas{padding:15px 30px;border-radius:999px;border:2px solid var(--azul);background:#fff;color:var(--azul);font-family:inherit;font-weight:800;font-size:1rem;cursor:pointer;transition:background .2s,color .2s}
+  .ct-mas:hover{background:var(--azul);color:#fff}
+  .ct-mas[hidden]{display:none}
   .ct-empty{text-align:center;padding:48px 20px;border-radius:24px;background:var(--fondo2)}
   .ct-empty[hidden]{display:none}
   .ct-empty svg{width:44px;height:44px;fill:none;stroke:var(--azul);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
@@ -431,7 +435,7 @@
     <div class="ct-wrap ct-hero-grid">
       <div>
         {%- if section.settings.logo_hero != blank -%}
-          <img class="ct-logo-hero" src="{{ section.settings.logo_hero | file_url }}" alt="Cotidiano Shoes">
+          <img class="ct-logo-hero" src="{{ section.settings.logo_hero | file_img_url: '680x' }}" alt="Cotidiano Shoes" fetchpriority="high">
         {%- endif -%}
         {%- if section.settings.modo_navidad and section.settings.texto_navidad != blank -%}
           <span class="ct-xmas"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>{{ section.settings.texto_navidad }}</span>
@@ -466,7 +470,8 @@
                 {%- unless rvistos contains rclave -%}
                   {%- assign rvistos = rvistos | append: p.handle | append: ',' -%}
                   <a class="ct-rc{% if rn == 0 %} front{% endif %}" href="{{ p.url }}" draggable="false">
-                    {{ p.featured_image | image_url: width: 700 | image_tag: alt: p.title, loading: 'eager', draggable: 'false', sizes: '(max-width: 900px) 200px, 270px' }}
+                    {%- if rn < 3 -%}{%- assign rload = 'eager' -%}{%- else -%}{%- assign rload = 'lazy' -%}{%- endif -%}{%- if rn == 0 -%}{%- assign rprio = 'high' -%}{%- else -%}{%- assign rprio = 'auto' -%}{%- endif -%}
+                    {{ p.featured_image | image_url: width: 600 | image_tag: alt: p.title, loading: rload, fetchpriority: rprio, draggable: 'false', widths: '300, 450, 600', sizes: '(max-width: 900px) 200px, 270px' }}
                     <span class="lbl"><span>{{ p.title }}</span><b>{{ p.price | money_without_trailing_zeros }}</b></span>
                   </a>
                   {%- assign rn = rn | plus: 1 -%}
@@ -480,7 +485,8 @@
                 {%- unless rvistos contains rclave -%}
                   {%- assign rvistos = rvistos | append: p.handle | append: ',' -%}
                   <a class="ct-rc{% if rn == 0 %} front{% endif %}" href="{{ p.url }}" draggable="false">
-                    {{ p.featured_image | image_url: width: 700 | image_tag: alt: p.title, loading: 'eager', draggable: 'false', sizes: '(max-width: 900px) 200px, 270px' }}
+                    {%- if rn < 3 -%}{%- assign rload = 'eager' -%}{%- else -%}{%- assign rload = 'lazy' -%}{%- endif -%}{%- if rn == 0 -%}{%- assign rprio = 'high' -%}{%- else -%}{%- assign rprio = 'auto' -%}{%- endif -%}
+                    {{ p.featured_image | image_url: width: 600 | image_tag: alt: p.title, loading: rload, fetchpriority: rprio, draggable: 'false', widths: '300, 450, 600', sizes: '(max-width: 900px) 200px, 270px' }}
                     <span class="lbl"><span>{{ p.title }}</span><b>{{ p.price | money_without_trailing_zeros }}</b></span>
                   </a>
                   {%- assign rn = rn | plus: 1 -%}
@@ -649,11 +655,11 @@
           endfor
           assign alt_img = product.images[1]
         -%}
-        <article class="ct-card ct-it{% if alt_img %} has-alt{% endif %}" data-buy data-h="{{ product.handle }}" data-marca="{{ product.vendor | handleize }}" data-tags="{{ ptc | escape }}" data-tallas="{{ tdisp | escape }}" data-precio="{{ product.price }}" data-pub="{{ product.published_at | date: '%s' }}" data-nombre="{{ product.title | escape }}">
+        <article class="ct-card ct-it{% if alt_img %} pre-alt{% endif %}" data-buy data-h="{{ product.handle }}" data-marca="{{ product.vendor | handleize }}" data-tags="{{ ptc | escape }}" data-tallas="{{ tdisp | escape }}" data-precio="{{ product.price }}" data-pub="{{ product.published_at | date: '%s' }}" data-nombre="{{ product.title | escape }}">
           <div class="ct-img">
             <a class="ct-img-a" href="{{ product.url }}" tabindex="-1" aria-hidden="true">
-              {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', alt: '', class: 'main' }}{%- endif -%}
-              {%- if alt_img -%}{{ alt_img | image_url: width: 700 | image_tag: loading: 'lazy', alt: '', class: 'alt' }}{%- endif -%}
+              {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', alt: '', class: 'main', widths: '360, 540, 700', sizes: '(max-width: 700px) 92vw, (max-width: 1100px) 46vw, 380px' }}{%- endif -%}
+              {%- if alt_img -%}<img class="alt" alt="" data-src="{{ alt_img | image_url: width: 540 }}" width="540" height="{{ 540 | divided_by: alt_img.aspect_ratio | round }}">{%- endif -%}
             </a>
             {%- if ptc contains ',nuevo,' -%}<span class="ct-new">NUEVO</span>{%- endif -%}
             <label class="ct-cmp"><input type="checkbox" class="ct-cmp-in" aria-label="Comparar {{ product.title | escape }}">Comparar</label>
@@ -718,6 +724,7 @@
     <template id="ctTrustTpl">{{ trust }}</template>
     <script type="application/json" id="ctData">[{{ ctjson | remove_last: ',' }}]</script>
     <script type="application/json" id="ctMV">[{%- if hay_mv -%}{%- for p in mvc.products -%}{{ p.handle | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}{%- endif -%}]</script>
+    <div class="ct-mas-wrap"><button type="button" class="ct-mas" id="ctMas" hidden>Ver más zapatillas</button></div>
     <div class="ct-empty" id="ctEmpty" hidden>
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 17.5h20v1.5a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z"/><path d="M2 17.5V9l3.5-3 3 3.5 3-1 1.5 3c2.5.8 5 1.3 6.5 2.3 1 .7 1.5 1.8 1.5 3.7"/></svg>
       <h3>¿No ves tu talla? Escríbenos</h3>
@@ -1008,15 +1015,19 @@
     }
     function activos(){return (F.marca?1:0)+(F.genero?1:0)+(F.estilo?1:0)+(F.color?1:0)+(F.talla?1:0)+(F.q?1:0);}
     var tFade;
-    aplicar=function(anim){
-      var vis=cards.filter(pasa).sort(ORD[F.orden]||ORD.dest),n=vis.length;
+    /* Se muestran de a LIM zapatillas; "Ver más" suma otras LIM. Cambiar un filtro vuelve a empezar */
+    var LIM=24,lim=LIM,elMas=document.getElementById('ctMas');
+    aplicar=function(anim,seguir){
+      if(!seguir)lim=LIM;
+      var todas=cards.filter(pasa).sort(ORD[F.orden]||ORD.dest),n=todas.length,vis=todas.slice(0,lim),nv=vis.length;
+      elMas.hidden=n<=lim;elMas.textContent='Ver más zapatillas ('+(n-lim)+')';
       function render(){
         cards.forEach(function(c){c._v=false;});vis.forEach(function(c){c._v=true;});
         var nuevos=[];
         cards.forEach(function(c){c.classList.toggle('ct-hide',!c._v);c.classList.remove('ct-in');});
         /* Orden visual con CSS order: el producto j va en j + floor(j/6); el espacio m (frase o hero) va después de cada 6 productos */
         vis.forEach(function(c,j){c.style.order=j+Math.floor(j/6);if(F.talla)elegirTalla(c,F.talla);nuevos.push(c);});
-        frs.forEach(function(f,m){var ok=n>=4&&6*(m+1)<n;f.classList.toggle('ct-hide',!ok);f.classList.remove('ct-in');f.style.order=7*m+6;if(ok)nuevos.push(f);});
+        frs.forEach(function(f,m){var ok=nv>=4&&6*(m+1)<nv;f.classList.toggle('ct-hide',!ok);f.classList.remove('ct-in');f.style.order=7*m+6;if(ok)nuevos.push(f);});
         if(anim&&!RM){void grid.offsetWidth;nuevos.forEach(function(el){el.classList.add('ct-in');});}
         var txt=n+(n===1?' zapatilla':' zapatillas');elCount.textContent=txt;elCount2.textContent=txt;
         elEmpty.hidden=n>0;grid.hidden=n===0;
@@ -1048,6 +1059,9 @@
     });
     var tQ;elQ.addEventListener('input',function(){clearTimeout(tQ);tQ=setTimeout(function(){F.q=norm(elQ.value.trim());aplicar(true);},150);});
     elSort.addEventListener('change',function(){F.orden=elSort.value;aplicar(true);});
+    elMas.addEventListener('click',function(){var desde=lim;lim+=LIM;aplicar(false,true);var c=cards.filter(function(x){return x._v;}).sort(function(a,b){return a.style.order-b.style.order;})[desde];if(c){var a=c.querySelector('.ct-open');if(a)a.focus({preventScroll:true});}});
+    /* Foto alterna: se descarga solo al pasar el mouse (en celular no se usa) */
+    grid.addEventListener('pointerover',function(e){if(e.pointerType==='touch')return;var c=e.target.closest('.ct-card.pre-alt');if(!c)return;c.classList.remove('pre-alt');var im=c.querySelector('img.alt[data-src]');if(!im)return;im.onload=function(){c.classList.add('has-alt');};im.src=im.dataset.src;im.removeAttribute('data-src');});
     function limpiar(){F.marca=F.genero=F.estilo=F.color=F.talla=F.q='';elQ.value='';aplicar(true);}
     elClear.addEventListener('click',limpiar);
     document.querySelector('[data-limpiar]').addEventListener('click',limpiar);
