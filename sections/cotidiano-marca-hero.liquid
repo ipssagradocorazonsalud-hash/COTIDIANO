@@ -50,7 +50,20 @@
         {%- endif -%}
         <h1 class="rt-h2 rt-serif rt-mh-t">{{ c.title | escape }}</h1>
         <p class="rt-mh-p">{{ texto | escape }}</p>
-        <p class="rt-mh-n">{{ c.products_count }} {% if c.products_count == 1 %}modelo disponible{% else %}modelos disponibles{% endif %}</p>
+        {%- liquid
+          assign total = 0
+          for p in c.products limit: 48
+            assign n = 1
+            for o in p.options_with_values
+              assign on = o.name | downcase
+              if on contains 'color'
+                assign n = o.values.size
+              endif
+            endfor
+            assign total = total | plus: n
+          endfor
+        -%}
+        <p class="rt-mh-n">{{ total }} {% if total == 1 %}modelo disponible{% else %}modelos disponibles{% endif %}</p>
         <div class="rt-mh-cta">
           <a class="rt-btn rt-btn-dark" href="#rtMhGrid">Ver modelos <span aria-hidden="true">↓</span></a>
         </div>

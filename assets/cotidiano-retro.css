@@ -206,3 +206,13 @@ body{background:var(--rt-blanco)}
 .rt-ft-pay svg{width:38px;height:24px;display:block}
 @media(max-width:900px){.rt-ft-grid{grid-template-columns:1fr 1fr}.rt-ft-brand{grid-column:1/-1}}
 @media(max-width:520px){.rt-ft{padding-top:40px}.rt-ft-grid{gap:28px}.rt-ft-bot-in{justify-content:center;text-align:center}.rt-ft-bot{padding-bottom:84px}}
+/* Grilla de la portada de marca: una tarjeta por color (sections/cotidiano-marca-colores.liquid) */
+.rt-mc{background:var(--rt-blanco);padding:40px 0 60px}
+.rt-mc-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}
+.rt-mc-tag{position:absolute;top:20px;left:20px;z-index:1;padding:4px 10px;border-radius:999px;background:var(--rt-carbon);color:var(--rt-crema);font-size:.72rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.rt-mc-sale{background:var(--rt-terracota)}
+.rt-mc-off .rt-prod-img{opacity:.55}
+.rt-mc-empty{grid-column:1/-1;text-align:center;padding:40px 0;color:#4E5A4F}
+.rt-mc-pag{margin-top:30px;text-align:center;font-weight:700}
+.rt-mc-pag a,.rt-mc-pag span{display:inline-block;padding:6px 10px;color:var(--rt-verde)}
+@media(max-width:700px){.rt-mc{padding:26px 0 44px}.rt-mc-grid{grid-template-columns:1fr 1fr;gap:12px}.rt-mc .rt-prod{padding:8px 8px 12px}.rt-mc .rt-prod b{font-size:.86rem}.rt-mc-tag{top:14px;left:14px;font-size:.64rem}}
