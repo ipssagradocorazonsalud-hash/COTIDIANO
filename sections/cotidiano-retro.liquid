@@ -49,15 +49,15 @@
               assign bh = b.settings.handle | strip | downcase
               assign url = b.settings.enlace
               if url == blank
-                assign pg = pages[bh]
-                if pg != empty and pg != blank
-                  assign url = pg.url
+                assign ch = bh
+                if bh == 'on-running'
+                  assign ch = 'on'
+                endif
+                assign col = collections[ch]
+                if col.id
+                  assign url = col.url
                 else
-                  assign col = collections[bh]
-                  if bh == 'on-running'
-                    assign col = collections['on']
-                  endif
-                  assign url = col.url | default: routes.all_products_collection_url
+                  assign url = routes.all_products_collection_url
                 endif
               endif
             -%}
