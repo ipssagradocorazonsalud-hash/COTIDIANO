@@ -517,6 +517,8 @@
     </div>
   </div></div>
 
+  {%- render 'cotidiano-marcas', section: section -%}
+
   <section class="ct-sec" id="ct-coleccion"><div class="ct-wrap">
     {%- liquid
       # Etiquetas existentes en la tienda como ",a,b,c," para mostrar solo los filtros que tienen productos
@@ -1049,6 +1051,12 @@
     function limpiar(){F.marca=F.genero=F.estilo=F.color=F.talla=F.q='';elQ.value='';aplicar(true);}
     elClear.addEventListener('click',limpiar);
     document.querySelector('[data-limpiar]').addEventListener('click',limpiar);
+    /* Franja "Nuestras marcas": tocar una marca filtra la colección por esa marca (si existe en el filtro) */
+    document.querySelectorAll('.ct-mk-it[data-marca]').forEach(function(a){a.addEventListener('click',function(e){
+      if(e.ctrlKey||e.metaKey||e.shiftKey||e.button!==0)return;
+      if(!fpanel.querySelector('[data-k="marca"][data-val="'+a.dataset.marca+'"]'))return;
+      e.preventDefault();F.marca=a.dataset.marca;aplicar(false);document.getElementById('ct-coleccion').scrollIntoView({behavior:RM?'auto':'smooth'});
+    });});
     /* Botones Hombre / Mujer del hero */
     document.querySelectorAll('[data-go]').forEach(function(b){b.addEventListener('click',function(){F.genero=b.dataset.go;aplicar(false);document.getElementById('ct-coleccion').scrollIntoView({behavior:RM?'auto':'smooth'});});});
     /* Barra fija: se ubica bajo el encabezado si este es fijo, y toma sombra al quedar pegada */
@@ -1270,6 +1278,9 @@
     { "type": "text", "id": "titulo_acento", "label": "Título (parte resaltada)", "default": "paso." },
     { "type": "text", "id": "subtitulo", "label": "Subtítulo", "default": "Livianas, con amortiguación real y colores que se notan. Elige la tuya y recíbela en casa." },
     { "type": "text", "id": "marcas", "label": "Marcas", "default": "ON · SALOMON" },
+    { "type": "header", "content": "Nuestras marcas" },
+    { "type": "checkbox", "id": "marcas_activas", "label": "Mostrar franja de marcas", "default": true, "info": "Sale debajo de la cinta. Usa las marcas del campo \"Proveedor\" de tus productos, o los bloques \"Marca\" si agregas alguno (para poner logos)." },
+    { "type": "text", "id": "marcas_titulo", "label": "Título de la franja", "default": "Nuestras marcas" },
     { "type": "header", "content": "Colección" },
     { "type": "text", "id": "col_titulo", "label": "Título de la colección", "default": "Encuentra tu" },
     { "type": "text", "id": "col_acento", "label": "Título de la colección (parte resaltada en azul)", "default": "par ideal" },
@@ -1278,6 +1289,16 @@
     { "type": "text", "id": "promo_segundo_par", "label": "Oferta del segundo par (opcional)", "info": "Ej. 10% en el segundo par. Ponlo solo si ese descuento existe en Shopify → Descuentos. Si lo dejas vacío, la sugerencia dice \"Te puede gustar\"." }
   ],
   "blocks": [
+    {
+      "type": "marca",
+      "name": "Marca",
+      "limit": 20,
+      "settings": [
+        { "type": "text", "id": "nombre", "label": "Nombre de la marca", "default": "Salomon", "info": "Escríbela igual que en el campo \"Proveedor\" de tus productos, para que al tocarla se filtre la colección." },
+        { "type": "image_picker", "id": "logo", "label": "Logo (opcional)", "info": "PNG blanco o claro con fondo transparente. Sin logo se muestra el nombre." },
+        { "type": "url", "id": "enlace", "label": "Enlace (opcional)", "info": "Vacío = filtra el inicio por esta marca, o lleva a su colección." }
+      ]
+    },
     {
       "type": "hero",
       "name": "Hero entre zapatillas",

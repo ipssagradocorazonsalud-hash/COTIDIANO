@@ -1,0 +1,78 @@
+{%- comment -%}
+  Franja "Nuestras marcas" del inicio (sections/cotidiano-home.liquid, debajo de la cinta).
+  Marcas: los bloques "Marca" de la sección (logo, nombre, enlace) o, si no hay ninguno,
+  las marcas del catálogo (campo "Proveedor" de cada producto).
+  Al tocar una marca, el inicio filtra la colección por esa marca (JS en la sección);
+  sin JS, el enlace lleva a la colección de la marca o a la página de proveedor de Shopify.
+  Recibe: section.
+{%- endcomment -%}
+{%- liquid
+  assign bloques = section.blocks | where: 'type', 'marca'
+  assign vendors = collections.all.all_vendors | sort_natural
+  assign total = bloques.size
+  if total == 0
+    assign total = vendors.size
+  endif
+-%}
+{%- if section.settings.marcas_activas and total > 0 -%}
+  {%- capture items -%}
+    {%- if bloques.size > 0 -%}
+      {%- for b in bloques -%}
+        {%- liquid
+          assign nombre = b.settings.nombre | strip
+          assign h = nombre | handleize
+          assign url = b.settings.enlace
+          if url == blank
+            assign col = collections[h]
+            if col != blank and col.products_count > 0
+              assign url = col.url
+            else
+              assign url = nombre | url_for_vendor
+            endif
+          endif
+        -%}
+        <a class="ct-mk-it" href="{{ url }}" data-marca="{{ h }}" {{ b.shopify_attributes }}>
+          {%- if b.settings.logo -%}
+            {{ b.settings.logo | image_url: height: 120 | image_tag: alt: nombre, loading: 'lazy', class: 'ct-mk-logo' }}
+          {%- else -%}
+            <span class="ct-mk-name">{{ nombre | escape }}</span>
+          {%- endif -%}
+        </a>
+      {%- endfor -%}
+    {%- else -%}
+      {%- for v in vendors -%}
+        {%- liquid
+          assign h = v | handleize
+          assign col = collections[h]
+          if col != blank and col.products_count > 0
+            assign url = col.url
+          else
+            assign url = v | url_for_vendor
+          endif
+        -%}
+        <a class="ct-mk-it" href="{{ url }}" data-marca="{{ h }}"><span class="ct-mk-name">{{ v | escape }}</span></a>
+      {%- endfor -%}
+    {%- endif -%}
+  {%- endcapture -%}
+  {%- comment -%} Se repite la lista para que la franja se vea llena aunque haya pocas marcas {%- endcomment -%}
+  {%- liquid
+    assign rep = 1
+    if total < 4
+      assign rep = 4
+    elsif total < 7
+      assign rep = 2
+    endif
+  -%}
+  <section class="ct-mk" aria-labelledby="ctMkT">
+    <h2 class="ct-mk-t" id="ctMkT">{{ section.settings.marcas_titulo | default: 'Nuestras marcas' | escape }}</h2>
+    <div class="ct-mk-vp">
+      <div class="ct-mk-track">
+        <div class="ct-mk-set">{%- for i in (1..rep) -%}{{ items }}{%- endfor -%}</div>
+        <div class="ct-mk-set" aria-hidden="true" inert>{%- for i in (1..rep) -%}{{ items }}{%- endfor -%}</div>
+      </div>
+    </div>
+    <p class="ct-mk-hint" aria-hidden="true"><i></i>Toca una marca</p>
+  </section>
+{%- elsif section.settings.marcas_activas and request.design_mode -%}
+  <p style="text-align:center;padding:20px;background:#0F2A47;color:#fff;margin:0">Nuestras marcas: llena el campo "Proveedor" de tus productos o agrega bloques "Marca" en esta sección.</p>
+{%- endif -%}
