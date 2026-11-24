@@ -669,6 +669,7 @@
               {%- if alt_img -%}<img class="alt" alt="" data-src="{{ alt_img | image_url: width: 540 }}" width="540" height="{{ 540 | divided_by: alt_img.aspect_ratio | round }}">{%- endif -%}
             </a>
             {%- if ptc contains ',nuevo,' -%}<span class="ct-new">NUEVO</span>{%- endif -%}
+            {%- if product.compare_at_price > product.price -%}<span class="ct-off">−{{ product.compare_at_price | minus: product.price | money_without_trailing_zeros }}</span>{%- endif -%}
             <label class="ct-cmp"><input type="checkbox" class="ct-cmp-in" aria-label="Comparar {{ product.title | escape }}">Comparar</label>
           </div>
           {%- comment -%} Tarjeta limpia: solo nombre y color. Al tocarla se abre la vista rápida con precio, tallas y guía de conversión {%- endcomment -%}
@@ -681,10 +682,11 @@
             {%- endfor -%}
           {%- endcapture -%}
           {%- if ccol != blank -%}<div class="ct-color"><span class="ct-sr">Color:</span>{{ ccol }}</div>{%- endif -%}
+          <div class="ct-cprice"><b>{{ product.price | money_without_trailing_zeros }}</b>{%- if product.compare_at_price > product.price -%} <s><span class="ct-sr">Antes </span>{{ product.compare_at_price | money_without_trailing_zeros }}</s>{%- endif -%}</div>
           <div class="ct-hint" aria-live="polite"></div>
         </article>
         {%- capture pj -%}
-          {"h":{{ product.handle | json }},"t":{{ product.title | json }},"u":{{ product.url | json }},"vd":{{ product.vendor | json }},"p":{{ product.price | money_without_trailing_zeros | json }},"e":{{ estilo | json }},"i":[{%- for im in product.images limit: 6 -%}{{ im | image_url: width: 900 | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"s":[{%- for v in product.variants -%}{%- case topt -%}{%- when 2 -%}{%- assign vt = v.option2 -%}{%- when 3 -%}{%- assign vt = v.option3 -%}{%- else -%}{%- assign vt = v.option1 -%}{%- endcase -%}[{{ vt | json }},{{ v.id }},{{ v.available }},{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %}]{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+          {"h":{{ product.handle | json }},"t":{{ product.title | json }},"u":{{ product.url | json }},"vd":{{ product.vendor | json }},"p":{{ product.price | money_without_trailing_zeros | json }},"pc":{% if product.compare_at_price > product.price %}{{ product.compare_at_price | money_without_trailing_zeros | json }}{% else %}""{% endif %},"e":{{ estilo | json }},"i":[{%- for im in product.images limit: 6 -%}{{ im | image_url: width: 900 | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"s":[{%- for v in product.variants -%}{%- case topt -%}{%- when 2 -%}{%- assign vt = v.option2 -%}{%- when 3 -%}{%- assign vt = v.option3 -%}{%- else -%}{%- assign vt = v.option1 -%}{%- endcase -%}[{{ vt | json }},{{ v.id }},{{ v.available }},{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %}]{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
         {%- endcapture -%}
         {%- assign ctjson = ctjson | append: pj | append: ',' -%}
         {%- comment -%}
@@ -1224,7 +1226,7 @@
     var th=p.i.length>1?'<div class="ct-qv-th">'+p.i.map(function(src,i){return '<button type="button" data-qi="'+i+'" aria-label="Imagen '+(i+1)+'"'+(i===0?' aria-current="true"':'')+'><img src="'+esc(src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'';
     qvp.innerHTML='<div class="ct-qv-top"><span class="ct-vend">'+esc(p.vd)+'</span><button type="button" class="ct-x" data-qvclose aria-label="Cerrar vista rápida">✕</button></div>'+
       '<div class="ct-qv-main">'+(p.i[0]?'<img id="ctQvImg" src="'+esc(p.i[0])+'" alt="'+esc(p.t)+'">':'')+'</div>'+th+
-      '<h3 id="ctQvT">'+esc(p.t)+'</h3><div class="ct-price" style="margin:0">'+esc(p.p)+'</div>'+
+      '<h3 id="ctQvT">'+esc(p.t)+'</h3><div class="ct-price" style="margin:0">'+esc(p.p)+(p.pc?' <s class="ct-pc">'+esc(p.pc)+'</s>':'')+'</div>'+
       (document.getElementById('ctTrustTpl')?document.getElementById('ctTrustTpl').innerHTML:'')+
       '<div class="ct-qv-buy" data-buy data-h="'+esc(p.h)+'"><span class="ct-fl" style="margin-bottom:8px">Elige tu talla (EU)</span>'+tallasHTML(p)+
       '<button type="button" class="ct-add">Agregar al carrito</button></div>'+
@@ -1266,7 +1268,7 @@
       fila('<span class="ct-sr">Imagen</span>',function(p){return p.i[0]?'<img src="'+esc(p.i[0])+'" alt="" loading="lazy">':'';})+
       fila('Nombre',function(p){return '<a class="nm" href="'+esc(p.u)+'" style="color:inherit;text-decoration:none">'+esc(p.t)+'</a>';})+
       fila('Estilo',function(p){return p.e?esc(p.e):'—';})+
-      fila('Precio',function(p){return '<span class="ct-price">'+esc(p.p)+'</span>';})+
+      fila('Precio',function(p){return '<span class="ct-price">'+esc(p.p)+'</span>'+(p.pc?' <s class="ct-pc">'+esc(p.pc)+'</s>':'');})+
       fila('Tallas disponibles',function(p){return '<div data-buy data-h="'+esc(p.h)+'" style="display:flex;flex-direction:column">'+tallasHTML(p)+'<button type="button" class="ct-add">Agregar</button></div>';})+
       '</table>';
     if(F.talla)compBody.querySelectorAll('[data-buy]').forEach(function(s){elegirTalla(s,F.talla);});

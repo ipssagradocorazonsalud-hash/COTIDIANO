@@ -240,3 +240,10 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
   #ctGrid .ct-qv{bottom:6px;padding:5px 9px;font-size:.62rem}
   #ctGrid .ct-qv svg{width:12px;height:12px}
 }
+
+/* Precio con descuento en las tarjetas del inicio */
+.ct-cprice{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 8px;margin:8px 6px 0;font-size:1.05rem;color:#0F2A47}
+.ct-cprice b{font-weight:900;color:#0B63CE}
+.ct-cprice s,.ct-pc{color:#5A6F88;font-weight:600;font-size:.85em}
+.ct-off{position:absolute;left:10px;top:42px;z-index:2;padding:5px 10px;border-radius:999px;background:#E5203A;color:#fff;font-size:.74rem;font-weight:800;letter-spacing:.02em;box-shadow:0 6px 14px rgba(229,32,58,.35)}
+@media(max-width:700px){#ctGrid .ct-cprice{margin:6px 2px 0;font-size:.86rem;gap:2px 6px}#ctGrid .ct-off{left:auto;right:6px;top:6px;font-size:.62rem;padding:3px 7px}}
