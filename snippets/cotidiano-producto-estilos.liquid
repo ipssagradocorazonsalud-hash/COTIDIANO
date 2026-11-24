@@ -1,0 +1,17 @@
+{%- comment -%}
+  Ajustes visuales de Cotidiano para la página de producto (se incluye desde layout/theme.liquid).
+  Botones de color y talla más compactos: se ajustan al texto en vez de ocupar media pantalla cada uno.
+{%- endcomment -%}
+<style>
+  .variant-picker .variant-option--buttons,
+  .variant-picker .variant-option--equal-width-buttons{display:flex;flex-wrap:wrap;gap:6px}
+  .variant-picker .variant-option--equal-width-buttons .variant-option__button-label,
+  .variant-picker .variant-option--buttons .variant-option__button-label{min-width:44px;flex:0 0 auto;padding-block:7px;padding-inline:13px;min-height:0;font-size:.82rem;line-height:1.2;border-radius:999px}
+  .variant-picker .variant-option--buttons .variant-option__button-label__text{text-align:center;white-space:nowrap}
+  .variant-picker .variant-option--buttons legend{font-size:.82rem;font-weight:600;margin-block-end:8px}
+  .variant-picker .variant-option--buttons + .variant-option--buttons,
+  .variant-picker .variant-option + .variant-option{margin-block-start:14px}
+  @media (max-width:749px){
+    .variant-picker .variant-option--buttons .variant-option__button-label{padding-inline:11px;font-size:.78rem}
+  }
+</style>
