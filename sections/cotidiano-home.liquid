@@ -622,9 +622,12 @@
     <div class="ct-fshade" id="ctFShade" hidden></div>
 
     {%- assign ctjson = '' -%}
-    {%- paginate collections.all.products by 120 -%}
+    {%- comment -%} Colección de la grilla: la elegida en "Colección del inicio" (respeta su orden manual) o todo el catálogo {%- endcomment -%}
+    {%- assign gcol = section.settings.grilla_coleccion -%}
+    {%- if gcol == blank or gcol.products_count == 0 -%}{%- assign gcol = collections.all -%}{%- endif -%}
+    {%- paginate gcol.products by 120 -%}
     <div class="ct-grid" id="ctGrid" data-wa="{{ wa }}" data-promo="{{ section.settings.promo_segundo_par | strip | escape }}">
-      {%- for product in collections.all.products -%}
+      {%- for product in gcol.products -%}
         {%- liquid
           assign ptc = product.tags | join: ',' | downcase
           assign ptc = ',' | append: ptc | append: ','
@@ -1306,6 +1309,7 @@
     { "type": "checkbox", "id": "marcas_activas", "label": "Mostrar franja de marcas", "default": true, "info": "Sale debajo de la cinta. Usa las marcas del campo \"Proveedor\" de tus productos, o los bloques \"Marca\" si agregas alguno (para poner logos)." },
     { "type": "text", "id": "marcas_titulo", "label": "Título de la franja", "default": "Nuestras marcas" },
     { "type": "header", "content": "Colección" },
+    { "type": "collection", "id": "grilla_coleccion", "label": "Colección del inicio", "info": "Las zapatillas salen en el orden de esa colección (ordénala como \"Manual\" y arrástralas en Productos → Colecciones). Vacía = todo el catálogo." },
     { "type": "text", "id": "col_titulo", "label": "Título de la colección", "default": "Encuentra tu" },
     { "type": "text", "id": "col_acento", "label": "Título de la colección (parte resaltada en azul)", "default": "par ideal" },
     { "type": "checkbox", "id": "frases_activas", "label": "Mostrar frases entre las zapatillas", "default": true, "info": "Si lo apagas, después de cada 6 zapatillas va un hero (imagen grande)." },
