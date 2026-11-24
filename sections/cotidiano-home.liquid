@@ -774,8 +774,11 @@
         <article class="ct-card ct-it{% if alt_img %} pre-alt{% endif %}" data-buy data-h="{{ product.handle }}"{% if cv != blank %} data-col="{{ cv | escape }}"{% endif %} data-marca="{{ product.vendor | handleize }}" data-tags="{{ ptc_card | escape }}" data-tallas="{{ tdisp | escape }}" data-precio="{{ c_precio }}" data-pub="{{ product.published_at | date: '%s' }}" data-nombre="{{ c_nombre | escape }}">
           <div class="ct-img">
             <a class="ct-img-a" href="{{ c_url }}" tabindex="-1" aria-hidden="true">
-              {%- if main_img -%}{{ main_img | image_url: width: 700 | image_tag: loading: 'lazy', alt: '', class: 'main', widths: '360, 540, 700', sizes: '(max-width: 700px) 92vw, (max-width: 1100px) 46vw, 380px' }}{%- endif -%}
-              {%- if alt_img -%}<img class="alt" alt="" data-src="{{ alt_img | image_url: width: 540 }}" width="540" height="{{ 540 | divided_by: alt_img.aspect_ratio | round }}">{%- endif -%}
+              {%- comment -%} Fotos que no son cuadradas (ej. UGG, muy anchas) se muestran completas dentro del recuadro en vez de recortarse {%- endcomment -%}
+              {%- assign img_cls = 'main' -%}
+              {%- if main_img.aspect_ratio > 1.2 or main_img.aspect_ratio < 0.83 -%}{%- assign img_cls = 'main ct-fit' -%}{%- endif -%}
+              {%- if main_img -%}{{ main_img | image_url: width: 700 | image_tag: loading: 'lazy', alt: '', class: img_cls, widths: '360, 540, 700', sizes: '(max-width: 700px) 92vw, (max-width: 1100px) 46vw, 380px' }}{%- endif -%}
+              {%- if alt_img -%}<img class="alt{% if alt_img.aspect_ratio > 1.2 or alt_img.aspect_ratio < 0.83 %} ct-fit{% endif %}" alt="" data-src="{{ alt_img | image_url: width: 540 }}" width="540" height="{{ 540 | divided_by: alt_img.aspect_ratio | round }}">{%- endif -%}
             </a>
             {%- if ptc contains ',nuevo,' -%}<span class="ct-new">NUEVO</span>{%- endif -%}
             {%- if c_antes > c_precio -%}<span class="ct-off">−{{ c_antes | minus: c_precio | money_without_trailing_zeros }}</span>{%- endif -%}
