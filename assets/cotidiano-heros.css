@@ -214,3 +214,7 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
 @keyframes ctAvShake{0%,88%,100%{translate:0 0}89%{translate:-3px 2px}90.5%{translate:3px -2px}92%{translate:-2px 2px}93.5%{translate:2px -1px}95%{translate:-1px 1px}96.5%{translate:0 0}}
 @keyframes ctAvShine{0%,60%{background-position:150% 0}100%{background-position:-60% 0}}
 @media(max-width:700px){.ct-av{margin:18px calc(50% - 50vw)}.ct-av-fx{mask-image:none;-webkit-mask-image:none}}
+
+/* Diapositiva en video del hero */
+.ct-hs-media video{display:block;width:100%;height:auto}
+@media(min-width:701px){.ct-hs-s .ct-hs-media{position:relative;width:min(94%,1500px,calc((100svh - var(--header-height,80px) - 36px) * 2));border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}}

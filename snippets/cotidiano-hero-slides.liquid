@@ -39,11 +39,21 @@
       -%}
       <a class="ct-hs-s{% if forloop.first %} on{% endif %}" href="{{ url }}" role="group" aria-roledescription="diapositiva" aria-label="{{ forloop.index }} de {{ forloop.length }}: {{ bs.alt | escape }}"{% unless forloop.first %} aria-hidden="true" tabindex="-1"{% endunless %} {{ b.shopify_attributes }}>
         {%- comment -%} Fondo difuminado con la misma imagen: rellena los lados cuando el banner se achica para caber en la pantalla {%- endcomment -%}
-        {%- if bs.imagen -%}
+        {%- if bs.video_tema != blank and bs.poster_tema != blank -%}
+          <img class="ct-hs-bgi" src="{{ bs.poster_tema | asset_url }}" alt="" aria-hidden="true" loading="{{ carga }}">
+        {%- elsif bs.imagen -%}
           <img class="ct-hs-bgi" src="{{ bs.imagen | image_url: width: 300 }}" alt="" aria-hidden="true" loading="{{ carga }}">
         {%- elsif bs.archivo_tema != blank -%}
           <img class="ct-hs-bgi" src="{{ bs.archivo_tema | asset_url }}" alt="" aria-hidden="true" loading="{{ carga }}">
         {%- endif -%}
+        {%- if bs.video_tema != blank -%}
+          {%- comment -%} Diapositiva en video (archivo del tema): en bucle y sin sonido; solo corre mientras está activa {%- endcomment -%}
+          <div class="ct-hs-media">
+            <video class="ct-hs-v" muted loop playsinline{% if forloop.first %} autoplay preload="auto"{% else %} preload="none"{% endif %}{% if bs.poster_tema != blank %} poster="{{ bs.poster_tema | asset_url }}"{% endif %} width="1358" height="678">
+              <source src="{{ bs.video_tema | asset_url }}" type="video/mp4">
+            </video>
+          </div>
+        {%- else -%}
         <picture>
           {%- if bs.imagen_movil -%}
             <source media="(max-width: 700px)" srcset="{{ bs.imagen_movil | image_url: width: 750 }} 750w, {{ bs.imagen_movil | image_url: width: 1100 }} 1100w" sizes="100vw">
@@ -54,6 +64,7 @@
             <img src="{{ bs.archivo_tema | asset_url }}" alt="{{ bs.alt | escape }}" loading="{{ carga }}" fetchpriority="{{ prio }}" width="1774" height="887">
           {%- endif -%}
         </picture>
+        {%- endif -%}
       </a>
     {%- endfor -%}
   </div>
@@ -82,6 +93,7 @@
     ds[i]&&ds[i].removeAttribute('aria-current');
     i=k;
     ss[i].querySelectorAll('img').forEach(function(im){if(im.loading==='lazy')im.loading='eager';});
+    ss.forEach(function(sl,k){var v=sl.querySelector('video');if(!v)return;if(k===i){if(v.preload==='none')v.preload='auto';try{v.currentTime=0;}catch(e){}var p=v.play();if(p&&p.catch)p.catch(function(){});}else v.pause();});
     ss[i].classList.add('on');ss[i].removeAttribute('aria-hidden');ss[i].removeAttribute('tabindex');
     ds[i]&&ds[i].setAttribute('aria-current','true');
     reiniciar();
