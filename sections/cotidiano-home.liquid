@@ -603,7 +603,7 @@
             {%- if gtags contains ',urbanas,' -%}<button type="button" class="ct-chip" data-k="estilo" data-val="urbanas" aria-pressed="false">Urbanas</button>{%- endif -%}
           </div></div>
         {%- endif -%}
-        <div class="ct-fg" role="group" aria-labelledby="ctFhTalla"><span class="ct-fh" id="ctFhTalla">Talla (EU)</span><div class="ct-fopts ct-tallas">
+        <div class="ct-fg" role="group" aria-labelledby="ctFhTalla"><span class="ct-fh" id="ctFhTalla">Talla (EUR)</span><div class="ct-fopts ct-tallas">
           {%- for t in (35..44) -%}<button type="button" class="ct-tf" data-k="talla" data-val="{{ t }}" aria-pressed="false" aria-label="Talla {{ t }}">{{ t }}</button>{%- endfor -%}
         </div></div>
         {%- capture circulos -%}
@@ -646,6 +646,13 @@
               assign topt = forloop.index
             endif
           endfor
+          assign copt = 0
+          for o in product.options_with_values
+            assign onm = o.name | downcase
+            if onm contains 'color' or onm contains 'colour'
+              assign copt = forloop.index
+            endif
+          endfor
           assign tdisp = ','
           for v in product.variants
             case topt
@@ -686,7 +693,7 @@
           <div class="ct-hint" aria-live="polite"></div>
         </article>
         {%- capture pj -%}
-          {"h":{{ product.handle | json }},"t":{{ product.title | json }},"u":{{ product.url | json }},"vd":{{ product.vendor | json }},"p":{{ product.price | money_without_trailing_zeros | json }},"pc":{% if product.compare_at_price > product.price %}{{ product.compare_at_price | money_without_trailing_zeros | json }}{% else %}""{% endif %},"e":{{ estilo | json }},"i":[{%- for im in product.images limit: 6 -%}{{ im | image_url: width: 900 | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"s":[{%- for v in product.variants -%}{%- case topt -%}{%- when 2 -%}{%- assign vt = v.option2 -%}{%- when 3 -%}{%- assign vt = v.option3 -%}{%- else -%}{%- assign vt = v.option1 -%}{%- endcase -%}[{{ vt | json }},{{ v.id }},{{ v.available }},{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %}]{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
+          {"h":{{ product.handle | json }},"t":{{ product.title | json }},"u":{{ product.url | json }},"vd":{{ product.vendor | json }},"p":{{ product.price | money_without_trailing_zeros | json }},"pc":{% if product.compare_at_price > product.price %}{{ product.compare_at_price | money_without_trailing_zeros | json }}{% else %}""{% endif %},"e":{{ estilo | json }},"i":[{%- for im in product.images limit: 80 -%}{{ im | image_url: width: 900 | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"ia":[{%- for im in product.images limit: 80 -%}{{ im.alt | downcase | strip | json }}{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}],"s":[{%- for v in product.variants -%}{%- case topt -%}{%- when 2 -%}{%- assign vt = v.option2 -%}{%- when 3 -%}{%- assign vt = v.option3 -%}{%- else -%}{%- assign vt = v.option1 -%}{%- endcase -%}[{{ vt | json }},{{ v.id }},{{ v.available }},{% if v.inventory_management == 'shopify' and v.inventory_policy == 'deny' %}{{ v.inventory_quantity }}{% else %}null{% endif %},{%- case copt -%}{%- when 1 -%}{{ v.option1 | json }}{%- when 2 -%}{{ v.option2 | json }}{%- when 3 -%}{{ v.option3 | json }}{%- else -%}""{%- endcase -%}]{%- unless forloop.last -%},{%- endunless -%}{%- endfor -%}]}
         {%- endcapture -%}
         {%- assign ctjson = ctjson | append: pj | append: ',' -%}
         {%- comment -%}
@@ -1050,7 +1057,7 @@
         ['marca','estilo','talla','color'].forEach(function(k){
           if(!F[k])return;np++;
           var b=fpanel.querySelector('[data-k="'+k+'"][data-val="'+F[k]+'"]');
-          var lbl=k==='talla'?'Talla EU '+F[k]:(b?(b.title||b.textContent):F[k]);
+          var lbl=k==='talla'?'Talla EUR '+F[k]:(b?(b.title||b.textContent):F[k]);
           chips+='<button type="button" class="ct-act-chip" data-rm="'+k+'" aria-label="Quitar filtro '+esc(lbl)+'">'+esc(lbl)+'<span aria-hidden="true">✕</span></button>';
         });
         elActChips.innerHTML=chips;elAct.hidden=np===0;elFNum.textContent=np?np:'';
@@ -1125,7 +1132,7 @@
   /* Conversión de tallas: Colombia/EU · USA hombre · USA mujer · UK · largo del pie (cm). Aproximada, varía por marca */
   var CONV=[[35,'3.5','5','2.5',22.0],[36,'4','5.5','3.5',22.8],[37,'5','6.5','4',23.5],[38,'5.5','7','5',24.1],[39,'6.5','8','6',24.8],[40,'7','8.5','6',25.4],[41,'8','9.5','7',26.0],[42,'8.5','10','7.5',26.7],[43,'9.5','11','8.5',27.3],[44,'10','11.5','9',28.0]];
   function convHTML(hit){
-    return '<div class="ct-conv-wrap"><table class="ct-conv"><thead><tr><th scope="col">EU</th><th scope="col">USA hombre</th><th scope="col">USA mujer</th><th scope="col">UK</th><th scope="col">Pie (cm)</th></tr></thead><tbody>'+
+    return '<div class="ct-conv-wrap"><table class="ct-conv"><thead><tr><th scope="col">EUR</th><th scope="col">USA hombre</th><th scope="col">USA mujer</th><th scope="col">UK</th><th scope="col">Pie (cm)</th></tr></thead><tbody>'+
       CONV.map(function(r){return '<tr data-eu="'+r[0]+'"'+(String(r[0])===String(hit)?' class="hit"':'')+'><td>'+r[0]+'</td><td>'+r[1]+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4].toFixed(1)+'</td></tr>';}).join('')+'</tbody></table></div>';
   }
   function marcarTalla(scope,b){
@@ -1136,8 +1143,14 @@
     var q=b.dataset.q===undefined?NaN:+b.dataset.q;
     if(q>=1&&q<=2){low.textContent=(q===1?'Última en talla ':'Últimas 2 en talla ')+b.dataset.t;low.hidden=false;}else{low.hidden=true;low.textContent='';}
   }
-  function tallasHTML(p){
-    return '<div class="ct-sizes" role="group" aria-label="Tallas de '+esc(p.t)+'">'+p.s.map(function(s){
+  /* Colores de un producto (5.º dato de cada variante) y tallas de un color: sin repetir y ordenadas */
+  function coloresDe(p){var c=[];p.s.forEach(function(s){if(s[4]&&c.indexOf(s[4])<0)c.push(s[4]);});return c;}
+  function tallasDe(p,color){var vistas={},out=[];p.s.forEach(function(s){if(color&&s[4]!==color)return;if(vistas[s[0]]!==undefined){if(s[2]&&!out[vistas[s[0]]][2])out[vistas[s[0]]]=s;return;}vistas[s[0]]=out.length;out.push(s);});
+    return out.sort(function(a,b){var x=parseFloat(a[0]),y=parseFloat(b[0]);return isNaN(x)||isNaN(y)?0:x-y;});}
+  /* Fotos de un color: su texto alternativo es el color o "título + color"; si no hay, todas */
+  function fotosDe(p,color){if(!color||!p.ia)return p.i;var c=color.toLowerCase(),t=p.t.toLowerCase()+' '+c,f=p.i.filter(function(src,k){var a=p.ia[k]||'';return a===c||a===t;});return f.length?f:p.i;}
+  function tallasHTML(p,color){
+    return '<div class="ct-sizes" role="group" aria-label="Tallas de '+esc(p.t)+'">'+tallasDe(p,color).map(function(s){
       return '<button type="button" class="ct-size" data-v="'+s[1]+'" data-t="'+esc(s[0])+'"'+(s[3]!==null?' data-q="'+s[3]+'"':'')+' aria-pressed="false"'+(s[2]?'':' disabled aria-label="Talla '+esc(s[0])+' agotada"')+'>'+esc(s[0])+'</button>';
     }).join('')+'</div><p class="ct-low" hidden></p><div class="ct-hint" aria-live="polite"></div>';
   }
@@ -1223,17 +1236,30 @@
   var qvw=document.getElementById('ctQvw'),qvp=document.getElementById('ctQvPanel');
   function abrirQV(h,volver){
     var p=DATA[h];if(!p)return;
-    var th=p.i.length>1?'<div class="ct-qv-th">'+p.i.map(function(src,i){return '<button type="button" data-qi="'+i+'" aria-label="Imagen '+(i+1)+'"'+(i===0?' aria-current="true"':'')+'><img src="'+esc(src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'';
+    var cols=coloresDe(p),col=cols.length?(cols.filter(function(c){return p.s.some(function(s){return s[4]===c&&s[2];});})[0]||cols[0]):'';
+    var fotos=fotosDe(p,col);
+    function thHTML(f){return f.length>1?'<div class="ct-qv-th">'+f.slice(0,8).map(function(src,i){return '<button type="button" data-qi="'+i+'" aria-label="Imagen '+(i+1)+'"'+(i===0?' aria-current="true"':'')+'><img src="'+esc(src)+'" alt="" loading="lazy"></button>';}).join('')+'</div>':'';}
+    var th='<div id="ctQvTh">'+thHTML(fotos)+'</div>';
+    var colHTML=cols.length>1?'<span class="ct-fl" style="margin-bottom:8px">Color: <b id="ctQvColN">'+esc(col)+'</b></span><div class="ct-qcols" role="group" aria-label="Colores">'+cols.map(function(c){var hay=p.s.some(function(s){return s[4]===c&&s[2];});return '<button type="button" class="ct-qcol" data-col="'+esc(c)+'" aria-pressed="'+(c===col)+'"'+(hay?'':' data-agotado="1"')+'>'+esc(c)+'</button>';}).join('')+'</div>':'';
     qvp.innerHTML='<div class="ct-qv-top"><span class="ct-vend">'+esc(p.vd)+'</span><button type="button" class="ct-x" data-qvclose aria-label="Cerrar vista rápida">✕</button></div>'+
-      '<div class="ct-qv-main">'+(p.i[0]?'<img id="ctQvImg" src="'+esc(p.i[0])+'" alt="'+esc(p.t)+'">':'')+'</div>'+th+
+      '<div class="ct-qv-main">'+(fotos[0]?'<img id="ctQvImg" src="'+esc(fotos[0])+'" alt="'+esc(p.t+(col?' '+col:''))+'">':'')+'</div>'+th+
       '<h3 id="ctQvT">'+esc(p.t)+'</h3><div class="ct-price" style="margin:0">'+esc(p.p)+(p.pc?' <s class="ct-pc">'+esc(p.pc)+'</s>':'')+'</div>'+
       (document.getElementById('ctTrustTpl')?document.getElementById('ctTrustTpl').innerHTML:'')+
-      '<div class="ct-qv-buy" data-buy data-h="'+esc(p.h)+'"><span class="ct-fl" style="margin-bottom:8px">Elige tu talla (EU)</span>'+tallasHTML(p)+
+      '<div class="ct-qv-buy" data-buy data-h="'+esc(p.h)+'">'+colHTML+'<span class="ct-fl" style="margin-bottom:8px">Elige tu talla (EUR)</span><div id="ctQvSz">'+tallasHTML(p,col)+'</div>'+
       '<button type="button" class="ct-add">Agregar al carrito</button></div>'+
-      '<details class="ct-qv-guia"><summary>Guía de tallas · EU, USA, UK</summary>'+convHTML(null)+
+      '<details class="ct-qv-guia"><summary>Guía de tallas · EUR, USA, UK</summary>'+convHTML(null)+
       '<p>Medidas aproximadas: cada marca calza un poco distinto. ¿Dudas? Escríbenos por WhatsApp. <button type="button" data-guia style="border:none;background:none;padding:0;color:var(--azul);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer">Calcular por largo del pie</button></p></details>'+
       '<div class="ct-links"><a href="'+esc(p.u)+'">Ver producto completo →</a></div>';
     if(F.talla)elegirTalla(qvp,F.talla);
+    /* Cambiar de color: fotos y tallas de ese color */
+    qvp.querySelectorAll('.ct-qcol').forEach(function(b){b.addEventListener('click',function(){
+      col=b.dataset.col;qvp.querySelectorAll('.ct-qcol').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+      var n=document.getElementById('ctQvColN');if(n)n.textContent=col;
+      fotos=fotosDe(p,col);var im=document.getElementById('ctQvImg');if(im&&fotos[0]){im.src=fotos[0];im.alt=p.t+' '+col;}
+      document.getElementById('ctQvTh').innerHTML=thHTML(fotos);
+      document.getElementById('ctQvSz').innerHTML=tallasHTML(p,col);
+      if(F.talla)elegirTalla(qvp,F.talla);
+    });});
     qvw.classList.add('open');qvw.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';
     abrirDialogo(qvw,qvp,volver,cerrarQV);
   }
