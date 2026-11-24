@@ -663,9 +663,9 @@
             endfor
           endif
           assign ct_vals = ct_vals | split: '|'
+          # Productos de un solo color (o sin opción de color): una sola tarjeta. "_unica_" marca esa vuelta
           if ct_vals.size < 2
-            assign ct_vals = '' | split: ','
-            assign ct_vals = ct_vals | push: ''
+            assign ct_vals = '_unica_' | split: '|'
           endif
           assign ptc_base = ptc
           if ct_vals.size > 1
@@ -677,8 +677,12 @@
           endif
           assign ct_tit = product.title | downcase | strip
         -%}
-        {%- for cv in ct_vals -%}
+        {%- for cv_raw in ct_vals -%}
           {%- liquid
+            assign cv = cv_raw
+            if cv_raw == '_unica_'
+              assign cv = ''
+            endif
             assign cvd = cv | downcase | strip
             assign tdisp = ','
             assign cvar = blank
