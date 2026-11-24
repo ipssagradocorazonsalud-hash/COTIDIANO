@@ -626,7 +626,7 @@
     {%- assign gcol = section.settings.grilla_coleccion -%}
     {%- if gcol == blank or gcol.products_count == 0 -%}{%- assign gcol = collections.all -%}{%- endif -%}
     {%- paginate gcol.products by 120 -%}
-    <div class="ct-grid" id="ctGrid" data-wa="{{ wa }}" data-promo="{{ section.settings.promo_segundo_par | strip | escape }}">
+    <div class="ct-grid" id="ctGrid" data-orden="{{ section.settings.orden_marcas | strip | escape }}" data-wa="{{ wa }}" data-promo="{{ section.settings.promo_segundo_par | strip | escape }}">
       {%- for product in gcol.products -%}
         {%- liquid
           assign ptc = product.tags | join: ',' | downcase
@@ -996,7 +996,12 @@
     var fzone=document.getElementById('ct-coleccion'),elAct=document.getElementById('ctAct'),elActChips=document.getElementById('ctActChips');
     var fbar=document.getElementById('ctFBar'),fpanel=document.getElementById('ctFPanel'),fshade=document.getElementById('ctFShade'),fbtn=document.getElementById('ctFBtn');
     var elCount=document.getElementById('ctCount'),elCount2=document.getElementById('ctCount2'),elClear=document.getElementById('ctClear'),elEmpty=document.getElementById('ctEmpty'),elFNum=document.getElementById('ctFNum'),elQ=document.getElementById('ctQ'),elSort=document.getElementById('ctSort');
-    cards.forEach(function(c,i){c._i=i;c._n=norm(c.dataset.nombre);c._t=c.dataset.tags||'';c._s=c.dataset.tallas||'';c._p=+c.dataset.precio||0;c._d=+c.dataset.pub||0;var r=MV.indexOf(c.dataset.h);c._mv=r<0?1e6:r;});
+    /* Orden de marcas ("Salomon, On, Adidas Samba, Nike Dunk"): cada término va primero, en ese orden.
+       Un término coincide si todas sus palabras aparecen como palabras completas en la marca + nombre de la zapatilla */
+    var PRI=(grid.dataset.orden||'').split(',').map(function(t){return norm(t).trim().split(/\s+/).filter(Boolean);}).filter(function(w){return w.length;});
+    function rango(c){var pal=' '+norm((c.dataset.marca||'').replace(/-/g,' ')+' '+c.dataset.nombre).replace(/[^a-z0-9ñ]+/g,' ')+' ';
+      for(var k=0;k<PRI.length;k++){if(PRI[k].every(function(w){return pal.indexOf(' '+w+' ')>=0;}))return k;}return PRI.length;}
+    cards.forEach(function(c,i){c._i=rango(c)*100000+i;c._n=norm(c.dataset.nombre);c._t=c.dataset.tags||'';c._s=c.dataset.tallas||'';c._p=+c.dataset.precio||0;c._d=+c.dataset.pub||0;var r=MV.indexOf(c.dataset.h);c._mv=r<0?1e6:r;});
     /* Tallas del filtro sin ningún producto disponible: deshabilitadas */
     /* Opciones de etiqueta (Para, Estilo, Color) sin ningún producto: se quitan, y su grupo si queda vacío */
     fzone.querySelectorAll('[data-k="genero"],[data-k="estilo"],[data-k="color"]').forEach(function(b){
@@ -1309,6 +1314,7 @@
     { "type": "checkbox", "id": "marcas_activas", "label": "Mostrar franja de marcas", "default": true, "info": "Sale debajo de la cinta. Usa las marcas del campo \"Proveedor\" de tus productos, o los bloques \"Marca\" si agregas alguno (para poner logos)." },
     { "type": "text", "id": "marcas_titulo", "label": "Título de la franja", "default": "Nuestras marcas" },
     { "type": "header", "content": "Colección" },
+    { "type": "text", "id": "orden_marcas", "label": "Orden de marcas (salen primero)", "info": "Separadas por comas, en el orden que quieres. Ej: Salomon, On, Adidas Samba, Nike Dunk. Puedes poner marca o marca + modelo. Las demás salen después." },
     { "type": "collection", "id": "grilla_coleccion", "label": "Colección del inicio", "info": "Las zapatillas salen en el orden de esa colección (ordénala como \"Manual\" y arrástralas en Productos → Colecciones). Vacía = todo el catálogo." },
     { "type": "text", "id": "col_titulo", "label": "Título de la colección", "default": "Encuentra tu" },
     { "type": "text", "id": "col_acento", "label": "Título de la colección (parte resaltada en azul)", "default": "par ideal" },
