@@ -477,60 +477,148 @@
         "frases_activas": false,
         "frases_grilla": "Pa'l 24 y pa'l 31 se estrena, así sea las medias.\nEsas no se prestan ni al primo.\nQue el año nuevo lo coja con pies nuevos.\nHágale, que estrenar no es pecado.",
         "por_marca": 6
-      }
+      },
+      "disabled": true
     },
     "cotidiano_retro": {
       "type": "cotidiano-retro",
       "blocks": {
-        "cat_hombre": {
-          "type": "categoria",
+        "marca_adidas": {
+          "type": "marca",
+          "settings": {
+            "nombre": "Adidas",
+            "handle": "adidas",
+            "imagen_tema": "rt-marca-adidas.webp"
+          }
+        },
+        "marca_nike": {
+          "type": "marca",
+          "settings": {
+            "nombre": "Nike",
+            "handle": "nike",
+            "imagen_tema": "rt-marca-nike.webp"
+          }
+        },
+        "marca_new_balance": {
+          "type": "marca",
+          "settings": {
+            "nombre": "New Balance",
+            "handle": "new-balance",
+            "imagen_tema": "rt-marca-new-balance.webp"
+          }
+        },
+        "marca_on_running": {
+          "type": "marca",
+          "settings": {
+            "nombre": "On Running",
+            "handle": "on-running",
+            "imagen_tema": "rt-marca-on.webp"
+          }
+        },
+        "marca_salomon": {
+          "type": "marca",
+          "settings": {
+            "nombre": "Salomon",
+            "handle": "salomon",
+            "imagen_tema": "rt-marca-salomon.webp"
+          }
+        },
+        "marca_ugg": {
+          "type": "marca",
+          "settings": {
+            "nombre": "UGG",
+            "handle": "ugg",
+            "imagen_tema": "rt-marca-ugg.webp"
+          }
+        },
+        "col_hombre": {
+          "type": "coleccion",
           "settings": {
             "titulo": "Hombre",
-            "genero": "hombre"
+            "coleccion": "hombre"
           }
         },
-        "cat_mujer": {
-          "type": "categoria",
+        "col_mujer": {
+          "type": "coleccion",
           "settings": {
             "titulo": "Mujer",
-            "genero": "mujer"
+            "coleccion": "mujer"
           }
         },
-        "cat_nov": {
-          "type": "categoria",
+        "ben_0": {
+          "type": "beneficio",
           "settings": {
-            "titulo": "Novedades",
-            "enlace": "/collections/all?sort_by=created-descending"
+            "icono": "envio",
+            "titulo": "Envíos a todo Colombia",
+            "texto": "Con guía de rastreo"
           }
         },
-        "cat_ofe": {
-          "type": "categoria",
+        "ben_1": {
+          "type": "beneficio",
           "settings": {
-            "titulo": "Ofertas"
+            "icono": "segura",
+            "titulo": "Compra segura",
+            "texto": "Checkout protegido por Shopify"
+          }
+        },
+        "ben_2": {
+          "type": "beneficio",
+          "settings": {
+            "icono": "pago",
+            "titulo": "Paga como prefieras",
+            "texto": "En línea o contra entrega"
+          }
+        },
+        "ben_3": {
+          "type": "beneficio",
+          "settings": {
+            "icono": "cambio",
+            "titulo": "Cambio de talla",
+            "texto": "Si no te queda, te ayudamos"
+          }
+        },
+        "ben_4": {
+          "type": "beneficio",
+          "settings": {
+            "icono": "atencion",
+            "titulo": "Atención personalizada",
+            "texto": "Por WhatsApp"
           }
         }
       },
       "block_order": [
-        "cat_hombre",
-        "cat_mujer",
-        "cat_nov",
-        "cat_ofe"
+        "marca_adidas",
+        "marca_nike",
+        "marca_new_balance",
+        "marca_on_running",
+        "marca_salomon",
+        "marca_ugg",
+        "col_hombre",
+        "col_mujer",
+        "ben_0",
+        "ben_1",
+        "ben_2",
+        "ben_3",
+        "ben_4"
       ],
       "settings": {
-        "etiqueta": "Black Friday",
-        "titulo": "Ofertas",
-        "titulo2": "Retro",
-        "texto": "Tus marcas favoritas con descuentos especiales",
-        "boton": "Descubre las ofertas",
-        "logos_marcas": "nike,adidas,new-balance,on,salomon,ugg",
-        "mas_titulo": "Más buscados"
+        "hero_titulo": "COTIDIANO, tienda multimarca de zapatillas en Colombia",
+        "hero_boton": "Descubre las ofertas",
+        "uni_kicker": "Nuestro",
+        "uni_titulo": "Universo de Marcas",
+        "uni_sub": "Las marcas que hacen parte de tu cotidiano",
+        "pp_color": "Blanco Vainilla",
+        "pp_kicker": "Producto protagonista",
+        "mas_titulo": "Más buscados",
+        "com_titulo": "Haz parte de la comunidad",
+        "com_texto": "Novedades, lanzamientos exclusivos, beneficios y mucho más.",
+        "whatsapp": "573103081052"
       }
     }
   },
   "order": [
     "cotidiano_retro",
     "hero_jVaWmY",
-    "product_list_fa6P9H",
-    "cotidiano_home_8JV8pR"
+    "product_list_fa6P9H"
   ]
 }
