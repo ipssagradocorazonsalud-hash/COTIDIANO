@@ -688,7 +688,7 @@
         {%- endcapture -%}
         {%- assign ctjson = ctjson | append: pj | append: ',' -%}
         {%- comment -%}
-          Cada 6 productos va un espacio especial. Se alternan: frase, hero, frase, hero…
+          Cada 6 productos va un espacio especial. Se alternan: hero, frase, hero, frase… (el primero es un hero)
           Si las frases están apagadas, todos los espacios son heros (6 zapatillas, hero, 6 zapatillas, hero…).
           Cuando se acaban los heros (bloques "Hero entre zapatillas"), los espacios siguientes son frases.
           Las frases rotan los estilos 1·2·3 (la 3.ª lleva la guía de tallas).
@@ -700,7 +700,7 @@
           {%- liquid
             assign usar_hero = false
             if nheros > hi
-              if k2 == 1 or section.settings.frases_activas == false
+              if k2 == 0 or section.settings.frases_activas == false
                 assign usar_hero = true
               endif
             endif
