@@ -12,7 +12,7 @@
   endif
   assign alt = bs.alt | default: 'Una avalancha de estilo: las marcas que te mueven, en un solo lugar'
 -%}
-<a class="ct-av ct-slot" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ alt | escape }}" {{ block.shopify_attributes }}>
+<a class="ct-av ct-slot{% if bs.av_nieve %} ct-av-nieve{% endif %}"{% if bs.av_nieve %} data-nieve="1"{% endif %} href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ alt | escape }}" {{ block.shopify_attributes }}>
   <div class="ct-av-cam">
     <picture>
       {%- if bs.imagen_movil -%}
@@ -21,7 +21,7 @@
       {%- if bs.imagen -%}
         {{ bs.imagen | image_url: width: 2200 | image_tag: alt: alt, loading: 'lazy', widths: '750, 1100, 1500, 2200', sizes: '100vw', class: 'ct-av-img' }}
       {%- else -%}
-        <img class="ct-av-img" src="{{ 'hero-avalancha.webp' | asset_url }}" alt="{{ alt | escape }}" loading="lazy" width="1774" height="887">
+        <img class="ct-av-img" src="{{ bs.archivo_tema | default: 'hero-avalancha.webp' | asset_url }}" alt="{{ alt | escape }}" loading="lazy" width="1774" height="887">
       {%- endif -%}
     </picture>
   </div>
@@ -37,7 +37,8 @@
   var W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2),ps=[],vivo=false,raf=0,t0=0;
   function medir(){W=el.clientWidth;H=el.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
   function nueva(inicio){
-    var roca=.22>Math.random(),s=W/1000;
+    var nieve=el.dataset.nieve==='1',roca=!nieve&&.22>Math.random(),s=W/1000;
+    if(nieve)return {x:Math.random()*W*1.1,y:inicio?Math.random()*H:-10-Math.random()*H*.2,vx:-(.2+Math.random()*.8)*s*2,vy:(.6+Math.random()*1.4)*s*2,r:(.8+Math.random()*2.6)*Math.max(s,.5),a:.35+Math.random()*.6,rot:0,vr:0,roca:false,c:'#ffffff',k:0};
     return {x:W*(.42+Math.random()*.62),y:inicio?Math.random()*H:-20-Math.random()*H*.3,
       vx:-(1.2+Math.random()*2.6)*s*2,vy:(1.4+Math.random()*2.2)*s*2,
       r:roca?(3+Math.random()*6)*Math.max(s,.5):(.8+Math.random()*2.2)*Math.max(s,.5),

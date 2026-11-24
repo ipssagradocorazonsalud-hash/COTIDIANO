@@ -218,3 +218,6 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
 /* Diapositiva en video del hero */
 .ct-hs-media video{display:block;width:100%;height:auto}
 @media(min-width:701px){.ct-hs-s .ct-hs-media{position:relative;width:min(94%,1500px,calc((100svh - var(--header-height,80px) - 36px) * 2));border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}}
+
+/* Variante nieve: la nieve cae por todo el ancho (sin máscara a la izquierda) */
+.ct-av-nieve .ct-av-fx{mask-image:none;-webkit-mask-image:none}
