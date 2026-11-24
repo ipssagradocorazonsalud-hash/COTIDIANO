@@ -688,7 +688,7 @@
         {%- endcapture -%}
         {%- assign ctjson = ctjson | append: pj | append: ',' -%}
         {%- comment -%}
-          Cada 6 productos va un espacio especial. Se alternan: frase, hero, frase, hero…
+          Cada 6 productos va un espacio especial. Se alternan: hero, frase, hero, frase… (el primero es un hero)
           Si las frases están apagadas, todos los espacios son heros (6 zapatillas, hero, 6 zapatillas, hero…).
           Cuando se acaban los heros (bloques "Hero entre zapatillas"), los espacios siguientes son frases.
           Las frases rotan los estilos 1·2·3 (la 3.ª lleva la guía de tallas).
@@ -700,7 +700,7 @@
           {%- liquid
             assign usar_hero = false
             if nheros > hi
-              if k2 == 1 or section.settings.frases_activas == false
+              if k2 == 0 or section.settings.frases_activas == false
                 assign usar_hero = true
               endif
             endif
@@ -950,7 +950,7 @@
   }
   /* ── Heros entre zapatillas (tarjeta y pantalla completa): aparecen al entrar en pantalla y la palabra de fondo se desliza con el scroll ── */
   (function(){
-    var hbs=[].slice.call(document.querySelectorAll('.ct-hb,.ct-hb-full,.ct-bfa'));if(!hbs.length)return;
+    var hbs=[].slice.call(document.querySelectorAll('.ct-hb,.ct-hb-full,.ct-bfa,.ct-av'));if(!hbs.length)return;
     if(!('IntersectionObserver' in window)){hbs.forEach(function(h){h.classList.add('vis');});return;}
     var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}});},{threshold:.25});
     hbs.forEach(function(h){io.observe(h);});
@@ -1334,7 +1334,9 @@
         { "type": "text", "id": "alt", "label": "Describe el banner", "info": "Ej. Samba, un clásico que nunca pasa de moda" },
         { "type": "text", "id": "marca", "label": "Marca (para el enlace)", "info": "Igual que en \"Proveedor\". Al tocar el banner se abre esa marca." },
         { "type": "url", "id": "enlace", "label": "Enlace (opcional)", "info": "Si lo pones, reemplaza al de la marca." },
-        { "type": "text", "id": "archivo_tema", "label": "Archivo del tema (avanzado)", "info": "Se usa solo si no subes imagen. Déjalo como está." }
+        { "type": "text", "id": "archivo_tema", "label": "Archivo del tema (avanzado)", "info": "Se usa solo si no subes imagen. Déjalo como está." },
+        { "type": "text", "id": "video_tema", "label": "Video del tema (avanzado)", "info": "Si tiene un video (archivo del tema), la diapositiva muestra el video en vez de la imagen." },
+        { "type": "text", "id": "poster_tema", "label": "Póster del video (avanzado)" }
       ]
     },
     {

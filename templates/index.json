@@ -430,7 +430,9 @@
             "alt": "Black Friday Cotidiano: descuentos especiales en tus marcas favoritas",
             "marca": "",
             "enlace": "",
-            "archivo_tema": "hero-black-friday.webp"
+            "archivo_tema": "hero-black-friday.webp",
+            "video_tema": "black-friday-cotidiano.mp4",
+            "poster_tema": "black-friday-cotidiano-poster.jpg"
           }
         },
         "hero_bf_nieve": {
