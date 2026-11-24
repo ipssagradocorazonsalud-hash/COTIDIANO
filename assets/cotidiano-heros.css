@@ -153,8 +153,8 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
 .ct-hs-s{grid-area:1/1;display:block;opacity:0;visibility:hidden;transition:opacity .8s ease,visibility 0s .8s}
 .ct-hs-s.on{opacity:1;visibility:visible;transition:opacity .8s ease}
 .ct-hs-s picture,.ct-hs-s img{display:block;width:100%;height:auto}
-.ct-hs-s img{scale:1.06;transition:scale 7s cubic-bezier(.2,.6,.3,1)}
-.ct-hs-s.on img{scale:1}
+.ct-hs-s picture img{scale:1.06;transition:scale 7s cubic-bezier(.2,.6,.3,1)}
+.ct-hs-s.on picture img{scale:1}
 .ct-hs-s:focus-visible{outline:3px solid #7CC4FF;outline-offset:-3px}
 .ct-hs-arr{position:absolute;top:50%;z-index:3;width:48px;height:48px;margin-top:-24px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(15,42,71,.45);color:#fff;font-size:1.2rem;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .25s,background .2s}
 .ct-hs:hover .ct-hs-arr,.ct-hs-arr:focus-visible{opacity:1}
@@ -178,4 +178,14 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
   .ct-hs-dots button[aria-current="true"]{width:32px}
   .ct-cinta-wrap.ct-cinta-bn{margin-top:-30px}
 }
-@media(prefers-reduced-motion:reduce){.ct-hs-s,.ct-hs-s img{transition:none}.ct-hs-s img{scale:1}}
+@media(prefers-reduced-motion:reduce){.ct-hs-s,.ct-hs-s img{transition:none}.ct-hs-s picture img{scale:1}}
+
+/* Hero con banners: en computador el banner se ajusta para caber entero debajo del menú (sin taparse),
+   un poco más pequeño, y los lados se rellenan con la misma imagen difuminada */
+.ct-hs-bgi{display:none}
+@media(min-width:701px){
+  .ct-hs-s{position:relative;overflow:hidden;display:flex;justify-content:center;align-items:center;padding:18px 0}
+  .ct-hs-bgi{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(38px) brightness(.7) saturate(1.15);scale:1.25;pointer-events:none}
+  .ct-hs-s picture{position:relative;width:min(94%,1500px,calc((100svh - var(--header-height,80px) - 36px) * 2));border-radius:18px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.35)}
+  .ct-hs-dots{bottom:64px}
+}

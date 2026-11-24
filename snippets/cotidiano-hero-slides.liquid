@@ -38,6 +38,12 @@
         endif
       -%}
       <a class="ct-hs-s{% if forloop.first %} on{% endif %}" href="{{ url }}" role="group" aria-roledescription="diapositiva" aria-label="{{ forloop.index }} de {{ forloop.length }}: {{ bs.alt | escape }}"{% unless forloop.first %} aria-hidden="true" tabindex="-1"{% endunless %} {{ b.shopify_attributes }}>
+        {%- comment -%} Fondo difuminado con la misma imagen: rellena los lados cuando el banner se achica para caber en la pantalla {%- endcomment -%}
+        {%- if bs.imagen -%}
+          <img class="ct-hs-bgi" src="{{ bs.imagen | image_url: width: 300 }}" alt="" aria-hidden="true" loading="{{ carga }}">
+        {%- elsif bs.archivo_tema != blank -%}
+          <img class="ct-hs-bgi" src="{{ bs.archivo_tema | asset_url }}" alt="" aria-hidden="true" loading="{{ carga }}">
+        {%- endif -%}
         <picture>
           {%- if bs.imagen_movil -%}
             <source media="(max-width: 700px)" srcset="{{ bs.imagen_movil | image_url: width: 750 }} 750w, {{ bs.imagen_movil | image_url: width: 1100 }} 1100w" sizes="100vw">
@@ -75,7 +81,7 @@
     ss[i].classList.remove('on');ss[i].setAttribute('aria-hidden','true');ss[i].tabIndex=-1;
     ds[i]&&ds[i].removeAttribute('aria-current');
     i=k;
-    var im=ss[i].querySelector('img');if(im&&im.loading==='lazy')im.loading='eager';
+    ss[i].querySelectorAll('img').forEach(function(im){if(im.loading==='lazy')im.loading='eager';});
     ss[i].classList.add('on');ss[i].removeAttribute('aria-hidden');ss[i].removeAttribute('tabindex');
     ds[i]&&ds[i].setAttribute('aria-current','true');
     reiniciar();
