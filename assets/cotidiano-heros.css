@@ -256,5 +256,5 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
 .ct-qcol:focus-visible{outline:2px solid #0B63CE;outline-offset:2px}
 
 /* Tarjetas: fotos no cuadradas completas dentro del recuadro (fondo blanco como las fotos de estudio) */
-#ctGrid .ct-img:has(img.ct-fit){background:#fff}
-#ctGrid .ct-img img.ct-fit{object-fit:contain;padding:8%}
+#ctGrid .ct-img:has(img.ct-fit){background:#f3f2ef}
+#ctGrid .ct-img img.ct-fit{object-fit:contain;padding:4%}
