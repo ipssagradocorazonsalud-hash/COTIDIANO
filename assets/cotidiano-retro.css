@@ -216,3 +216,6 @@ body{background:var(--rt-blanco)}
 .rt-mc-pag{margin-top:30px;text-align:center;font-weight:700}
 .rt-mc-pag a,.rt-mc-pag span{display:inline-block;padding:6px 10px;color:var(--rt-verde)}
 @media(max-width:700px){.rt-mc{padding:26px 0 44px}.rt-mc-grid{grid-template-columns:1fr 1fr;gap:12px}.rt-mc .rt-prod{padding:8px 8px 12px}.rt-mc .rt-prod b{font-size:.86rem}.rt-mc-tag{top:14px;left:14px;font-size:.64rem}}
+/* Fotos de producto con su color real: sin tinte crema ni mezcla (mismo gris claro de las fotos de estudio) */
+.rt-prod-img{background:#f3f2ef}
+.rt-prod-img img{mix-blend-mode:normal}
