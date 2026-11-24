@@ -7,12 +7,25 @@
 {%- endcomment -%}
 {%- liquid
   assign bs = block.settings
+  # Variante nieve: ajuste "av_nieve" o, mientras Shopify no tenga ese ajuste, la palabra "nieve" en "Palabra gigante de fondo"
+  assign nieve = false
+  if bs.av_nieve or bs.palabra == 'nieve'
+    assign nieve = true
+  endif
+  assign img_tema = bs.archivo_tema
+  if img_tema == blank
+    if nieve
+      assign img_tema = 'hero-bf-nieve.webp'
+    else
+      assign img_tema = 'hero-avalancha.webp'
+    endif
+  endif
   if href == blank
     assign href = '#ct-coleccion'
   endif
   assign alt = bs.alt | default: 'Una avalancha de estilo: las marcas que te mueven, en un solo lugar'
 -%}
-<a class="ct-av ct-slot{% if bs.av_nieve %} ct-av-nieve{% endif %}"{% if bs.av_nieve %} data-nieve="1"{% endif %} href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ alt | escape }}" {{ block.shopify_attributes }}>
+<a class="ct-av ct-slot{% if nieve %} ct-av-nieve{% endif %}"{% if nieve %} data-nieve="1"{% endif %} href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ alt | escape }}" {{ block.shopify_attributes }}>
   <div class="ct-av-cam">
     <picture>
       {%- if bs.imagen_movil -%}
@@ -21,7 +34,7 @@
       {%- if bs.imagen -%}
         {{ bs.imagen | image_url: width: 2200 | image_tag: alt: alt, loading: 'lazy', widths: '750, 1100, 1500, 2200', sizes: '100vw', class: 'ct-av-img' }}
       {%- else -%}
-        <img class="ct-av-img" src="{{ bs.archivo_tema | default: 'hero-avalancha.webp' | asset_url }}" alt="{{ alt | escape }}" loading="lazy" width="1774" height="887">
+        <img class="ct-av-img" src="{{ img_tema | asset_url }}" alt="{{ alt | escape }}" loading="lazy" width="1774" height="887">
       {%- endif -%}
     </picture>
   </div>

@@ -221,3 +221,22 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
 
 /* Variante nieve: la nieve cae por todo el ancho (sin máscara a la izquierda) */
 .ct-av-nieve .ct-av-fx{mask-image:none;-webkit-mask-image:none}
+
+/* Arreglo celular: el fondo difuminado del hero solo va en computador (.ct-hs-s img lo forzaba a verse) */
+.ct-hs-s .ct-hs-bgi{display:none}
+@media(min-width:701px){.ct-hs-s .ct-hs-bgi{display:block}}
+
+/* Celular: zapatillas de a dos por fila (los banners y frases siguen a lo ancho) */
+@media(max-width:700px){
+  #ctGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  #ctGrid .ct-frase,#ctGrid .ct-hb,#ctGrid .ct-hb-full,#ctGrid .ct-bfa,#ctGrid .ct-av{grid-column:1/-1}
+  #ctGrid .ct-card{padding:6px 6px 10px;border-radius:16px}
+  #ctGrid .ct-img{border-radius:12px;margin-bottom:8px}
+  #ctGrid .ct-card h3{font-size:.86rem;margin:0 2px 4px;line-height:1.15}
+  #ctGrid .ct-color{margin:0 2px;font-size:.72rem;gap:4px 8px}
+  #ctGrid .ct-dot{width:11px;height:11px}
+  #ctGrid .ct-new{top:6px;left:6px;font-size:.56rem;padding:3px 7px}
+  #ctGrid .ct-cmp{display:none}
+  #ctGrid .ct-qv{bottom:6px;padding:5px 9px;font-size:.62rem}
+  #ctGrid .ct-qv svg{width:12px;height:12px}
+}
