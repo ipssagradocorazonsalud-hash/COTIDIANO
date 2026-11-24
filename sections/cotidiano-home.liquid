@@ -395,6 +395,9 @@
     assign rvistos = ','
     assign rn = 0
   -%}
+  {%- if section.settings.hero_modo == 'banners' -%}
+  {%- render 'cotidiano-hero-slides', section: section -%}
+  {%- else -%}
   <section class="ct-hero ct-intro" id="ctHero">
     {%- if section.settings.modo_navidad -%}
       <div class="ct-snow" id="ctSnow" aria-hidden="true"></div>
@@ -507,6 +510,7 @@
     </div>
     <div class="ct-hint-mouse">Mueve el mouse ↔</div>
   </section>
+  {%- endif -%}
 
   {%- capture cinta_items -%}
     <span class="ct-ci"><svg viewBox="0 0 24 24"><path d="M2.5 6.5h11v10h-11z"/><path d="M13.5 9.5h4l3 3.2v3.8h-7"/><circle cx="6.5" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>Envío nacional <small>con guía de rastreo</small></span><span class="ct-cs">✦</span>
@@ -515,7 +519,7 @@
     <span class="ct-ci"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9.5L5 20v-4H4z"/><path d="M8 9.5h8M8 12.5h5"/></svg>Asesoría por WhatsApp <small>te ayudamos a elegir</small></span><span class="ct-cs">✦</span>
     <span class="ct-ci"><svg viewBox="0 0 24 24"><rect x="2.5" y="8" width="19" height="8" rx="1.5"/><path d="M6.5 8v3M10 8v4.5M13.5 8v3M17 8v4.5"/></svg>Tallas 35 a 44 <small>hombre y mujer</small></span><span class="ct-cs">✦</span>
   {%- endcapture -%}
-  <div class="ct-cinta-wrap"><div class="ct-cinta" id="ctCinta">
+  <div class="ct-cinta-wrap{% if section.settings.hero_modo == 'banners' %} ct-cinta-bn{% endif %}"><div class="ct-cinta" id="ctCinta">
     <div class="ct-cinta-track" id="ctCintaTrack">
       <div class="ct-cinta-set">{{ cinta_items }}</div>
       <div class="ct-cinta-set" aria-hidden="true">{{ cinta_items }}</div>
@@ -1279,6 +1283,12 @@
   "name": "Cotidiano · Inicio",
   "settings": [
     { "type": "text", "id": "whatsapp", "label": "WhatsApp (con código de país, ej. 573001234567)", "default": "573103081052" },
+    { "type": "header", "content": "Hero principal" },
+    { "type": "select", "id": "hero_modo", "label": "Tipo de hero", "default": "ruleta", "options": [
+      { "value": "banners", "label": "Banners que rotan" },
+      { "value": "ruleta", "label": "Ruleta de zapatillas con texto" }
+    ], "info": "Banners que rotan: agrega bloques \"Banner del hero\" con tus imágenes." },
+    { "type": "range", "id": "hero_segundos", "label": "Segundos por banner", "min": 3, "max": 10, "step": 1, "default": 5 },
     { "type": "text", "id": "logo_hero", "label": "Logo blanco del hero (nombre del archivo en Contenido → Archivos)", "default": "cotidiano-blanco.png" },
     { "type": "collection", "id": "hero_coleccion", "label": "Colección de la ruleta del hero", "info": "Si la dejas vacía se usan todos los productos" },
     { "type": "range", "id": "hero_cantidad", "label": "Cantidad de zapatillas en la ruleta", "min": 4, "max": 16, "step": 1, "default": 10 },
@@ -1303,6 +1313,19 @@
     { "type": "text", "id": "promo_segundo_par", "label": "Oferta del segundo par (opcional)", "info": "Ej. 10% en el segundo par. Ponlo solo si ese descuento existe en Shopify → Descuentos. Si lo dejas vacío, la sugerencia dice \"Te puede gustar\"." }
   ],
   "blocks": [
+    {
+      "type": "slide",
+      "name": "Banner del hero",
+      "limit": 8,
+      "settings": [
+        { "type": "image_picker", "id": "imagen", "label": "Imagen (computador)", "info": "Horizontal 2:1, ej. 1774 × 887 o 2400 × 1200 px." },
+        { "type": "image_picker", "id": "imagen_movil", "label": "Imagen para celular (opcional)", "info": "Vertical 4:5, ej. 1080 × 1350. Si la dejas vacía, en celular se ve la horizontal completa." },
+        { "type": "text", "id": "alt", "label": "Describe el banner", "info": "Ej. Samba, un clásico que nunca pasa de moda" },
+        { "type": "text", "id": "marca", "label": "Marca (para el enlace)", "info": "Igual que en \"Proveedor\". Al tocar el banner se abre esa marca." },
+        { "type": "url", "id": "enlace", "label": "Enlace (opcional)", "info": "Si lo pones, reemplaza al de la marca." },
+        { "type": "text", "id": "archivo_tema", "label": "Archivo del tema (avanzado)", "info": "Se usa solo si no subes imagen. Déjalo como está." }
+      ]
+    },
     {
       "type": "marca",
       "name": "Marca",

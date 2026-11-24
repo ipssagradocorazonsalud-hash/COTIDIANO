@@ -1,0 +1,109 @@
+{%- comment -%}
+  Hero principal en modo "Banners que rotan" (sections/cotidiano-home.liquid, ajuste "Hero principal").
+  Cada bloque "Banner del hero" es una diapositiva: imagen (computador), imagen para celular, enlace.
+  Si un bloque no tiene imagen subida, usa el archivo del tema indicado en "Archivo del tema".
+  Rota solo cada N segundos, se pausa al pasar el mouse o al tocar, y se puede deslizar con el dedo.
+  Estilos en assets/cotidiano-heros.css (busca "Hero con banners"); JS al final de este archivo.
+  Recibe: section.
+{%- endcomment -%}
+{%- liquid
+  assign slides = section.blocks | where: 'type', 'slide'
+  assign seg = section.settings.hero_segundos | default: 5
+-%}
+<section class="ct-hs" id="ctHs" aria-roledescription="carrusel" aria-label="Destacados" data-seg="{{ seg }}">
+  <h1 class="ct-sr">{{ section.settings.titulo }} {{ section.settings.titulo_acento }}</h1>
+  <div class="ct-hs-vp">
+    {%- for b in slides -%}
+      {%- liquid
+        assign bs = b.settings
+        assign url = bs.enlace
+        if url == blank and bs.marca != blank
+          assign mh = bs.marca | handleize
+          assign col = collections[mh]
+          if col != blank and col.products_count > 0
+            assign url = col.url
+          else
+            assign url = bs.marca | url_for_vendor
+          endif
+        endif
+        if url == blank
+          assign url = '#ct-coleccion'
+        endif
+        if forloop.first
+          assign carga = 'eager'
+          assign prio = 'high'
+        else
+          assign carga = 'lazy'
+          assign prio = 'auto'
+        endif
+      -%}
+      <a class="ct-hs-s{% if forloop.first %} on{% endif %}" href="{{ url }}" role="group" aria-roledescription="diapositiva" aria-label="{{ forloop.index }} de {{ forloop.length }}: {{ bs.alt | escape }}"{% unless forloop.first %} aria-hidden="true" tabindex="-1"{% endunless %} {{ b.shopify_attributes }}>
+        <picture>
+          {%- if bs.imagen_movil -%}
+            <source media="(max-width: 700px)" srcset="{{ bs.imagen_movil | image_url: width: 750 }} 750w, {{ bs.imagen_movil | image_url: width: 1100 }} 1100w" sizes="100vw">
+          {%- endif -%}
+          {%- if bs.imagen -%}
+            {{ bs.imagen | image_url: width: 2000 | image_tag: alt: bs.alt, loading: carga, fetchpriority: prio, widths: '750, 1100, 1500, 2000', sizes: '100vw' }}
+          {%- elsif bs.archivo_tema != blank -%}
+            <img src="{{ bs.archivo_tema | asset_url }}" alt="{{ bs.alt | escape }}" loading="{{ carga }}" fetchpriority="{{ prio }}" width="1774" height="887">
+          {%- endif -%}
+        </picture>
+      </a>
+    {%- endfor -%}
+  </div>
+  {%- if slides.size > 1 -%}
+    <button type="button" class="ct-hs-arr ct-hs-prev" aria-label="Banner anterior">←</button>
+    <button type="button" class="ct-hs-arr ct-hs-next" aria-label="Banner siguiente">→</button>
+    <div class="ct-hs-dots" role="group" aria-label="Elegir banner">
+      {%- for b in slides -%}
+        <button type="button" data-i="{{ forloop.index0 }}" aria-label="Banner {{ forloop.index }}"{% if forloop.first %} aria-current="true"{% endif %}><i></i></button>
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</section>
+{%- if slides.size > 1 -%}
+<script>
+(function(){
+  /* Carrusel del hero: avance automático con barra de progreso en el punto activo, flechas, puntos, deslizar, teclado */
+  var hs=document.getElementById('ctHs');if(!hs)return;
+  var ss=[].slice.call(hs.querySelectorAll('.ct-hs-s')),ds=[].slice.call(hs.querySelectorAll('.ct-hs-dots button'));
+  var n=ss.length,i=0,seg=(+hs.dataset.seg||5)*1000,t=null,pausa=false;
+  var RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  hs.style.setProperty('--seg',seg+'ms');
+  function ir(k,user){
+    k=(k+n)%n;if(k===i&&!user)return;
+    ss[i].classList.remove('on');ss[i].setAttribute('aria-hidden','true');ss[i].tabIndex=-1;
+    ds[i]&&ds[i].removeAttribute('aria-current');
+    i=k;
+    var im=ss[i].querySelector('img');if(im&&im.loading==='lazy')im.loading='eager';
+    ss[i].classList.add('on');ss[i].removeAttribute('aria-hidden');ss[i].removeAttribute('tabindex');
+    ds[i]&&ds[i].setAttribute('aria-current','true');
+    reiniciar();
+  }
+  function reiniciar(){
+    clearTimeout(t);hs.classList.remove('run');void hs.offsetWidth;
+    if(RM||pausa)return;hs.classList.add('run');t=setTimeout(function(){ir(i+1);},seg);
+  }
+  function parar(v){pausa=v;if(v){clearTimeout(t);hs.classList.remove('run');}else reiniciar();}
+  hs.querySelector('.ct-hs-prev').addEventListener('click',function(){ir(i-1,true);});
+  hs.querySelector('.ct-hs-next').addEventListener('click',function(){ir(i+1,true);});
+  ds.forEach(function(d){d.addEventListener('click',function(){ir(+d.dataset.i,true);});});
+  hs.addEventListener('mouseenter',function(){parar(true);});
+  hs.addEventListener('mouseleave',function(){parar(false);});
+  hs.addEventListener('focusin',function(){parar(true);});
+  hs.addEventListener('focusout',function(e){if(!hs.contains(e.relatedTarget))parar(false);});
+  hs.addEventListener('keydown',function(e){if(e.key==='ArrowLeft'){ir(i-1,true);}else if(e.key==='ArrowRight'){ir(i+1,true);}});
+  /* Deslizar con el dedo: si se movió más de 40 px en horizontal, cambia y no abre el enlace */
+  var x0=null,y0=0,movio=false;
+  hs.addEventListener('touchstart',function(e){x0=e.touches[0].clientX;y0=e.touches[0].clientY;movio=false;},{passive:true});
+  hs.addEventListener('touchend',function(e){if(x0===null)return;var dx=e.changedTouches[0].clientX-x0,dy=e.changedTouches[0].clientY-y0;x0=null;
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)){movio=true;ir(dx<0?i+1:i-1,true);}});
+  hs.addEventListener('click',function(e){if(movio&&e.target.closest('.ct-hs-s')){e.preventDefault();movio=false;}},true);
+  /* Solo rota mientras se ve en pantalla y la pestaña está activa */
+  var visible=true;
+  if('IntersectionObserver' in window){new IntersectionObserver(function(es){visible=es[0].isIntersecting;parar(!visible);},{threshold:.3}).observe(hs);}
+  document.addEventListener('visibilitychange',function(){parar(document.hidden||!visible);});
+  reiniciar();
+})();
+</script>
+{%- endif -%}

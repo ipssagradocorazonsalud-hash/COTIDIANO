@@ -146,3 +146,36 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
 @keyframes ctMk{to{transform:translateX(-50%)}}
 @media(max-width:700px){.ct-mk{padding:34px 0 24px}.ct-mk-it{height:60px;padding:0 28px}.ct-mk-t{letter-spacing:.3em}}
 @media(prefers-reduced-motion:reduce){.ct-mk-track{animation:none}.ct-mk-vp{overflow-x:auto}}
+
+/* ── Hero con banners que rotan (snippet cotidiano-hero-slides) ── */
+.ct-hs{position:relative;overflow:hidden;background:#0F2A47;--seg:5000ms}
+.ct-hs-vp{position:relative;display:grid}
+.ct-hs-s{grid-area:1/1;display:block;opacity:0;visibility:hidden;transition:opacity .8s ease,visibility 0s .8s}
+.ct-hs-s.on{opacity:1;visibility:visible;transition:opacity .8s ease}
+.ct-hs-s picture,.ct-hs-s img{display:block;width:100%;height:auto}
+.ct-hs-s img{scale:1.06;transition:scale 7s cubic-bezier(.2,.6,.3,1)}
+.ct-hs-s.on img{scale:1}
+.ct-hs-s:focus-visible{outline:3px solid #7CC4FF;outline-offset:-3px}
+.ct-hs-arr{position:absolute;top:50%;z-index:3;width:48px;height:48px;margin-top:-24px;border-radius:50%;border:1px solid rgba(255,255,255,.5);background:rgba(15,42,71,.45);color:#fff;font-size:1.2rem;cursor:pointer;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);opacity:0;transition:opacity .25s,background .2s}
+.ct-hs:hover .ct-hs-arr,.ct-hs-arr:focus-visible{opacity:1}
+.ct-hs-arr:hover{background:#0B63CE}
+.ct-hs-arr:focus-visible{outline:2px solid #7CC4FF;outline-offset:2px}
+.ct-hs-prev{left:18px}.ct-hs-next{right:18px}
+.ct-hs-dots{position:absolute;left:50%;bottom:72px;z-index:3;display:flex;gap:8px;translate:-50% 0;padding:8px 10px;border-radius:999px;background:rgba(15,42,71,.35);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.ct-hs-dots button{position:relative;width:26px;height:6px;padding:0;border:none;border-radius:999px;background:rgba(255,255,255,.4);cursor:pointer;overflow:hidden;transition:width .3s}
+.ct-hs-dots button[aria-current="true"]{width:46px}
+.ct-hs-dots button i{position:absolute;inset:0;background:#fff;transform-origin:left;scale:0 1}
+.ct-hs-dots button[aria-current="true"] i{scale:1 1}
+.ct-hs.run .ct-hs-dots button[aria-current="true"] i{animation:ctHsBar var(--seg) linear both}
+.ct-hs-dots button:focus-visible{outline:2px solid #7CC4FF;outline-offset:3px}
+@keyframes ctHsBar{from{scale:0 1}to{scale:1 1}}
+.ct-cinta-wrap.ct-cinta-bn{margin-top:-40px}
+@media(max-width:700px){
+  .ct-hs-arr{display:none}
+  .ct-hs{padding-bottom:40px}
+  .ct-hs-dots{bottom:auto;top:auto;position:relative;left:auto;translate:none;justify-content:center;margin:10px auto 0;width:max-content;padding:6px 8px;background:none}
+  .ct-hs-dots button{width:18px;height:5px}
+  .ct-hs-dots button[aria-current="true"]{width:32px}
+  .ct-cinta-wrap.ct-cinta-bn{margin-top:-30px}
+}
+@media(prefers-reduced-motion:reduce){.ct-hs-s,.ct-hs-s img{transition:none}.ct-hs-s img{scale:1}}
