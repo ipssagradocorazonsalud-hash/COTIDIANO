@@ -1,0 +1,78 @@
+{%- comment -%}
+  Banner con efecto "avalancha" (formato "Imagen con efecto avalancha" del bloque "Hero entre zapatillas").
+  Toma un diseño ya hecho (una sola imagen) y le da vida en código: zoom lento de cámara,
+  polvo y piedras que vuelan por la ladera (canvas), un temblor cada pocos segundos,
+  un destello de luz y movimiento con el mouse y el scroll. Todo el banner es un enlace.
+  Recibe: block, href, externo. Estilos en assets/cotidiano-heros.css (busca "Efecto avalancha").
+{%- endcomment -%}
+{%- liquid
+  assign bs = block.settings
+  if href == blank
+    assign href = '#ct-coleccion'
+  endif
+  assign alt = bs.alt | default: 'Una avalancha de estilo: las marcas que te mueven, en un solo lugar'
+-%}
+<a class="ct-av ct-slot" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ alt | escape }}" {{ block.shopify_attributes }}>
+  <div class="ct-av-cam">
+    <picture>
+      {%- if bs.imagen_movil -%}
+        <source media="(max-width: 700px)" srcset="{{ bs.imagen_movil | image_url: width: 750 }} 750w, {{ bs.imagen_movil | image_url: width: 1100 }} 1100w" sizes="100vw">
+      {%- endif -%}
+      {%- if bs.imagen -%}
+        {{ bs.imagen | image_url: width: 2200 | image_tag: alt: alt, loading: 'lazy', widths: '750, 1100, 1500, 2200', sizes: '100vw', class: 'ct-av-img' }}
+      {%- else -%}
+        <img class="ct-av-img" src="{{ 'hero-avalancha.webp' | asset_url }}" alt="{{ alt | escape }}" loading="lazy" width="1774" height="887">
+      {%- endif -%}
+    </picture>
+  </div>
+  <canvas class="ct-av-fx" aria-hidden="true"></canvas>
+  <span class="ct-av-shine" aria-hidden="true"></span>
+</a>
+<script>
+(function(){
+  /* Polvo y piedras de la avalancha: nacen arriba a la derecha y caen hacia abajo a la izquierda, por la ladera */
+  var el=document.currentScript.previousElementSibling;if(!el||el.dataset.on)return;el.dataset.on='1';
+  var cv=el.querySelector('.ct-av-fx'),ctx=cv.getContext('2d');
+  var RM=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var W=0,H=0,dpr=Math.min(window.devicePixelRatio||1,2),ps=[],vivo=false,raf=0,t0=0;
+  function medir(){W=el.clientWidth;H=el.clientHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+  function nueva(inicio){
+    var roca=.22>Math.random(),s=W/1000;
+    return {x:W*(.42+Math.random()*.62),y:inicio?Math.random()*H:-20-Math.random()*H*.3,
+      vx:-(1.2+Math.random()*2.6)*s*2,vy:(1.4+Math.random()*2.2)*s*2,
+      r:roca?(3+Math.random()*6)*Math.max(s,.5):(.8+Math.random()*2.2)*Math.max(s,.5),
+      a:roca?.85:.25+Math.random()*.5,rot:Math.random()*6,vr:(Math.random()-.5)*.12,roca:roca,
+      c:roca?(.5>Math.random()?'#6b6660':'#8a847c'):'#ffffff',k:5+Math.floor(Math.random()*3)};
+  }
+  function iniciar(){medir();ps=[];var n=Math.round(Math.min(140,W/9));for(var i=0;n>i;i++)ps.push(nueva(true));}
+  function dibujar(t){
+    raf=0;if(!vivo)return;
+    ctx.clearRect(0,0,W,H);
+    /* ráfagas: cada ~6 s la avalancha acelera un momento (coincide con el temblor del CSS) */
+    var fase=((t-t0)/6000)%1,rafaga=.12>fase?1+Math.sin(fase/.12*Math.PI)*1.6:1;
+    for(var i=0;ps.length>i;i++){var p=ps[i];
+      p.x+=p.vx*rafaga;p.y+=p.vy*rafaga;p.rot+=p.vr*rafaga;
+      if(-30>p.x||p.y>H+30){ps[i]=nueva(false);continue;}
+      ctx.globalAlpha=p.a;ctx.fillStyle=p.c;
+      if(p.roca){ctx.save();ctx.translate(p.x,p.y);ctx.rotate(p.rot);ctx.beginPath();
+        for(var k=0;p.k>k;k++){var an=k/p.k*Math.PI*2,rr=p.r*(.7+((k*37)%10)/25);ctx.lineTo(Math.cos(an)*rr,Math.sin(an)*rr);}
+        ctx.closePath();ctx.fill();ctx.restore();}
+      else{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,6.283);ctx.fill();}
+    }
+    ctx.globalAlpha=1;raf=requestAnimationFrame(dibujar);
+  }
+  function play(v){vivo=v&&!RM;if(vivo&&!raf){t0=t0||performance.now();raf=requestAnimationFrame(dibujar);}}
+  if(RM)return;
+  iniciar();
+  var tr;window.addEventListener('resize',function(){clearTimeout(tr);tr=setTimeout(iniciar,200);});
+  /* Solo anima mientras se ve en pantalla */
+  if('IntersectionObserver' in window){new IntersectionObserver(function(es){play(es[0].isIntersecting);el.classList.toggle('vis',es[0].isIntersecting||el.classList.contains('vis'));},{threshold:.15}).observe(el);}else play(true);
+  /* Mouse: la imagen se inclina un poco hacia el cursor. Scroll: la cámara se desplaza suave */
+  var cam=el.querySelector('.ct-av-cam');
+  el.addEventListener('pointermove',function(e){if(e.pointerType==='touch')return;var r=el.getBoundingClientRect();
+    cam.style.setProperty('--mx',((e.clientX-r.left)/r.width-.5).toFixed(3));cam.style.setProperty('--my',((e.clientY-r.top)/r.height-.5).toFixed(3));});
+  el.addEventListener('pointerleave',function(){cam.style.setProperty('--mx',0);cam.style.setProperty('--my',0);});
+  var sr=0;window.addEventListener('scroll',function(){if(sr)return;sr=requestAnimationFrame(function(){sr=0;var r=el.getBoundingClientRect(),vh=window.innerHeight;
+    if(0>r.bottom||r.top>vh)return;cam.style.setProperty('--sp',((r.top+r.height/2-vh/2)/vh).toFixed(3));});},{passive:true});
+})();
+</script>

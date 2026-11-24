@@ -193,3 +193,24 @@ a.ct-hb-full:focus-visible{outline:3px solid var(--cielo);outline-offset:-3px}
 /* Logos blancos y nombres a la misma altura visual; en celular un poco más pequeños */
 .ct-mk-it .ct-mk-name{line-height:1}
 @media(max-width:700px){.ct-mk-logo{height:34px;max-width:110px}}
+
+/* ── Efecto avalancha (snippet cotidiano-hero-avalancha) ── */
+.ct-av{grid-column:1/-1;position:relative;display:block;width:100vw;margin:26px calc(50% - 50vw);overflow:hidden;background:#2a2e35;color:#fff;text-decoration:none;isolation:isolate}
+/* El zoom crece desde el lado derecho (75%) para no recortar el texto de la izquierda del diseño */
+.ct-av-cam{--mx:0;--my:0;--sp:0;transform-origin:75% 50%;transform:translate(calc(var(--mx) * -6px),calc(var(--my) * -6px + var(--sp) * 10px)) scale(1.02);transition:transform .5s cubic-bezier(.2,.7,.3,1)}
+.ct-av-cam picture,.ct-av-img{display:block;width:100%;height:auto}
+.ct-av-fx{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;mask-image:linear-gradient(90deg,transparent 30%,#000 52%);-webkit-mask-image:linear-gradient(90deg,transparent 30%,#000 52%)}
+.ct-av-shine{position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.22) 50%,transparent 60%);background-size:250% 100%;background-position:150% 0;mix-blend-mode:soft-light}
+.ct-av:focus-visible{outline:3px solid #7CC4FF;outline-offset:-3px}
+@media(prefers-reduced-motion:no-preference){
+  .ct-av-img{animation:ctAvCam 18s ease-in-out infinite alternate}
+  .ct-av.vis .ct-av-cam picture{animation:ctAvShake 6s infinite}
+  .ct-av-shine{animation:ctAvShine 7s ease-in-out infinite}
+  .ct-av{opacity:0;transition:opacity .8s}
+  .ct-av.vis{opacity:1}
+}
+.ct-av-img{transform-origin:75% 50%}
+@keyframes ctAvCam{from{transform:scale(1)}to{transform:scale(1.025)}}
+@keyframes ctAvShake{0%,88%,100%{translate:0 0}89%{translate:-3px 2px}90.5%{translate:3px -2px}92%{translate:-2px 2px}93.5%{translate:2px -1px}95%{translate:-1px 1px}96.5%{translate:0 0}}
+@keyframes ctAvShine{0%,60%{background-position:150% 0}100%{background-position:-60% 0}}
+@media(max-width:700px){.ct-av{margin:18px calc(50% - 50vw)}.ct-av-fx{mask-image:none;-webkit-mask-image:none}}

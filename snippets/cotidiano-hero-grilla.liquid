@@ -29,6 +29,8 @@
 -%}
 {%- if bs.formato == 'animado' -%}
   {%- render 'cotidiano-bf-animado', block: block, href: href, externo: externo -%}
+{%- elsif bs.formato == 'avalancha' -%}
+  {%- render 'cotidiano-hero-avalancha', block: block, href: href, externo: externo -%}
 {%- elsif bs.formato == 'pantalla' and vid -%}
   {%- comment -%} Video en bucle, sin sonido: uno para computador y otro (opcional) para celular {%- endcomment -%}
   {%- if href != blank -%}
