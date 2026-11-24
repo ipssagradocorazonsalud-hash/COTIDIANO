@@ -9,6 +9,8 @@
 {%- liquid
   assign bloques = section.blocks | where: 'type', 'marca'
   assign vendors = collections.all.all_vendors | sort_natural
+  assign logos_tema = section.settings.marcas_logos | default: '' | remove: ' ' | downcase
+  assign logos_tema = ',' | append: logos_tema | append: ','
   assign total = bloques.size
   if total == 0
     assign total = vendors.size
@@ -32,8 +34,11 @@
           endif
         -%}
         <a class="ct-mk-it" href="{{ url }}" data-marca="{{ h }}" {{ b.shopify_attributes }}>
+          {%- assign lk = ',' | append: h | append: ',' -%}
           {%- if b.settings.logo -%}
             {{ b.settings.logo | image_url: height: 120 | image_tag: alt: nombre, loading: 'lazy', class: 'ct-mk-logo' }}
+          {%- elsif logos_tema contains lk -%}
+            <img class="ct-mk-logo" src="{{ 'logo-' | append: h | append: '.png' | asset_url }}" alt="{{ nombre | escape }}" loading="lazy" height="160">
           {%- else -%}
             <span class="ct-mk-name">{{ nombre | escape }}</span>
           {%- endif -%}
@@ -50,7 +55,14 @@
             assign url = v | url_for_vendor
           endif
         -%}
-        <a class="ct-mk-it" href="{{ url }}" data-marca="{{ h }}"><span class="ct-mk-name">{{ v | escape }}</span></a>
+        {%- assign lk = ',' | append: h | append: ',' -%}
+        <a class="ct-mk-it" href="{{ url }}" data-marca="{{ h }}">
+          {%- if logos_tema contains lk -%}
+            <img class="ct-mk-logo" src="{{ 'logo-' | append: h | append: '.png' | asset_url }}" alt="{{ v | escape }}" loading="lazy" height="160">
+          {%- else -%}
+            <span class="ct-mk-name">{{ v | escape }}</span>
+          {%- endif -%}
+        </a>
       {%- endfor -%}
     {%- endif -%}
   {%- endcapture -%}
