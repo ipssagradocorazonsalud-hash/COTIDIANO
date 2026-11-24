@@ -478,9 +478,57 @@
         "frases_grilla": "Pa'l 24 y pa'l 31 se estrena, así sea las medias.\nEsas no se prestan ni al primo.\nQue el año nuevo lo coja con pies nuevos.\nHágale, que estrenar no es pecado.",
         "por_marca": 6
       }
+    },
+    "cotidiano_retro": {
+      "type": "cotidiano-retro",
+      "blocks": {
+        "cat_hombre": {
+          "type": "categoria",
+          "settings": {
+            "titulo": "Hombre",
+            "genero": "hombre"
+          }
+        },
+        "cat_mujer": {
+          "type": "categoria",
+          "settings": {
+            "titulo": "Mujer",
+            "genero": "mujer"
+          }
+        },
+        "cat_nov": {
+          "type": "categoria",
+          "settings": {
+            "titulo": "Novedades",
+            "enlace": "/collections/all?sort_by=created-descending"
+          }
+        },
+        "cat_ofe": {
+          "type": "categoria",
+          "settings": {
+            "titulo": "Ofertas"
+          }
+        }
+      },
+      "block_order": [
+        "cat_hombre",
+        "cat_mujer",
+        "cat_nov",
+        "cat_ofe"
+      ],
+      "settings": {
+        "etiqueta": "Black Friday",
+        "titulo": "Ofertas",
+        "titulo2": "Retro",
+        "texto": "Tus marcas favoritas con descuentos especiales",
+        "boton": "Descubre las ofertas",
+        "logos_marcas": "nike,adidas,new-balance,on,salomon,ugg",
+        "mas_titulo": "Más buscados"
+      }
     }
   },
   "order": [
+    "cotidiano_retro",
     "hero_jVaWmY",
     "product_list_fa6P9H",
     "cotidiano_home_8JV8pR"

@@ -1,0 +1,232 @@
+{%- comment -%}
+  Cotidiano · Inicio retro (va arriba de "Cotidiano · Inicio").
+  Hero "Black Friday · Ofertas Retro" con franjas, franja de logos, 4 categorías con foto y carrusel "Más buscados".
+  Sin fotos subidas: el hero arma un collage con las fotos de tus productos y las categorías usan fondos de color.
+  También pasa la sección "Cotidiano · Inicio" (debajo) a la paleta retro.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign hcol = s.hero_coleccion | default: collections.all
+  assign mcol = s.mas_coleccion | default: collections.all
+  assign cats = section.blocks | where: 'type', 'categoria'
+-%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,700;1,9..144,800&display=swap" rel="stylesheet">
+<style>
+  :root{--rt-verde:#2F3A2B;--rt-verde2:#3D4A37;--rt-crema:#F4EAD5;--rt-crema2:#FBF4E6;--rt-mostaza:#D9A441;--rt-naranja:#C8692F;--rt-rojo:#A63A2B;--rt-tinta:#2B2A24}
+  body{background:var(--rt-crema2)}
+  /* La sección de abajo (colección, banners) toma la paleta retro */
+  body .ct{--azul:#A63A2B;--azul2:#83301F;--marino:#2F3A2B;--cielo:#D9A441;--suave:#6E6656;--linea:rgba(47,58,43,.14);--fondo2:#F4EAD5}
+  body .ct-sec#ct-coleccion,body #ct-como,body #ct-faq{background:transparent}
+  /* La franja de marcas de abajo se oculta: ya están los logos retro arriba */
+  body .ct-mk{display:none}
+  .rt{color:var(--rt-tinta);font-family:inherit}
+  .rt *{box-sizing:border-box}
+  .rt-wrap{max-width:1240px;margin:0 auto;padding:0 20px}
+  .rt-serif{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:800;letter-spacing:-.01em}
+  /* Hero */
+  .rt-hero{position:relative;overflow:hidden;background:var(--rt-verde);color:var(--rt-crema);isolation:isolate}
+  .rt-rayas{position:absolute;inset:0;z-index:-1;background:
+    linear-gradient(100deg,transparent 0 46%,var(--rt-mostaza) 46% 50%,var(--rt-naranja) 50% 54%,var(--rt-rojo) 54% 58%,transparent 58%);opacity:.95}
+  .rt-rayas::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 40%,rgba(0,0,0,0),rgba(0,0,0,.35));mix-blend-mode:multiply}
+  .rt-grano{position:absolute;inset:0;z-index:-1;opacity:.18;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+  .rt-hero-in{display:grid;grid-template-columns:1fr 1.25fr;align-items:center;gap:24px;min-height:min(78vh,620px);padding:48px 20px}
+  .rt-tag{display:block;margin-bottom:10px;font-size:.8rem;font-weight:700;letter-spacing:.28em;text-transform:uppercase;color:var(--rt-mostaza)}
+  .rt-h1{margin:0 0 14px;font-size:clamp(3.2rem,8vw,6.6rem);line-height:.9;color:#F2D9A6;text-shadow:0 3px 0 rgba(0,0,0,.25)}
+  .rt-h1 span{display:block}
+  .rt-p{margin:0 0 24px;max-width:360px;font-size:1.05rem;line-height:1.5;color:#EADFC6}
+  .rt-btn{display:inline-flex;align-items:center;gap:10px;padding:13px 24px;border-radius:999px;background:var(--rt-crema);color:var(--rt-verde);font-weight:800;text-decoration:none;box-shadow:0 10px 24px rgba(0,0,0,.25);transition:transform .2s,background .2s}
+  .rt-btn:hover{transform:translateY(-2px);background:#fff}
+  .rt-btn:focus-visible,.rt a:focus-visible,.rt button:focus-visible{outline:3px solid var(--rt-mostaza);outline-offset:3px}
+  .rt-hero-img{position:relative}
+  .rt-hero-img>img{display:block;width:100%;height:auto;border-radius:18px;box-shadow:0 30px 60px rgba(0,0,0,.35)}
+  /* Collage con fotos de productos (sin foto subida) */
+  .rt-collage{position:relative;aspect-ratio:1.25/1}
+  .rt-collage a{position:absolute;display:block;width:44%;aspect-ratio:1/1;border-radius:20px;overflow:hidden;background:var(--rt-crema);box-shadow:0 24px 50px rgba(0,0,0,.4);border:4px solid var(--rt-crema);transition:transform .3s}
+  .rt-collage a:hover{transform:translateY(-6px) rotate(0deg)!important;z-index:5}
+  .rt-collage img{width:100%;height:100%;object-fit:cover;display:block}
+  .rt-collage a:nth-child(1){left:2%;top:28%;rotate:-7deg;z-index:2}
+  .rt-collage a:nth-child(2){left:30%;top:0;rotate:3deg;z-index:3}
+  .rt-collage a:nth-child(3){right:2%;top:30%;rotate:8deg;z-index:2}
+  .rt-collage a:nth-child(4){left:28%;bottom:0;rotate:-2deg;z-index:4;width:40%}
+  /* Logos */
+  .rt-logos{background:var(--rt-crema);border-bottom:1px solid rgba(47,58,43,.12)}
+  .rt-logos ul{list-style:none;margin:0;padding:22px 20px;display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:6px 0;max-width:1240px;margin-inline:auto}
+  .rt-logos li{display:flex;align-items:center}
+  .rt-logos li+li::before{content:'';width:1px;height:34px;background:rgba(47,58,43,.25);margin:0 clamp(14px,3vw,38px)}
+  .rt-logos a{display:block;opacity:.85;transition:opacity .2s,transform .2s}
+  .rt-logos a:hover{opacity:1;transform:translateY(-2px)}
+  .rt-logos img{display:block;height:34px;width:auto;max-width:120px;object-fit:contain}
+  /* Categorías */
+  .rt-cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;padding:34px 0 10px}
+  .rt-cat{position:relative;display:block;aspect-ratio:1.25/1;border-radius:18px;overflow:hidden;color:#fff;text-decoration:none;box-shadow:0 14px 30px rgba(47,58,43,.18)}
+  .rt-cat img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:sepia(.25) saturate(.9);transition:transform .5s}
+  .rt-cat:hover img{transform:scale(1.06)}
+  .rt-cat::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(30,25,15,.7),rgba(30,25,15,0) 60%)}
+  .rt-cat-c1{background:linear-gradient(135deg,var(--rt-verde),var(--rt-verde2))}
+  .rt-cat-c2{background:linear-gradient(135deg,var(--rt-naranja),#E08A49)}
+  .rt-cat-c3{background:linear-gradient(135deg,var(--rt-mostaza),#E7BF6A)}
+  .rt-cat-c4{background:linear-gradient(135deg,var(--rt-rojo),#C2553F)}
+  .rt-cat-t{position:absolute;left:16px;right:16px;bottom:14px;z-index:2;display:flex;justify-content:space-between;align-items:center;font-size:clamp(1.3rem,2.2vw,1.9rem)}
+  .rt-cat-t i{display:grid;place-items:center;width:34px;height:34px;border:2px solid #fff;border-radius:50%;font-style:normal;font-family:inherit;font-size:1rem;font-weight:700}
+  /* Más buscados */
+  .rt-mb{padding:30px 0 40px}
+  .rt-mb-head{display:flex;align-items:center;gap:18px;margin-bottom:18px}
+  .rt-mb-head h2{margin:0;font-size:clamp(2rem,4vw,3rem);color:var(--rt-verde);white-space:nowrap}
+  .rt-mb-head hr{flex:1;border:0;border-top:1.5px solid rgba(47,58,43,.35);margin:0}
+  .rt-mb-head a{color:var(--rt-verde);font-weight:700;font-size:.9rem;text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
+  .rt-car{position:relative}
+  .rt-track{display:grid;grid-auto-flow:column;grid-auto-columns:calc((100% - 3*16px)/4);gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:4px 2px 10px}
+  .rt-track::-webkit-scrollbar{display:none}
+  .rt-prod{position:relative;scroll-snap-align:start;background:#fff;border-radius:18px;padding:12px 12px 16px;text-align:center;text-decoration:none;color:var(--rt-tinta);box-shadow:0 8px 20px rgba(47,58,43,.08);transition:transform .25s,box-shadow .25s}
+  .rt-prod:hover{transform:translateY(-4px);box-shadow:0 16px 30px rgba(47,58,43,.16)}
+  .rt-prod-img{display:block;aspect-ratio:1/1;border-radius:12px;overflow:hidden;background:var(--rt-crema);margin-bottom:10px}
+  .rt-prod-img img{width:100%;height:100%;object-fit:contain;mix-blend-mode:multiply}
+  .rt-prod b{display:block;font-size:.95rem;margin-bottom:4px}
+  .rt-prod b a{color:inherit;text-decoration:none}
+  .rt-prod b a::after{content:'';position:absolute;inset:0;border-radius:18px}
+  .rt-prod .pr{font-weight:800;color:var(--rt-rojo)}
+  .rt-prod s{margin-left:6px;color:#8A8270;font-size:.85em}
+  .rt-fav{position:absolute;top:16px;right:16px;z-index:2;width:34px;height:34px;border-radius:50%;border:0;background:rgba(255,255,255,.9);display:grid;place-items:center;cursor:pointer;color:var(--rt-verde)}
+  .rt-fav svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2}
+  .rt-fav[aria-pressed="true"] svg{fill:var(--rt-rojo);stroke:var(--rt-rojo)}
+  .rt-arr{position:absolute;top:40%;z-index:3;width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(47,58,43,.35);background:var(--rt-crema2);color:var(--rt-verde);font-size:1.1rem;cursor:pointer}
+  .rt-arr:hover{background:var(--rt-verde);color:var(--rt-crema)}
+  .rt-arr-p{left:-20px}.rt-arr-n{right:-20px}
+  @media(max-width:900px){
+    .rt-hero-in{grid-template-columns:1fr;min-height:0;padding:34px 20px 40px;text-align:left}
+    .rt-hero-img{order:-1}
+    .rt-rayas{background:linear-gradient(160deg,transparent 0 52%,var(--rt-mostaza) 52% 57%,var(--rt-naranja) 57% 62%,var(--rt-rojo) 62% 67%,transparent 67%)}
+    .rt-cats{grid-template-columns:repeat(2,1fr);gap:10px}
+    .rt-track{grid-auto-columns:calc((100% - 10px)/2.2);gap:10px}
+    .rt-arr{display:none}
+    .rt-logos img{height:26px;max-width:84px}
+    .rt-logos li+li::before{height:24px;margin:0 10px}
+  }
+  @media(prefers-reduced-motion:reduce){.rt *{transition:none!important}}
+</style>
+
+<div class="rt">
+  <section class="rt-hero" aria-labelledby="rtH1">
+    <div class="rt-rayas" aria-hidden="true"></div>
+    <div class="rt-grano" aria-hidden="true"></div>
+    <div class="rt-wrap rt-hero-in">
+      <div>
+        {%- if s.etiqueta != blank -%}<span class="rt-tag">{{ s.etiqueta | escape }}</span>{%- endif -%}
+        <h1 class="rt-h1 rt-serif" id="rtH1"><span>{{ s.titulo | escape }}</span><span>{{ s.titulo2 | escape }}</span></h1>
+        {%- if s.texto != blank -%}<p class="rt-p">{{ s.texto | escape }}</p>{%- endif -%}
+        <a class="rt-btn" href="{{ s.enlace | default: '#ct-coleccion' }}">{{ s.boton | escape }} <span aria-hidden="true">→</span></a>
+      </div>
+      <div class="rt-hero-img">
+        {%- if s.imagen -%}
+          {{ s.imagen | image_url: width: 1600 | image_tag: alt: s.imagen.alt, loading: 'eager', fetchpriority: 'high', widths: '700, 1000, 1300, 1600', sizes: '(max-width: 900px) 100vw, 680px' }}
+        {%- else -%}
+          <div class="rt-collage">
+            {%- for p in hcol.products limit: 4 -%}
+              <a href="{{ p.url }}" aria-label="{{ p.title | escape }}">{{ p.featured_image | image_url: width: 500 | image_tag: alt: '', loading: 'eager', widths: '300, 500', sizes: '(max-width: 900px) 44vw, 300px' }}</a>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </section>
+
+  {%- assign logos = s.logos_marcas | remove: ' ' | downcase | split: ',' -%}
+  {%- if logos.size > 0 -%}
+    <nav class="rt-logos" aria-label="Marcas">
+      <ul>
+        {%- for h in logos -%}
+          {%- assign col = collections[h] -%}
+          {%- if col != blank and col.products_count > 0 -%}{%- assign url = col.url -%}{%- else -%}{%- assign url = h | url_for_vendor -%}{%- endif -%}
+          <li><a href="{{ url }}"><img src="{{ 'logo-' | append: h | append: '-oscuro.png' | asset_url }}" alt="{{ h | replace: '-', ' ' | capitalize }}" loading="lazy" height="34"></a></li>
+        {%- endfor -%}
+      </ul>
+    </nav>
+  {%- endif -%}
+
+  <div class="rt-wrap">
+    {%- if cats.size > 0 -%}
+      <div class="rt-cats">
+        {%- for b in cats -%}
+          <a class="rt-cat rt-cat-c{{ forloop.index0 | modulo: 4 | plus: 1 }}" href="{{ b.settings.enlace | default: '#ct-coleccion' }}"{% if b.settings.genero != blank %} data-go="{{ b.settings.genero }}"{% endif %} {{ b.shopify_attributes }}>
+            {%- if b.settings.imagen -%}{{ b.settings.imagen | image_url: width: 700 | image_tag: alt: '', loading: 'lazy', widths: '350, 500, 700', sizes: '(max-width: 900px) 50vw, 300px' }}{%- endif -%}
+            <span class="rt-cat-t rt-serif">{{ b.settings.titulo | escape }}<i aria-hidden="true">→</i></span>
+          </a>
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+
+    <section class="rt-mb" aria-labelledby="rtMb">
+      <div class="rt-mb-head">
+        <h2 class="rt-serif" id="rtMb">{{ s.mas_titulo | escape }}</h2>
+        <hr aria-hidden="true">
+        <a href="#ct-coleccion">Ver colección →</a>
+      </div>
+      <div class="rt-car">
+        <button type="button" class="rt-arr rt-arr-p" aria-label="Anteriores" data-rt="-1">←</button>
+        <div class="rt-track" id="rtTrack">
+          {%- for p in mcol.products limit: 12 -%}
+            <div class="rt-prod">
+              <a class="rt-prod-img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">{{ p.featured_image | image_url: width: 500 | image_tag: alt: '', loading: 'lazy', widths: '300, 500', sizes: '(max-width: 900px) 45vw, 280px' }}</a>
+              <b><a href="{{ p.url }}">{{ p.title }}</a></b>
+              <span class="pr">{{ p.price | money_without_trailing_zeros }}</span>{%- if p.compare_at_price > p.price -%}<s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{%- endif -%}
+              <button type="button" class="rt-fav" data-fav="{{ p.handle }}" aria-pressed="false" aria-label="Guardar {{ p.title | escape }} en favoritos"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-9.3-9C1.2 7.6 3.4 4 7 4c2 0 3.4 1.1 5 3 1.6-1.9 3-3 5-3 3.6 0 5.8 3.6 4.3 7-2.3 4.6-9.3 9-9.3 9z"/></svg></button>
+            </div>
+          {%- endfor -%}
+        </div>
+        <button type="button" class="rt-arr rt-arr-n" aria-label="Siguientes" data-rt="1">→</button>
+      </div>
+    </section>
+  </div>
+</div>
+<script>
+(function(){
+  var tr=document.getElementById('rtTrack');if(!tr)return;
+  document.querySelectorAll('[data-rt]').forEach(function(b){b.addEventListener('click',function(){tr.scrollBy({left:+b.dataset.rt*tr.clientWidth*.9,behavior:'smooth'});});});
+  /* Favoritos: se guardan en este navegador */
+  var KEY='ct-favoritos',fav=[];try{fav=JSON.parse(localStorage.getItem(KEY)||'[]');}catch(e){}
+  tr.querySelectorAll('.rt-fav').forEach(function(b){
+    b.setAttribute('aria-pressed',String(fav.indexOf(b.dataset.fav)>=0));
+    b.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();var h=b.dataset.fav,i=fav.indexOf(h);if(i>=0)fav.splice(i,1);else fav.push(h);b.setAttribute('aria-pressed',String(i<0));try{localStorage.setItem(KEY,JSON.stringify(fav));}catch(e){}});
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Cotidiano · Inicio retro",
+  "settings": [
+    { "type": "header", "content": "Hero" },
+    { "type": "image_picker", "id": "imagen", "label": "Foto del hero", "info": "Si la dejas vacía se arma un collage con fotos de tus productos." },
+    { "type": "collection", "id": "hero_coleccion", "label": "Colección del collage (sin foto)" },
+    { "type": "text", "id": "etiqueta", "label": "Etiqueta", "default": "Black Friday" },
+    { "type": "text", "id": "titulo", "label": "Título, línea 1", "default": "Ofertas" },
+    { "type": "text", "id": "titulo2", "label": "Título, línea 2", "default": "Retro" },
+    { "type": "text", "id": "texto", "label": "Texto", "default": "Tus marcas favoritas con descuentos especiales" },
+    { "type": "text", "id": "boton", "label": "Botón", "default": "Descubre las ofertas" },
+    { "type": "url", "id": "enlace", "label": "Enlace del botón" },
+    { "type": "header", "content": "Logos" },
+    { "type": "text", "id": "logos_marcas", "label": "Marcas con logo", "default": "nike,adidas,new-balance,on,salomon,ugg", "info": "Separadas por coma. Usan los logos del tema (logo-marca-oscuro.png)." },
+    { "type": "header", "content": "Más buscados" },
+    { "type": "text", "id": "mas_titulo", "label": "Título", "default": "Más buscados" },
+    { "type": "collection", "id": "mas_coleccion", "label": "Colección", "info": "Vacía = todo el catálogo. Ordénala a mano para elegir cuáles salen primero." }
+  ],
+  "blocks": [
+    {
+      "type": "categoria",
+      "name": "Categoría",
+      "limit": 8,
+      "settings": [
+        { "type": "text", "id": "titulo", "label": "Título", "default": "Hombre" },
+        { "type": "image_picker", "id": "imagen", "label": "Foto", "info": "Sin foto se usa un fondo de color retro." },
+        { "type": "url", "id": "enlace", "label": "Enlace", "info": "Vacío = baja a la colección del inicio." },
+        { "type": "select", "id": "genero", "label": "Filtrar la colección por", "default": "", "options": [
+          { "value": "", "label": "Nada" }, { "value": "hombre", "label": "Hombre" }, { "value": "mujer", "label": "Mujer" }
+        ] }
+      ]
+    }
+  ],
+  "presets": [{ "name": "Cotidiano · Inicio retro" }]
+}
+{% endschema %}
