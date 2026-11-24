@@ -544,7 +544,14 @@
       assign frases = section.settings.frases_grilla | strip | newline_to_br | split: '<br />'
       assign nfrases = frases.size
       # Heros entre zapatillas (bloques de la sección) y contadores de frases/heros ya usados
-      assign heros = section.blocks | where: 'type', 'hero'
+      # Heros: bloques "hero" y "efecto" en el orden del editor (se guardan sus posiciones, ej. "3,5,8")
+      assign hidx = ''
+      for b in section.blocks
+        if b.type == 'hero' or b.type == 'efecto'
+          assign hidx = hidx | append: forloop.index0 | append: ','
+        endif
+      endfor
+      assign heros = hidx | split: ','
       assign nheros = heros.size
       assign hi = 0
       assign fi = 0
@@ -706,9 +713,14 @@
             endif
           -%}
           {%- if usar_hero -%}
-            {%- assign hb = heros[hi] -%}
+            {%- assign hbi = heros[hi] | plus: 0 -%}
+            {%- assign hb = section.blocks[hbi] -%}
             {%- assign hi = hi | plus: 1 -%}
-            {%- render 'cotidiano-hero-grilla', block: hb, wa: wa -%}
+            {%- if hb.type == 'efecto' -%}
+              {%- render 'cotidiano-hero-avalancha', block: hb, wa: wa -%}
+            {%- else -%}
+              {%- render 'cotidiano-hero-grilla', block: hb, wa: wa -%}
+            {%- endif -%}
           {%- elsif nfrases > 0 and section.settings.frases_activas -%}
             {%- assign ki = fi | modulo: nfrases -%}
             {%- assign est = fi | modulo: 3 | plus: 1 -%}
@@ -1325,6 +1337,24 @@
   ],
   "blocks": [
     {
+      "type": "efecto",
+      "name": "Banner con efecto",
+      "limit": 6,
+      "settings": [
+        { "type": "paragraph", "content": "Un diseño ya hecho (una imagen) con animación: avalancha de polvo y piedras, o nieve. Sale entre las zapatillas, en el orden de la lista junto a los \"Hero entre zapatillas\"." },
+        { "type": "select", "id": "efecto", "label": "Efecto", "default": "avalancha", "options": [
+          { "value": "avalancha", "label": "Avalancha (polvo, piedras y temblor)" },
+          { "value": "nieve", "label": "Nieve cayendo" }
+        ] },
+        { "type": "image_picker", "id": "imagen", "label": "Imagen (computador)" },
+        { "type": "image_picker", "id": "imagen_movil", "label": "Imagen para celular (opcional)" },
+        { "type": "text", "id": "alt", "label": "Describe la imagen" },
+        { "type": "url", "id": "enlace", "label": "Enlace (opcional)", "info": "Vacío = baja a la colección." },
+        { "type": "text", "id": "whatsapp_msg", "label": "…o mensaje de WhatsApp" },
+        { "type": "text", "id": "archivo_tema", "label": "Imagen del tema (avanzado)", "info": "Se usa si no subes imagen." }
+      ]
+    },
+    {
       "type": "slide",
       "name": "Banner del hero",
       "limit": 8,
@@ -1357,7 +1387,6 @@
         { "type": "paragraph", "content": "Aparece entre las zapatillas, en el orden de esta lista: cada 12 zapatillas alternando con las frases, o cada 6 si apagas las frases." },
         { "type": "select", "id": "formato", "label": "Formato", "default": "tarjeta", "options": [
           { "value": "animado", "label": "Black Friday animado (con tus fotos)" },
-          { "value": "avalancha", "label": "Imagen con efecto avalancha (polvo, piedras y temblor)" },
           { "value": "pantalla", "label": "Imagen a pantalla completa" },
           { "value": "tarjeta", "label": "Tarjeta con texto" }
         ], "info": "Pantalla completa: sube tu diseño ya hecho (con textos incluidos) y se ve de borde a borde. Los textos de abajo no se usan, solo el enlace o WhatsApp." },
@@ -1369,10 +1398,6 @@
         { "type": "image_picker", "id": "imagen", "label": "Imagen / foto", "info": "Pantalla completa: horizontal, ej. 2400 × 1000 px. Tarjeta: foto de fondo opcional (el texto va encima)." },
         { "type": "image_picker", "id": "imagen_movil", "label": "Imagen para celular", "info": "Vertical, ej. 1080 × 1350 o 1080 × 1920 px. Si la dejas vacía se usa la misma imagen." },
         { "type": "video", "id": "video", "label": "Video (pantalla completa, opcional)", "info": "Si subes un video, se muestra en bucle y sin sonido en lugar de la imagen. Ideal 5–10 s, MP4." },
-        { "type": "checkbox", "id": "av_nieve", "label": "Efecto avalancha: solo nieve", "default": false, "info": "Para el formato avalancha: nieve cayendo por todo el banner en vez de polvo y piedras." },
-        { "type": "text", "id": "archivo_tema", "label": "Imagen del tema (avanzado)", "info": "Nombre de una imagen en los archivos del tema; se usa si no subes imagen." },
-        { "type": "text", "id": "video_tema", "label": "Video del tema (avanzado)", "info": "Nombre de un video guardado en los archivos del tema, ej. black-friday-cotidiano.mp4. Se usa si no subes video arriba." },
-        { "type": "text", "id": "poster_tema", "label": "Póster del video del tema (avanzado)", "info": "Imagen que se ve mientras carga el video." },
         { "type": "video", "id": "video_movil", "label": "Video para celular (opcional)", "info": "Vertical 9:16 o 4:5. Si lo dejas vacío se usa el mismo video." },
         { "type": "text", "id": "alt", "label": "Describe la imagen (pantalla completa)", "info": "Para buscadores y lectores de pantalla. Ej. Black Friday: 20% en todas las zapatillas" },
         { "type": "select", "id": "lado", "label": "Texto a la", "default": "izquierda", "options": [

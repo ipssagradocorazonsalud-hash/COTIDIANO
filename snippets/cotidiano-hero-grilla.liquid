@@ -29,19 +29,6 @@
 -%}
 {%- if bs.formato == 'animado' -%}
   {%- render 'cotidiano-bf-animado', block: block, href: href, externo: externo -%}
-{%- elsif bs.formato == 'avalancha' -%}
-  {%- render 'cotidiano-hero-avalancha', block: block, href: href, externo: externo -%}
-{%- elsif bs.formato == 'pantalla' and bs.video_tema != blank -%}
-  {%- comment -%} Video guardado en los archivos del tema (assets/): en bucle, sin sonido; el póster se ve mientras carga {%- endcomment -%}
-  {%- if href != blank -%}
-    <a class="ct-hb-full ct-hb-vid ct-slot" href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ bs.alt | default: 'Black Friday' | escape }}" {{ block.shopify_attributes }}>
-  {%- else -%}
-    <div class="ct-hb-full ct-hb-vid ct-slot" role="img" aria-label="{{ bs.alt | escape }}" {{ block.shopify_attributes }}>
-  {%- endif -%}
-    <video muted loop playsinline preload="none" width="1358" height="678"{% if bs.poster_tema != blank %} poster="{{ bs.poster_tema | asset_url }}"{% endif %}>
-      <source src="{{ bs.video_tema | asset_url }}" type="video/mp4">
-    </video>
-  {%- if href != blank -%}</a>{%- else -%}</div>{%- endif -%}
 {%- elsif bs.formato == 'pantalla' and vid -%}
   {%- comment -%} Video en bucle, sin sonido: uno para computador y otro (opcional) para celular {%- endcomment -%}
   {%- if href != blank -%}

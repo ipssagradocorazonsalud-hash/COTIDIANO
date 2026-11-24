@@ -3,16 +3,27 @@
   Toma un diseño ya hecho (una sola imagen) y le da vida en código: zoom lento de cámara,
   polvo y piedras que vuelan por la ladera (canvas), un temblor cada pocos segundos,
   un destello de luz y movimiento con el mouse y el scroll. Todo el banner es un enlace.
-  Recibe: block, href, externo. Estilos en assets/cotidiano-heros.css (busca "Efecto avalancha").
+  Recibe: block (bloque "efecto"), wa (número de WhatsApp). Estilos en assets/cotidiano-heros.css (busca "Efecto avalancha").
 {%- endcomment -%}
 {%- liquid
   assign bs = block.settings
+  assign href = bs.enlace
+  assign externo = false
+  if bs.whatsapp_msg != blank
+    assign msg = bs.whatsapp_msg | url_encode
+    assign href = 'https://wa.me/' | append: wa | append: '?text=' | append: msg
+    assign externo = true
+  endif
   if href == blank
     assign href = '#ct-coleccion'
   endif
+  assign nieve = false
+  if bs.efecto == 'nieve'
+    assign nieve = true
+  endif
   assign alt = bs.alt | default: 'Una avalancha de estilo: las marcas que te mueven, en un solo lugar'
 -%}
-<a class="ct-av ct-slot{% if bs.av_nieve %} ct-av-nieve{% endif %}"{% if bs.av_nieve %} data-nieve="1"{% endif %} href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ alt | escape }}" {{ block.shopify_attributes }}>
+<a class="ct-av ct-slot{% if nieve %} ct-av-nieve{% endif %}"{% if nieve %} data-nieve="1"{% endif %} href="{{ href }}"{% if externo %} target="_blank" rel="noopener"{% endif %} aria-label="{{ alt | escape }}" {{ block.shopify_attributes }}>
   <div class="ct-av-cam">
     <picture>
       {%- if bs.imagen_movil -%}
