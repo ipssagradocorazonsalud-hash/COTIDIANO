@@ -6,8 +6,7 @@
  * or related systems. Please exercise caution as any changes
  * made to this file may be overwritten.
  * ------------------------------------------------------------
- */
-{
+ */{
   "type": "footer",
   "name": "t:names.footer",
   "sections": {
@@ -141,7 +140,8 @@
         "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 30,
         "padding-block-end": 30
-      }
+      },
+      "disabled": true
     },
     "footer_utilities_jLGE8U": {
       "type": "footer-utilities",
@@ -189,10 +189,21 @@
         "background_color": "{{ settings.color_palette.background }}",
         "padding-block-start": 20,
         "padding-block-end": 48
+      },
+      "disabled": true
+    },
+    "cotidiano_footer_retro": {
+      "type": "cotidiano-footer-retro",
+      "settings": {
+        "texto": "Tienda multimarca de zapatillas en Colombia.",
+        "instagram": "https://www.instagram.com/cotidianoshoes__/",
+        "correo": "cotidianoshoes@hotmail.com",
+        "whatsapp": "573103081052"
       }
     }
   },
   "order": [
+    "cotidiano_footer_retro",
     "footer_m9NzUG",
     "footer_utilities_jLGE8U"
   ]
