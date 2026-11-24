@@ -626,7 +626,7 @@
     {%- assign gcol = section.settings.grilla_coleccion -%}
     {%- if gcol == blank or gcol.products_count == 0 -%}{%- assign gcol = collections.all -%}{%- endif -%}
     {%- paginate gcol.products by 120 -%}
-    <div class="ct-grid" id="ctGrid" data-orden="{{ section.settings.orden_marcas | strip | escape }}" data-wa="{{ wa }}" data-promo="{{ section.settings.promo_segundo_par | strip | escape }}">
+    <div class="ct-grid" id="ctGrid" data-orden="{{ section.settings.orden_marcas | strip | escape }}" data-por="{{ section.settings.por_marca | default: 6 }}" data-wa="{{ wa }}" data-promo="{{ section.settings.promo_segundo_par | strip | escape }}">
       {%- for product in gcol.products -%}
         {%- liquid
           assign ptc = product.tags | join: ',' | downcase
@@ -1110,6 +1110,7 @@
     var elCount=document.getElementById('ctCount'),elCount2=document.getElementById('ctCount2'),elClear=document.getElementById('ctClear'),elEmpty=document.getElementById('ctEmpty'),elFNum=document.getElementById('ctFNum'),elQ=document.getElementById('ctQ'),elSort=document.getElementById('ctSort');
     /* Orden de marcas ("Salomon, On, Adidas Samba, Nike Dunk"): cada término va primero, en ese orden.
        Un término coincide si todas sus palabras aparecen como palabras completas en la marca + nombre de la zapatilla */
+    var POR=+(grid.dataset.por||6)||6;
     var PRI=(grid.dataset.orden||'').split(',').map(function(t){return norm(t).trim().split(/\s+/).filter(Boolean);}).filter(function(w){return w.length;});
     function rango(c){var pal=' '+norm((c.dataset.marca||'').replace(/-/g,' ')+' '+c.dataset.nombre).replace(/[^a-z0-9ñ]+/g,' ')+' ';
       for(var k=0;k<PRI.length;k++){if(PRI[k].every(function(w){return pal.indexOf(' '+w+' ')>=0;}))return k;}return PRI.length;}
@@ -1143,15 +1144,31 @@
     var LIM=24,lim=LIM,elMas=document.getElementById('ctMas');
     aplicar=function(anim,seguir){
       if(!seguir)lim=LIM;
-      var todas=cards.filter(pasa).sort(ORD[F.orden]||ORD.dest),n=todas.length,vis=todas.slice(0,lim),nv=vis.length;
+      var todas=cards.filter(pasa).sort(ORD[F.orden]||ORD.dest),n=todas.length;
+      /* Secuencia y posiciones de los banners. En "Destacados" sin filtros: por marca ("Orden de marcas"),
+         hasta POR tarjetas de cada marca y un banner después de cada grupo; luego el resto, con un banner cada 6 */
+      var seq=todas,pos=[];
+      if(F.orden==='dest'&&activos()===0&&PRI.length){
+        var grupos=[],resto=[],sobran=[];
+        todas.forEach(function(c){var g=Math.floor(c._i/100000);if(g<PRI.length)(grupos[g]=grupos[g]||[]).push(c);else resto.push(c);});
+        seq=[];
+        for(var g=0;PRI.length>g;g++){var arr=grupos[g]||[];if(!arr.length)continue;seq=seq.concat(arr.slice(0,POR));sobran=sobran.concat(arr.slice(POR));pos.push(seq.length);}
+        seq=seq.concat(resto,sobran);
+      }
+      var t0=pos.length?pos[pos.length-1]:0;while(seq.length>t0+6){t0+=6;pos.push(t0);}
+      var vis=seq.slice(0,lim),nv=vis.length;
       elMas.hidden=n<=lim;elMas.textContent='Ver más zapatillas ('+(n-lim)+')';
       function render(){
         cards.forEach(function(c){c._v=false;});vis.forEach(function(c){c._v=true;});
         var nuevos=[];
         cards.forEach(function(c){c.classList.toggle('ct-hide',!c._v);c.classList.remove('ct-in');});
-        /* Orden visual con CSS order: el producto j va en j + floor(j/6); el espacio m (frase o hero) va después de cada 6 productos */
-        vis.forEach(function(c,j){c.style.order=j+Math.floor(j/6);if(F.talla)elegirTalla(c,F.talla);nuevos.push(c);});
-        frs.forEach(function(f,m){var ok=nv>=4&&6*(m+1)<nv;f.classList.toggle('ct-hide',!ok);f.classList.remove('ct-in');f.style.order=7*m+6;if(ok)nuevos.push(f);});
+        /* Orden visual con CSS order: tarjetas y banners intercalados según la secuencia calculada arriba */
+        var k=0,sm=0;
+        frs.forEach(function(f){f.classList.add('ct-hide');f.classList.remove('ct-in');});
+        vis.forEach(function(c,j){
+          while(pos.length>sm&&pos[sm]===j){var f=frs[sm];if(f&&nv>=4){f.classList.remove('ct-hide');f.style.order=k++;nuevos.push(f);}sm++;}
+          c.style.order=k++;if(F.talla)elegirTalla(c,F.talla);nuevos.push(c);
+        });
         if(anim&&!RM){void grid.offsetWidth;nuevos.forEach(function(el){el.classList.add('ct-in');});}
         var txt=n+(n===1?' zapatilla':' zapatillas');elCount.textContent=txt;elCount2.textContent=txt;
         elEmpty.hidden=n>0;grid.hidden=n===0;
@@ -1446,6 +1463,7 @@
     { "type": "text", "id": "marcas_logos", "label": "Marcas con logo en el tema (avanzado)", "default": "adidas,nike,salomon,puma,new-balance,on,ugg", "info": "Marcas que muestran su logo blanco (archivo assets/logo-marca.png). Las demás salen con su nombre." },
     { "type": "text", "id": "marcas_titulo", "label": "Título de la franja", "default": "Nuestras marcas" },
     { "type": "header", "content": "Colección" },
+    { "type": "range", "id": "por_marca", "label": "Zapatillas por marca antes de cada banner", "min": 2, "max": 12, "step": 1, "default": 6, "info": "Con \"Destacados\" y sin filtros, el inicio muestra las marcas del \"Orden de marcas\" en grupos, con un banner entre cada grupo." },
     { "type": "text", "id": "orden_marcas", "label": "Orden de marcas (salen primero)", "info": "Separadas por comas, en el orden que quieres. Ej: Salomon, On, Adidas Samba, Nike Dunk. Puedes poner marca o marca + modelo. Las demás salen después." },
     { "type": "collection", "id": "grilla_coleccion", "label": "Colección del inicio", "info": "Las zapatillas salen en el orden de esa colección (ordénala como \"Manual\" y arrástralas en Productos → Colecciones). Vacía = todo el catálogo." },
     { "type": "text", "id": "col_titulo", "label": "Título de la colección", "default": "Encuentra tu" },

@@ -473,9 +473,10 @@
         "subtitulo": "Livianas, con amortiguación real y colores que se notan. Elige la tuya y recíbela en casa.",
         "marcas": "ON · SALOMON",
         "marcas_logos": "adidas,nike,salomon,puma,new-balance,on,ugg",
-        "orden_marcas": "Salomon, On, Adidas Samba, Nike Dunk",
+        "orden_marcas": "Salomon, Adidas, On, UGG",
         "frases_activas": false,
-        "frases_grilla": "Pa'l 24 y pa'l 31 se estrena, así sea las medias.\nEsas no se prestan ni al primo.\nQue el año nuevo lo coja con pies nuevos.\nHágale, que estrenar no es pecado."
+        "frases_grilla": "Pa'l 24 y pa'l 31 se estrena, así sea las medias.\nEsas no se prestan ni al primo.\nQue el año nuevo lo coja con pies nuevos.\nHágale, que estrenar no es pecado.",
+        "por_marca": 6
       }
     }
   },
