@@ -1,0 +1,117 @@
+{%- comment -%}
+  COTIDIANO® · Grilla de la portada de marca: una tarjeta por cada color de cada zapatilla
+  (plantilla templates/collection.marca.json, debajo de "Portada de marca").
+  Foto: la primera imagen cuyo texto alternativo coincide con el color (igual que la galería del producto).
+  Enlace: el producto con la primera talla disponible de ese color ya elegida.
+{%- endcomment -%}
+{%- assign s = section.settings -%}
+{{ 'cotidiano-retro.css' | asset_url | stylesheet_tag }}
+<section class="rt rt-mc" aria-label="Modelos de {{ collection.title | escape }}">
+  <div class="rt-wrap">
+    {%- paginate collection.products by 48 -%}
+      <ul class="rt-mc-grid">
+        {%- for p in collection.products -%}
+          {%- liquid
+            assign cpos = 0
+            assign cvals = ''
+            for o in p.options_with_values
+              assign on = o.name | downcase
+              if on contains 'color'
+                assign cpos = forloop.index0
+                assign cvals = o.values
+              endif
+            endfor
+            if cvals == ''
+              assign cvals = '_unica_' | split: ','
+            endif
+          -%}
+          {%- for col in cvals -%}
+            {%- liquid
+              assign vfirst = nil
+              assign vav = nil
+              if col == '_unica_'
+                assign vfirst = p.selected_or_first_available_variant
+                assign vav = p.first_available_variant
+              else
+                for v in p.variants
+                  if v.options[cpos] == col
+                    if vfirst == nil
+                      assign vfirst = v
+                    endif
+                    if v.available and vav == nil
+                      assign vav = v
+                    endif
+                  endif
+                endfor
+              endif
+              assign vref = vav | default: vfirst
+              assign img = nil
+              if col != '_unica_'
+                assign cd = col | downcase
+                assign tcd = p.title | append: ' ' | append: col | downcase
+                for m in p.images
+                  assign ad = m.alt | downcase | strip
+                  if ad == cd or ad == tcd
+                    assign img = m
+                    break
+                  endif
+                endfor
+                if img == nil
+                  for m in p.images
+                    assign ad = m.alt | downcase
+                    if ad contains cd
+                      assign img = m
+                      break
+                    endif
+                  endfor
+                endif
+                if img == nil and vfirst.featured_image
+                  assign img = vfirst.featured_image
+                endif
+              endif
+              if img == nil
+                assign img = p.featured_image
+              endif
+              assign nombre = p.title
+              if col != '_unica_'
+                assign td = p.title | downcase
+                assign cd = col | downcase
+                unless td contains cd
+                  assign nombre = p.title | append: ' ' | append: col
+                endunless
+              endif
+              assign url = p.url
+              if vref
+                assign url = vref.url
+              endif
+            -%}
+            <li class="rt-prod rt-mc-it{% if vav == nil %} rt-mc-off{% endif %}">
+              <a class="rt-prod-img" href="{{ url }}" tabindex="-1" aria-hidden="true">
+                {%- if img -%}
+                  {{ img | image_url: width: 600 | image_tag: alt: '', loading: 'lazy', widths: '300, 450, 600', sizes: '(max-width: 700px) 46vw, (max-width: 1100px) 30vw, 280px' }}
+                {%- endif -%}
+              </a>
+              {%- if vav == nil -%}<span class="rt-mc-tag">Agotado</span>{%- elsif vref.compare_at_price > vref.price -%}<span class="rt-mc-tag rt-mc-sale">Oferta</span>{%- endif -%}
+              <b><a href="{{ url }}">{{ nombre | escape }}</a></b>
+              <span class="pr">{{ vref.price | money_without_trailing_zeros }}</span>
+              {%- if vref.compare_at_price > vref.price -%}<s>{{ vref.compare_at_price | money_without_trailing_zeros }}</s>{%- endif -%}
+            </li>
+          {%- endfor -%}
+        {%- else -%}
+          <li class="rt-mc-empty">Pronto tendremos modelos de esta marca.</li>
+        {%- endfor -%}
+      </ul>
+      {%- if paginate.pages > 1 -%}
+        <nav class="rt-mc-pag" aria-label="Páginas">{{ paginate | default_pagination: previous: '←', next: '→' }}</nav>
+      {%- endif -%}
+    {%- endpaginate -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Modelos por color",
+  "settings": [],
+  "presets": [{ "name": "Modelos por color" }]
+}
+{% endschema %}
