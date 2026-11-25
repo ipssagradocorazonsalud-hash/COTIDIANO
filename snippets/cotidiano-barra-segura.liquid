@@ -50,6 +50,9 @@
   /* El botón flotante de WhatsApp: en computador lo reemplaza el de la barra; en celular queda encima de la barra */
   @media (min-width:1101px){.cot-wa{display:none!important}}
   @media (min-width:1101px) and (max-width:1560px){.ct-seg-hora{display:none}.ct-seg-bar{font-size:.8rem;gap:12px}.ct-seg-bar-l li{padding:0 9px}}
+  /* Pantallas medianas: los beneficios se desplazan para que quepan junto al botón de WhatsApp */
+  @media (min-width:1101px) and (max-width:1340px){.ct-seg-bar-l{flex:none;justify-content:flex-start;animation:ctSegBar 30s linear infinite}.ct-seg-bar-dup{display:flex}}
+  @keyframes ctSegBar{to{transform:translateX(-100%)}}
   @media (max-width:1100px){
     :root{--ct-seg-h:42px}
     .ct-seg-bar{padding:0;font-size:.78rem}
