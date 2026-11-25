@@ -219,3 +219,13 @@ body{background:var(--rt-blanco)}
 /* Fotos de producto con su color real: sin tinte crema ni mezcla (mismo gris claro de las fotos de estudio) */
 .rt-prod-img{background:#f3f2ef}
 .rt-prod-img img{mix-blend-mode:normal}
+/* Universo de Marcas con 7 tarjetas (4 arriba, 3 abajo), imágenes rt-uni-*.webp */
+.rt-uni-grid:has(> li:nth-child(7)){grid-template-columns:repeat(12,1fr)}
+.rt-uni-grid:has(> li:nth-child(7)) > li{grid-column:span 3}
+.rt-uni-grid:has(> li:nth-child(7)) > li:nth-child(n+5){grid-column:span 4}
+.rt-uni-card img{aspect-ratio:auto}
+@media(max-width:900px){
+  .rt-uni-grid:has(> li:nth-child(7)){grid-template-columns:repeat(2,1fr)}
+  .rt-uni-grid:has(> li:nth-child(7)) > li,.rt-uni-grid:has(> li:nth-child(7)) > li:nth-child(n+5){grid-column:span 1}
+  .rt-uni-grid:has(> li:nth-child(7)) > li:nth-child(7):last-child{grid-column:1/-1;justify-self:center;width:calc(50% - 5px)}
+}
