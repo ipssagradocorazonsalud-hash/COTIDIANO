@@ -1,0 +1,108 @@
+{%- comment -%}
+  COTIDIANO® · Barra de beneficios (arriba de todo) + ventana de bienvenida con regalo para la primera compra.
+  Se incluye desde layout/theme.liquid, antes del encabezado.
+  - Barra: solo beneficios reales (domicilio gratis desde 2 pares, despacho el mismo día antes de las 12 m).
+  - Ventana: aparece a los 6 s (o al intentar salir en computador), una vez cada 7 días por visitante.
+    Pide el correo (formulario de clientes de Shopify, etiqueta "bienvenida") y entrega el código.
+    El código BIENVENIDO20 está creado en Shopify: $20.000 de descuento, compra mínima $190.000, un uso por cliente.
+  No aparece en el carrito ni en la cuenta, ni para clientes con sesión iniciada que ya compraron.
+{%- endcomment -%}
+{%- liquid
+  assign codigo = 'BIENVENIDO20'
+  assign regalo = '$20.000'
+  assign mostrar_ventana = true
+  if template.name == 'cart' or template.name contains 'customers' or template.name == 'password'
+    assign mostrar_ventana = false
+  endif
+  if customer and customer.orders_count > 0
+    assign mostrar_ventana = false
+  endif
+-%}
+<div class="ct-bar" role="region" aria-label="Beneficios">
+  <div class="ct-bar-track">
+    <span>🚚 <b>Domicilio gratis</b> llevando 2 pares</span>
+    <span>⚡ Despacho <b>el mismo día</b> si pides antes de las 12:00&nbsp;m.</span>
+    <span>📍 Bogotá: <b>domicilio el mismo día</b></span>
+  </div>
+</div>
+
+{%- if mostrar_ventana -%}
+<div class="ct-wel" id="ctWel" hidden>
+  <div class="ct-wel-bg" data-cerrar></div>
+  <div class="ct-wel-box" role="dialog" aria-modal="true" aria-labelledby="ctWelT">
+    <button type="button" class="ct-wel-x" data-cerrar aria-label="Cerrar">×</button>
+    {%- form 'customer', id: 'ctWelForm', class: 'ct-wel-form' -%}
+      <input type="hidden" name="contact[tags]" value="newsletter,bienvenida">
+      {%- if form.posted_successfully? -%}
+        <p class="ct-wel-k">¡Bienvenido a COTIDIANO!</p>
+        <h2 class="ct-wel-t" id="ctWelT">Tu regalo: {{ regalo }}</h2>
+        <p class="ct-wel-p">Usa este código en tu primera compra:</p>
+        <button type="button" class="ct-wel-code" data-copiar="{{ codigo }}">{{ codigo }} <small>Copiar</small></button>
+        <a class="ct-wel-btn" href="/discount/{{ codigo }}?redirect=/collections/all">Aplicar y comprar →</a>
+        <p class="ct-wel-fine">Compra mínima $190.000 · Un uso por cliente.</p>
+        <span data-exito hidden></span>
+      {%- else -%}
+        <p class="ct-wel-k">Primera compra</p>
+        <h2 class="ct-wel-t" id="ctWelT">Te regalamos {{ regalo }}</h2>
+        <p class="ct-wel-p">Déjanos tu correo y te damos el código para usarlo hoy en tus zapatillas.</p>
+        <label class="ct-wel-sr" for="ctWelEmail">Correo electrónico</label>
+        <input id="ctWelEmail" type="email" name="contact[email]" placeholder="Tu correo" autocomplete="email" required>
+        <button type="submit" class="ct-wel-btn">Quiero mi regalo</button>
+        {%- if form.errors -%}<p class="ct-wel-err" role="alert">Revisa tu correo e inténtalo de nuevo.</p><span data-exito hidden></span>{%- endif -%}
+        <button type="button" class="ct-wel-no" data-cerrar>No, gracias</button>
+        <p class="ct-wel-fine">Compra mínima $190.000 · Un uso por cliente.</p>
+      {%- endif -%}
+    {%- endform -%}
+  </div>
+</div>
+<script>
+(function(){
+  var w=document.getElementById('ctWel');if(!w)return;
+  var K='ctWelVisto',DIAS=7,abierto=false;
+  function leer(){try{return +localStorage.getItem(K)||0;}catch(e){return 0;}}
+  function marcar(){try{localStorage.setItem(K,Date.now());}catch(e){}}
+  function abrir(){if(abierto)return;abierto=true;w.hidden=false;document.documentElement.classList.add('ct-wel-on');marcar();
+    var f=w.querySelector('input[type=email],.ct-wel-code');f&&setTimeout(function(){f.focus();},60);}
+  function cerrar(){w.hidden=true;document.documentElement.classList.remove('ct-wel-on');}
+  w.querySelectorAll('[data-cerrar]').forEach(function(b){b.addEventListener('click',cerrar);});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!w.hidden)cerrar();});
+  var c=w.querySelector('[data-copiar]');
+  if(c)c.addEventListener('click',function(){var t=c.dataset.copiar;(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){c.querySelector('small').textContent='¡Copiado!';}).catch(function(){});});
+  /* Después de enviar el correo, Shopify recarga la página: se abre sola con el código (o el error) */
+  if(w.querySelector('[data-exito]')||/customer_posted=true/.test(location.search)){abierto=false;abrir();return;}
+  if(Date.now()-leer()<DIAS*864e5)return;
+  setTimeout(abrir,6000);
+  document.addEventListener('mouseout',function(e){if(!e.relatedTarget&&e.clientY<8)abrir();});
+})();
+</script>
+{%- endif -%}
+<style>
+  .ct-bar{background:#102B20;color:#F2E6CF;font-size:.82rem;line-height:1.3;overflow:hidden}
+  .ct-bar-track{display:flex;justify-content:center;gap:34px;padding:8px 16px;white-space:nowrap}
+  .ct-bar b{color:#D99A27}
+  @media(max-width:900px){
+    .ct-bar-track{justify-content:flex-start;width:max-content;animation:ctBar 22s linear infinite;padding-left:100%}
+    @keyframes ctBar{to{transform:translateX(-100%)}}
+  }
+  @media(prefers-reduced-motion:reduce){.ct-bar-track{animation:none;padding-left:16px;flex-wrap:wrap;white-space:normal;width:auto;gap:6px 20px;justify-content:center}}
+  html.ct-wel-on{overflow:hidden}
+  .ct-wel{position:fixed;inset:0;z-index:9500;display:grid;place-items:center;padding:16px}
+  .ct-wel[hidden]{display:none}
+  .ct-wel-bg{position:absolute;inset:0;background:rgba(16,43,32,.6);backdrop-filter:blur(2px)}
+  .ct-wel-box{position:relative;width:min(420px,100%);background:#F2E6CF;color:#171916;border-radius:22px;padding:34px 26px 22px;text-align:center;box-shadow:0 30px 70px rgba(0,0,0,.35);border:3px solid #102B20;animation:ctWelIn .35s ease-out}
+  @keyframes ctWelIn{from{transform:translateY(18px) scale(.96);opacity:0}}
+  .ct-wel-x{position:absolute;top:8px;right:12px;border:0;background:none;font-size:1.8rem;line-height:1;cursor:pointer;color:#102B20}
+  .ct-wel-k{margin:0;font-size:.74rem;font-weight:800;letter-spacing:.24em;text-transform:uppercase;color:#B94D2D}
+  .ct-wel-t{margin:6px 0 8px;font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:800;font-size:2.2rem;line-height:1.05;color:#102B20}
+  .ct-wel-p{margin:0 0 16px;font-size:.98rem;line-height:1.5}
+  .ct-wel-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .ct-wel-form input[type=email]{width:100%;box-sizing:border-box;padding:14px 16px;border:2px solid #102B20;border-radius:999px;font:inherit;background:#FAF8F1;margin-bottom:10px}
+  .ct-wel-btn{display:block;width:100%;box-sizing:border-box;padding:14px 18px;border:0;border-radius:999px;background:#102B20;color:#F2E6CF;font:inherit;font-weight:800;text-decoration:none;cursor:pointer}
+  .ct-wel-btn:hover{background:#1C3D2E}
+  .ct-wel-no{margin-top:10px;border:0;background:none;font:inherit;font-size:.85rem;text-decoration:underline;color:#4E5A4F;cursor:pointer}
+  .ct-wel-code{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;margin:0 0 12px;padding:14px;border:2px dashed #B94D2D;border-radius:14px;background:#FAF8F1;font:inherit;font-size:1.4rem;font-weight:800;letter-spacing:.08em;color:#102B20;cursor:pointer}
+  .ct-wel-code small{font-size:.7rem;letter-spacing:0;color:#B94D2D}
+  .ct-wel-fine{margin:12px 0 0;font-size:.74rem;color:#5B6359}
+  .ct-wel-err{margin:4px 0 8px;color:#B94D2D;font-size:.85rem}
+  .ct-wel :focus-visible{outline:3px solid #D99A27;outline-offset:2px}
+</style>
