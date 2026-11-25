@@ -1,0 +1,51 @@
+{%- comment -%}
+  COTIDIANO® · Mensajes de promoción en el carrito (cajón y página), dentro de snippets/cart-summary.liquid.
+  - 1 zapatilla: invita a llevar otra para el domicilio gratis y dice cuánto se ahorra.
+  - 2 o más: confirma el domicilio gratis (descuento automático de envío gratis en Shopify, mínimo 2 artículos).
+  - Compras desde $600.000: anuncia el cupón de $100.000 para la próxima compra; si falta poco, dice cuánto falta.
+  Para cambiar valores, edita las líneas de abajo (en pesos, sin puntos).
+{%- endcomment -%}
+{%- liquid
+  assign costo_domicilio = 0
+  assign min_pares = 2
+  assign meta_cupon = 60000000
+  assign valor_cupon = 10000000
+  assign avisar_desde = 40000000
+
+  assign n = cart.item_count
+  assign total = cart.total_price
+  assign falta = meta_cupon | minus: total
+-%}
+{%- if n > 0 -%}
+  <div class="ct-promo" role="status">
+    {%- if n < min_pares -%}
+      <p class="ct-promo-it">
+        <span class="ct-promo-ic" aria-hidden="true">🚚</span>
+        <span>Agrega otra zapatilla y el <b>domicilio te sale gratis</b>
+        {%- if costo_domicilio > 0 %}: te ahorras <b>{{ costo_domicilio | money_without_trailing_zeros }}</b>{% endif %}.</span>
+      </p>
+    {%- else -%}
+      <p class="ct-promo-it ct-promo-ok">
+        <span class="ct-promo-ic" aria-hidden="true">✓</span>
+        <span>¡Tu <b>domicilio es gratis</b>!{% if costo_domicilio > 0 %} Te ahorras {{ costo_domicilio | money_without_trailing_zeros }}.{% endif %}</span>
+      </p>
+    {%- endif -%}
+    {%- if total >= meta_cupon -%}
+      <p class="ct-promo-it ct-promo-ok">
+        <span class="ct-promo-ic" aria-hidden="true">🎁</span>
+        <span>Con esta compra recibes un <b>cupón de {{ valor_cupon | money_without_trailing_zeros }}</b> para tu próxima compra.</span>
+      </p>
+    {%- elsif total >= avisar_desde -%}
+      <p class="ct-promo-it">
+        <span class="ct-promo-ic" aria-hidden="true">🎁</span>
+        <span>Te faltan <b>{{ falta | money_without_trailing_zeros }}</b> para ganar un cupón de {{ valor_cupon | money_without_trailing_zeros }} en tu próxima compra.</span>
+      </p>
+    {%- endif -%}
+  </div>
+  <style>
+    .ct-promo{display:grid;gap:8px;margin:0 0 14px}
+    .ct-promo-it{display:flex;gap:10px;align-items:flex-start;margin:0;padding:10px 12px;border-radius:12px;background:#F2E6CF;color:#102B20;font-size:.88rem;line-height:1.4}
+    .ct-promo-ok{background:#102B20;color:#F2E6CF}
+    .ct-promo-ic{flex:none;font-size:1.05rem;line-height:1.2}
+  </style>
+{%- endif -%}
