@@ -6,7 +6,9 @@
   Para cambiar valores, edita las líneas de abajo (en pesos, sin puntos).
 {%- endcomment -%}
 {%- liquid
-  assign costo_domicilio = 0
+  assign costo_domicilio = 1800000
+  # Cambiar a true cuando Shopify Flow ya esté entregando el cupón GRACIAS100
+  assign mostrar_cupon = false
   assign min_pares = 2
   assign meta_cupon = 60000000
   assign valor_cupon = 10000000
@@ -30,7 +32,8 @@
         <span>¡Tu <b>domicilio es gratis</b>!{% if costo_domicilio > 0 %} Te ahorras {{ costo_domicilio | money_without_trailing_zeros }}.{% endif %}</span>
       </p>
     {%- endif -%}
-    {%- if total >= meta_cupon -%}
+    {%- if mostrar_cupon == false -%}
+    {%- elsif total >= meta_cupon -%}
       <p class="ct-promo-it ct-promo-ok">
         <span class="ct-promo-ic" aria-hidden="true">🎁</span>
         <span>Con esta compra recibes un <b>cupón de {{ valor_cupon | money_without_trailing_zeros }}</b> para tu próxima compra.</span>
