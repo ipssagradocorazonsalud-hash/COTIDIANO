@@ -6,6 +6,7 @@
   Para cambiar valores, edita las líneas de abajo (en pesos, sin puntos).
 {%- endcomment -%}
 {%- liquid
+  # Domicilio: Bogotá $15.000, Nacional $18.000 (se muestra el mayor como "hasta")
   assign costo_domicilio = 1800000
   # Cambiar a true cuando Shopify Flow ya esté entregando el cupón GRACIAS100
   assign mostrar_cupon = false
@@ -24,12 +25,12 @@
       <p class="ct-promo-it">
         <span class="ct-promo-ic" aria-hidden="true">🚚</span>
         <span>Agrega otra zapatilla y el <b>domicilio te sale gratis</b>
-        {%- if costo_domicilio > 0 %}: te ahorras <b>{{ costo_domicilio | money_without_trailing_zeros }}</b>{% endif %}.</span>
+        {%- if costo_domicilio > 0 %}: te ahorras <b>hasta {{ costo_domicilio | money_without_trailing_zeros }}</b>{% endif %}.</span>
       </p>
     {%- else -%}
       <p class="ct-promo-it ct-promo-ok">
         <span class="ct-promo-ic" aria-hidden="true">✓</span>
-        <span>¡Tu <b>domicilio es gratis</b>!{% if costo_domicilio > 0 %} Te ahorras {{ costo_domicilio | money_without_trailing_zeros }}.{% endif %}</span>
+        <span>¡Tu <b>domicilio es gratis</b>!{% if costo_domicilio > 0 %} Te ahorras hasta {{ costo_domicilio | money_without_trailing_zeros }}.{% endif %}</span>
       </p>
     {%- endif -%}
     {%- if mostrar_cupon == false -%}
