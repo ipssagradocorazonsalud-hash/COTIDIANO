@@ -549,7 +549,7 @@
           "settings": {
             "icono": "envio",
             "titulo": "Envíos a todo Colombia",
-            "texto": "Despacho el mismo día si pides antes de las 12 m"
+            "texto": "Despacho el mismo día si pides antes de las 12:00 m."
           }
         },
         "ben_1": {
