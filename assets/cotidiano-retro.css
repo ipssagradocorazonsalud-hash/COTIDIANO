@@ -74,7 +74,7 @@ body{background:var(--rt-blanco)}
 .rt-pp-more{display:inline-block;margin-top:12px;color:var(--rt-verde);font-weight:700;font-size:.88rem}
 /* 5 Beneficios */
 .rt-ben{background:var(--rt-blanco);border-block:1px solid rgba(16,43,32,.12)}
-.rt-ben-list{list-style:none;margin:0 auto;padding:26px 20px;display:grid;grid-template-columns:repeat(5,1fr);gap:0}
+.rt-ben-list{list-style:none;margin:0 auto;padding:26px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0}
 .rt-ben-list li{display:flex;flex-direction:column;align-items:center;text-align:center;gap:6px;padding:8px 14px}
 .rt-ben-list li+li{border-left:1px solid rgba(16,43,32,.16)}
 .rt-ic{width:44px;height:44px;fill:none;stroke:var(--rt-terracota);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}

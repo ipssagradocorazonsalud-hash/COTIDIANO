@@ -549,7 +549,7 @@
           "settings": {
             "icono": "envio",
             "titulo": "Envíos a todo Colombia",
-            "texto": "Con guía de rastreo"
+            "texto": "Despacho el mismo día si pides antes de las 12 m"
           }
         },
         "ben_1": {
@@ -583,6 +583,14 @@
             "titulo": "Atención personalizada",
             "texto": "Por WhatsApp"
           }
+        },
+        "ben_bogota": {
+          "type": "beneficio",
+          "settings": {
+            "icono": "envio",
+            "titulo": "Domicilio en Bogotá",
+            "texto": "Te llega el mismo día"
+          }
         }
       },
       "block_order": [
@@ -595,6 +603,7 @@
         "col_hombre",
         "col_mujer",
         "ben_0",
+        "ben_bogota",
         "ben_1",
         "ben_2",
         "ben_3",
