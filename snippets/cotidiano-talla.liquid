@@ -1,0 +1,32 @@
+{%- comment -%}
+  COTIDIANO® · Etiqueta completa de talla a partir de la talla EUR guardada en la variante.
+  Ej.: "40" → "38 COL / 7.0 US / 40 EUR / 25 CM (MEN)". Si la talla no está en la tabla (niños), se muestra tal cual.
+  Recibe: valor. Tabla también en assets (JS de la vista rápida): busca TALLAS_COL en sections/cotidiano-home.liquid.
+{%- endcomment -%}
+{%- liquid
+  assign v = valor | strip
+  case v
+    when '35'
+      echo '34 COL / 5.0 US / 35 EUR / 22 CM (WM)'
+    when '36'
+      echo '35 COL / 5.5 US / 36 EUR / 22.5 CM (WM)'
+    when '37'
+      echo '36 COL / 6.0 US / 37 EUR / 23 CM (WM)'
+    when '38'
+      echo '37 COL / 7.0 US / 38 EUR / 24 CM (WM)'
+    when '39'
+      echo '38 COL / 7.5 US / 39 EUR / 25 CM (WM)'
+    when '40'
+      echo '38 COL / 7.0 US / 40 EUR / 25 CM (MEN)'
+    when '41'
+      echo '39 COL / 8.0 US / 41 EUR / 26 CM (MEN)'
+    when '42'
+      echo '40 COL / 8.5 US / 42 EUR / 26.5 CM (MEN)'
+    when '43'
+      echo '41 COL / 9.5 US / 43 EUR / 27 CM (MEN)'
+    when '44'
+      echo '42 COL / 10 US / 44 EUR / 28 CM (MEN)'
+    else
+      echo v | escape
+  endcase
+-%}

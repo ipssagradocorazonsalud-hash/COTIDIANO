@@ -1272,9 +1272,12 @@
     return out.sort(function(a,b){var x=parseFloat(a[0]),y=parseFloat(b[0]);return isNaN(x)||isNaN(y)?0:x-y;});}
   /* Fotos de un color: su texto alternativo es el color o "título + color"; si no hay, todas */
   function fotosDe(p,color){if(!color||!p.ia)return p.i;var c=color.toLowerCase(),t=p.t.toLowerCase()+' '+c,f=p.i.filter(function(src,k){var a=p.ia[k]||'';return a===c||a===t;});return f.length?f:p.i;}
+  /* TALLAS_COL: misma tabla que snippets/cotidiano-talla.liquid (talla EUR → etiqueta completa) */
+  var TALLAS_COL={'35':'34 COL / 5.0 US / 35 EUR / 22 CM (WM)','36':'35 COL / 5.5 US / 36 EUR / 22.5 CM (WM)','37':'36 COL / 6.0 US / 37 EUR / 23 CM (WM)','38':'37 COL / 7.0 US / 38 EUR / 24 CM (WM)','39':'38 COL / 7.5 US / 39 EUR / 25 CM (WM)','40':'38 COL / 7.0 US / 40 EUR / 25 CM (MEN)','41':'39 COL / 8.0 US / 41 EUR / 26 CM (MEN)','42':'40 COL / 8.5 US / 42 EUR / 26.5 CM (MEN)','43':'41 COL / 9.5 US / 43 EUR / 27 CM (MEN)','44':'42 COL / 10 US / 44 EUR / 28 CM (MEN)'};
+  function tallaTxt(t){return TALLAS_COL[String(t).trim()]||t;}
   function tallasHTML(p,color){
-    return '<div class="ct-sizes" role="group" aria-label="Tallas de '+esc(p.t)+'">'+tallasDe(p,color).map(function(s){
-      return '<button type="button" class="ct-size" data-v="'+s[1]+'" data-t="'+esc(s[0])+'"'+(s[3]!==null?' data-q="'+s[3]+'"':'')+' aria-pressed="false"'+(s[2]?'':' disabled aria-label="Talla '+esc(s[0])+' agotada"')+'>'+esc(s[0])+'</button>';
+    return '<div class="ct-sizes role="group" aria-label="Tallas de '+esc(p.t)+'">'+tallasDe(p,color).map(function(s){
+      return '<button type="button" class="ct-size" data-v="'+s[1]+'" data-t="'+esc(s[0])+'"'+(s[3]!==null?' data-q="'+s[3]+'"':'')+' aria-pressed="false"'+(s[2]?'':' disabled aria-label="Talla '+esc(tallaTxt(s[0]))+' agotada"')+'>'+esc(tallaTxt(s[0]))+'</button>';
     }).join('')+'</div><p class="ct-low" hidden></p><div class="ct-hint" aria-live="polite"></div>';
   }
   var toast=document.getElementById('ctToast'),upEl=document.getElementById('ctUp'),tt,toastPausa=false;
@@ -1368,7 +1371,7 @@
       '<div class="ct-qv-main">'+(fotos[0]?'<img id="ctQvImg" src="'+esc(fotos[0])+'" alt="'+esc(p.t+(col?' '+col:''))+'">':'')+'</div>'+th+
       '<h3 id="ctQvT">'+esc(p.t)+'</h3><div class="ct-price" style="margin:0">'+esc(p.p)+(p.pc?' <s class="ct-pc">'+esc(p.pc)+'</s>':'')+'</div>'+
       (document.getElementById('ctTrustTpl')?document.getElementById('ctTrustTpl').innerHTML:'')+
-      '<div class="ct-qv-buy" data-buy data-h="'+esc(p.h)+'">'+colHTML+'<span class="ct-fl" style="margin-bottom:8px">Elige tu talla (EUR)</span><div id="ctQvSz">'+tallasHTML(p,col)+'</div>'+
+      '<div class="ct-qv-buy" data-buy data-h="'+esc(p.h)+'">'+colHTML+'<span class="ct-fl" style="margin-bottom:8px">Elige tu talla</span><div id="ctQvSz">'+tallasHTML(p,col)+'</div>'+
       '<button type="button" class="ct-add">Agregar al carrito</button></div>'+
       '<details class="ct-qv-guia"><summary>Guía de tallas · EUR, USA, UK</summary>'+convHTML(null)+
       '<p>Medidas aproximadas: cada marca calza un poco distinto. ¿Dudas? Escríbenos por WhatsApp. <button type="button" data-guia style="border:none;background:none;padding:0;color:var(--azul);font:inherit;font-weight:700;text-decoration:underline;cursor:pointer">Calcular por largo del pie</button></p></details>'+

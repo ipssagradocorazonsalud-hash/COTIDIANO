@@ -11,6 +11,9 @@
   .variant-picker .variant-option--buttons legend{font-size:.82rem;font-weight:600;margin-block-end:8px}
   .variant-picker .variant-option--buttons + .variant-option--buttons,
   .variant-picker .variant-option + .variant-option{margin-block-start:14px}
+  /* Tallas con equivalencias (COL / US / EUR / CM): una por fila, como lista */
+  .variant-picker .ct-tallas{flex-direction:column;align-items:flex-start;gap:8px}
+  .variant-picker .ct-tallas .variant-option__button-label{padding-block:10px;padding-inline:22px;font-size:.86rem;letter-spacing:.02em}
   @media (max-width:749px){
     .variant-picker .variant-option--buttons .variant-option__button-label{padding-inline:11px;font-size:.78rem}
   }
