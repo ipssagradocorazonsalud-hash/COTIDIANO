@@ -86,7 +86,9 @@
 
   capture menu
     # COTIDIANO: en vez del menú de escritorio va el buscador (el menú sigue en el botón ☰ del celular)
+    echo '<div class="ct-busq-esc">'
     render 'cotidiano-buscador', id: 'd'
+    echo '</div>'
   endcapture
 
   capture drawer_menu
