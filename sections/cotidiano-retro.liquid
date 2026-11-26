@@ -74,6 +74,28 @@
     </section>
   {%- endif -%}
 
+  {%- comment -%} 2b · Más buscados (entre el Universo de Marcas y los pares destacados) {%- endcomment -%}
+  <section class="rt-mb rt-wrap rt-rev" aria-labelledby="rtMb">
+    <div class="rt-mb-head">
+      <h2 class="rt-h3 rt-serif" id="rtMb">{{ s.mas_titulo | escape }}</h2>
+      <hr aria-hidden="true">
+      <a href="{{ mcol.url | default: routes.all_products_collection_url }}">Ver colección →</a>
+    </div>
+    <div class="rt-car">
+      <button type="button" class="rt-arr rt-arr-p" aria-label="Anteriores" data-rt="-1">←</button>
+      <div class="rt-track" id="rtTrack">
+        {%- for p in mcol.products limit: 12 -%}
+          <div class="rt-prod">
+            <a class="rt-prod-img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">{{ p.featured_image | image_url: width: 500 | image_tag: alt: '', loading: 'lazy', widths: '300, 500', sizes: '(max-width: 900px) 45vw, 280px' }}</a>
+            <b><a href="{{ p.url }}">{{ p.title }}</a></b>
+            <span class="pr">{{ p.price | money_without_trailing_zeros }}</span>{%- if p.compare_at_price > p.price -%}<s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{%- endif -%}
+          </div>
+        {%- endfor -%}
+      </div>
+      <button type="button" class="rt-arr rt-arr-n" aria-label="Siguientes" data-rt="1">→</button>
+    </div>
+  </section>
+
   {%- comment -%} 3 · Pares destacados (fotos reales de producto, sin retoque de color) {%- endcomment -%}
   {%- if destacados.size > 0 -%}
     <section class="rt-dest rt-wrap rt-rev" aria-label="Pares destacados">
@@ -169,28 +191,6 @@
       </ul>
     </section>
   {%- endif -%}
-
-  {%- comment -%} 6 · Más buscados {%- endcomment -%}
-  <section class="rt-mb rt-wrap rt-rev" aria-labelledby="rtMb">
-    <div class="rt-mb-head">
-      <h2 class="rt-h3 rt-serif" id="rtMb">{{ s.mas_titulo | escape }}</h2>
-      <hr aria-hidden="true">
-      <a href="{{ mcol.url | default: routes.all_products_collection_url }}">Ver colección →</a>
-    </div>
-    <div class="rt-car">
-      <button type="button" class="rt-arr rt-arr-p" aria-label="Anteriores" data-rt="-1">←</button>
-      <div class="rt-track" id="rtTrack">
-        {%- for p in mcol.products limit: 12 -%}
-          <div class="rt-prod">
-            <a class="rt-prod-img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">{{ p.featured_image | image_url: width: 500 | image_tag: alt: '', loading: 'lazy', widths: '300, 500', sizes: '(max-width: 900px) 45vw, 280px' }}</a>
-            <b><a href="{{ p.url }}">{{ p.title }}</a></b>
-            <span class="pr">{{ p.price | money_without_trailing_zeros }}</span>{%- if p.compare_at_price > p.price -%}<s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{%- endif -%}
-          </div>
-        {%- endfor -%}
-      </div>
-      <button type="button" class="rt-arr rt-arr-n" aria-label="Siguientes" data-rt="1">→</button>
-    </div>
-  </section>
 
   {%- comment -%} 7 · Cierre: comunidad + suscripción (clientes de Shopify con etiqueta newsletter) {%- endcomment -%}
   <section class="rt-com rt-rev" aria-labelledby="rtCom">
