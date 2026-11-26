@@ -8,6 +8,7 @@
 {%- liquid
   # Domicilio: Bogotá $15.000, Nacional $18.000 (se muestra el mayor como "hasta")
   assign costo_domicilio = 1800000
+  assign costo_bogota = 1500000
   # Cambiar a true cuando Shopify Flow ya esté entregando el cupón GRACIAS100
   assign mostrar_cupon = false
   assign min_pares = 2
@@ -33,6 +34,17 @@
         <span>¡Tu <b>domicilio es gratis</b>!{% if costo_domicilio > 0 %} Te ahorras hasta {{ costo_domicilio | money_without_trailing_zeros }}.{% endif %}</span>
       </p>
     {%- endif -%}
+    {%- comment -%} Total estimado con envío (el checkout solo lo calcula después de la dirección) {%- endcomment -%}
+    <div class="ct-promo-tot">
+      {%- if n < min_pares -%}
+        <span class="ct-promo-tot-t">Total con envío</span>
+        <span><b>{{ total | plus: costo_bogota | money_without_trailing_zeros }}</b> en Bogotá</span>
+        <span><b>{{ total | plus: costo_domicilio | money_without_trailing_zeros }}</b> resto del país</span>
+      {%- else -%}
+        <span class="ct-promo-tot-t">Total con envío</span>
+        <span><b>{{ total | money_without_trailing_zeros }}</b> · domicilio gratis</span>
+      {%- endif -%}
+    </div>
     {%- if mostrar_cupon == false -%}
     {%- elsif total >= meta_cupon -%}
       <p class="ct-promo-it ct-promo-ok">
@@ -50,6 +62,8 @@
     .ct-promo{display:grid;gap:8px;margin:0 0 14px}
     .ct-promo-it{display:flex;gap:10px;align-items:flex-start;margin:0;padding:10px 12px;border-radius:12px;background:#F2E6CF;color:#102B20;font-size:.88rem;line-height:1.4}
     .ct-promo-ok{background:#102B20;color:#F2E6CF}
+    .ct-promo-tot{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:baseline;padding:10px 12px;border:1.5px dashed rgba(16,43,32,.35);border-radius:12px;font-size:.86rem;color:#102B20}
+    .ct-promo-tot-t{flex-basis:100%;font-size:.7rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#B94D2D}
     .ct-promo-ic{flex:none;font-size:1.05rem;line-height:1.2}
   </style>
 {%- endif -%}
