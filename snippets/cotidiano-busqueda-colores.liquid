@@ -1,0 +1,100 @@
+{%- comment -%}
+  COTIDIANO® · Resultados de búsqueda rápida con una tarjeta por cada color
+  (snippets/predictive-search-products-list.liquid). Si el producto no tiene opción de color, una sola tarjeta.
+  Foto: la imagen cuyo texto alternativo coincide con el color. Enlace: el producto con ese color elegido.
+  Recibe: products, limit.
+{%- endcomment -%}
+{%- assign mostradas = 0 -%}
+{%- for p in products -%}
+  {%- liquid
+    assign cpos = 0
+    assign cvals = ''
+    for o in p.options_with_values
+      assign on = o.name | downcase
+      if on contains 'color'
+        assign cpos = forloop.index0
+        assign cvals = o.values
+      endif
+    endfor
+    if cvals == ''
+      assign cvals = '_unica_' | split: ','
+    endif
+  -%}
+  {%- for col in cvals -%}
+    {%- if mostradas >= limit -%}{%- break -%}{%- endif -%}
+    {%- liquid
+      assign vfirst = nil
+      assign vav = nil
+      if col == '_unica_'
+        assign vfirst = p.selected_or_first_available_variant
+        assign vav = p.first_available_variant
+      else
+        for v in p.variants
+          if v.options[cpos] == col
+            if vfirst == nil
+              assign vfirst = v
+            endif
+            if v.available and vav == nil
+              assign vav = v
+            endif
+          endif
+        endfor
+      endif
+      assign vref = vav | default: vfirst
+      assign img = nil
+      if col != '_unica_'
+        assign cd = col | downcase
+        assign tcd = p.title | append: ' ' | append: col | downcase
+        for m in p.images
+          assign ad = m.alt | downcase | strip
+          if ad == cd or ad == tcd
+            assign img = m
+            break
+          endif
+        endfor
+        if img == nil and vfirst.featured_image
+          assign img = vfirst.featured_image
+        endif
+      endif
+      if img == nil
+        assign img = p.featured_image
+      endif
+      assign nombre = p.title
+      if col != '_unica_'
+        assign td = p.title | downcase
+        assign cd = col | downcase
+        unless td contains cd
+          assign nombre = p.title | append: ' ' | append: col
+        endunless
+      endif
+      assign url = p.url
+      if vref
+        assign url = vref.url
+      endif
+      assign mostradas = mostradas | plus: 1
+    -%}
+    <li class="predictive-search-results__card predictive-search-results__card--product ct-bc" ref="resultsItems[]">
+      <a class="ct-bc-a" href="{{ url }}">
+        <span class="ct-bc-img">
+          {%- if img -%}{{ img | image_url: width: 400 | image_tag: alt: nombre, loading: 'lazy', widths: '200, 300, 400', sizes: '200px' }}{%- endif -%}
+        </span>
+        <span class="ct-bc-t">{{ nombre | escape }}</span>
+        <span class="ct-bc-pr">
+          {%- if vref.compare_at_price > vref.price -%}<s>{{ vref.compare_at_price | money_without_trailing_zeros }}</s> {% endif -%}
+          <b>{{ vref.price | money_without_trailing_zeros }}</b>
+          {%- if vav == nil %} · Agotado{% endif -%}
+        </span>
+      </a>
+    </li>
+  {%- endfor -%}
+  {%- if mostradas >= limit -%}{%- break -%}{%- endif -%}
+{%- endfor -%}
+<style>
+  .ct-bc-a{display:flex;flex-direction:column;gap:6px;color:inherit;text-decoration:none}
+  .ct-bc-img{display:block;aspect-ratio:4/5;background:#f3f2ef;border-radius:10px;overflow:hidden}
+  .ct-bc-img img{width:100%;height:100%;object-fit:contain}
+  .ct-bc-t{font-size:.9rem;line-height:1.25}
+  .ct-bc-pr{font-size:.85rem}
+  .ct-bc-pr s{opacity:.6;margin-right:4px}
+  .ct-bc-a:hover .ct-bc-t{text-decoration:underline}
+</style>

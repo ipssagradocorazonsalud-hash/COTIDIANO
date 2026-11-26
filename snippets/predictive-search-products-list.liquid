@@ -92,21 +92,7 @@
       {% liquid
         assign limit = limit | default: 8
       %}
-      {% for product in products limit: limit %}
-        <li
-          class="predictive-search-results__card predictive-search-results__card--product"
-          ref="resultsItems[]"
-        >
-          {% render 'resource-card',
-            resource_type: 'product',
-            resource: product,
-            image_width: 500,
-            image_hover: true,
-            image_aspect_ratio: '4 / 5',
-            product_view_context: 'search'
-          %}
-        </li>
-      {% endfor %}
+      {% render 'cotidiano-busqueda-colores', products: products, limit: 12 %}
     </ul>
   {% endif %}
 </div>
