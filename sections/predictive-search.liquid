@@ -103,9 +103,15 @@
             %}
           {% endif %}
         {%- elsif predictive_search.resources.queries.size == 0 -%}
-          <p class="predictive-search-results__no-results">
-            {{ 'content.search_results_no_results' | t: terms: predictive_search.terms }}
-          </p>
+          {%- comment -%} COTIDIANO: sin resultados → aviso + otras opciones {%- endcomment -%}
+          {% render 'cotidiano-sin-resultados', terms: predictive_search.terms, compacto: true %}
+          {%- assign sugeridas = collections['ofertas'].products | default: collections.all.products -%}
+          <div class="predictive-search-results__products">
+            <h4 class="predictive-search-results__title">Te pueden gustar estas</h4>
+            <ul class="predictive-search-results__list predictive-search-results__wrapper-products list-unstyled">
+              {% render 'cotidiano-busqueda-colores', products: sugeridas, limit: 8 %}
+            </ul>
+          </div>
         {% endif %}
       {% else %}
         {%- liquid

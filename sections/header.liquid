@@ -85,7 +85,8 @@
   endcapture
 
   capture menu
-    content_for 'block', type: '_header-menu', id: 'header-menu'
+    # COTIDIANO: en vez del menú de escritorio va el buscador (el menú sigue en el botón ☰ del celular)
+    render 'cotidiano-buscador', id: 'd'
   endcapture
 
   capture drawer_menu
@@ -490,6 +491,8 @@
       </div>
     {% endif %}
   {% endfor %}
+
+  <div class="ct-busq-movil">{% render 'cotidiano-buscador', id: 'm' %}</div>
 
   {% if has_navigation_bar %}
     <div class="header__row header__navigation-bar-row">

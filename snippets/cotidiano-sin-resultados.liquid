@@ -1,0 +1,19 @@
+{%- comment -%}
+  COTIDIANO® · Aviso cuando la búsqueda no encuentra la referencia: ofrece otras y WhatsApp.
+  Se usa en sections/search-results.liquid (página de búsqueda) y en sections/predictive-search.liquid (búsqueda rápida).
+  Recibe: terms, compacto (true en la búsqueda rápida).
+{%- endcomment -%}
+{%- assign msg = 'Hola Cotidiano Shoes, estoy buscando ' | append: terms | append: '. ¿Me ayudan a conseguirla?' -%}
+<div class="ct-sinres{% if compacto %} ct-sinres-c{% endif %}">
+  <p class="ct-sinres-t">No tenemos «{{ terms | escape }}» en este momento</p>
+  <p class="ct-sinres-p">Mira estas opciones parecidas o escríbenos: te ayudamos a encontrar tu par.</p>
+  <a class="ct-sinres-wa" href="https://wa.me/573103081052?text={{ msg | url_encode }}" target="_blank" rel="noopener">💬 Pregúntanos por WhatsApp</a>
+</div>
+<style>
+  .ct-sinres{margin:0 0 18px;padding:16px 18px;border-radius:16px;background:#F2E6CF;color:#171916;border:1.5px dashed rgba(16,43,32,.3)}
+  .ct-sinres-t{margin:0 0 4px;font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:800;font-size:1.25rem;color:#102B20}
+  .ct-sinres-p{margin:0 0 10px;font-size:.92rem}
+  .ct-sinres-wa{display:inline-block;padding:9px 16px;border-radius:999px;background:#1E7B3C;color:#fff;text-decoration:none;font-weight:700;font-size:.88rem}
+  .ct-sinres-c{margin:4px 0 12px;padding:12px 14px}
+  .ct-sinres-c .ct-sinres-t{font-size:1.05rem}
+</style>

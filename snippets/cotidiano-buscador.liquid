@@ -1,0 +1,13 @@
+{%- comment -%}
+  COTIDIANO® · Buscador visible en el encabezado (reemplaza el menú de escritorio en sections/header.liquid
+  y aparece debajo del encabezado en celular). Usa la búsqueda de Shopify (/search) solo en productos.
+  Recibe: id (texto único para el campo).
+{%- endcomment -%}
+<form class="ct-busq" action="{{ routes.search_url }}" method="get" role="search">
+  <label class="ct-busq-sr" for="ctBusq-{{ id }}">Buscar zapatillas</label>
+  <svg class="ct-busq-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>
+  <input id="ctBusq-{{ id }}" class="ct-busq-in" type="search" name="q" value="{{ search.terms | escape }}" placeholder="Encuentra tu par o busca el que necesitas" autocomplete="off">
+  <input type="hidden" name="type" value="product">
+  <input type="hidden" name="options[prefix]" value="last">
+  <button class="ct-busq-btn" type="submit">Buscar</button>
+</form>

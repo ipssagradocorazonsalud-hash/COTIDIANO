@@ -258,3 +258,20 @@ body{background:var(--rt-blanco)}
   .rt-dest-img img{max-height:250px;width:auto;max-width:100%}
 }
 @media(prefers-reduced-motion:reduce){.rt-dest-card,.rt-dest-img img{transition:none}}
+/* Buscador del encabezado (snippets/cotidiano-buscador.liquid) */
+.ct-busq{position:relative;display:flex;align-items:center;width:min(560px,100%);margin:0 auto;background:#F2E6CF;border-radius:999px;padding:4px 4px 4px 44px;box-shadow:inset 0 0 0 1.5px rgba(16,43,32,.15)}
+.ct-busq-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.ct-busq-ic{position:absolute;left:16px;width:19px;height:19px;fill:none;stroke:#102B20;stroke-width:2;stroke-linecap:round}
+.ct-busq-in{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:.92rem;color:#171916;padding:9px 6px;outline:none}
+.ct-busq-in::placeholder{color:#5B6359}
+.ct-busq-in::-webkit-search-cancel-button{display:none}
+.ct-busq-btn{border:0;border-radius:999px;background:#D99A27;color:#102B20;font:inherit;font-weight:800;font-size:.85rem;padding:9px 18px;cursor:pointer}
+.ct-busq-btn:hover{background:#c98b1d}
+.ct-busq:focus-within{box-shadow:0 0 0 3px #D99A27}
+.ct-busq-movil{display:none}
+@media(max-width:749px){
+  .ct-busq-movil{display:block;background:#102B20;padding:0 14px 12px}
+  .ct-busq{padding-left:40px}.ct-busq-ic{left:14px}
+  .ct-busq-in{font-size:16px;padding:8px 4px}
+  .ct-busq-btn{padding:8px 14px}
+}
