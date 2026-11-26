@@ -272,7 +272,7 @@ body{background:var(--rt-blanco)}
 @media(max-width:749px){
   .ct-busq-movil{display:block;background:#102B20;padding:0 14px 12px}
   .ct-busq{padding-left:40px}.ct-busq-ic{left:14px}
-  .ct-busq-in{font-size:16px;padding:8px 4px}
+  .ct-busq-in{font-size:15px;padding:8px 4px}
   .ct-busq-btn{padding:8px 14px}
 }
 
