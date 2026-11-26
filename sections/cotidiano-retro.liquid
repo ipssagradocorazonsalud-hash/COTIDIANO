@@ -8,6 +8,7 @@
   assign s = section.settings
   assign marcas = section.blocks | where: 'type', 'marca'
   assign colecciones = section.blocks | where: 'type', 'coleccion'
+  assign destacados = section.blocks | where: 'type', 'destacado'
   assign beneficios = section.blocks | where: 'type', 'beneficio'
   assign pp = s.producto
   if pp == blank
@@ -74,6 +75,41 @@
           {%- endfor -%}
         </ul>
       </div>
+    </section>
+  {%- endif -%}
+
+  {%- comment -%} 3 · Pares destacados (fotos reales de producto, sin retoque de color) {%- endcomment -%}
+  {%- if destacados.size > 0 -%}
+    <section class="rt-dest rt-wrap rt-rev" aria-label="Pares destacados">
+      {%- for b in destacados -%}
+        {%- liquid
+          assign bs = b.settings
+          assign p = bs.producto
+          assign url = p.url | default: routes.all_products_collection_url
+        -%}
+        <a class="rt-dest-card" href="{{ url }}" style="--fondo:{{ bs.fondo }};--raya:{{ bs.raya }}" {{ b.shopify_attributes }}>
+          <span class="rt-dest-rayas" aria-hidden="true"></span>
+          <span class="rt-dest-txt">
+            {%- if bs.logo_tema != blank -%}
+              <img class="rt-dest-logo" src="{{ bs.logo_tema | asset_url }}" alt="{{ bs.marca | escape }}" loading="lazy" height="80">
+            {%- elsif bs.marca != blank -%}
+              <span class="rt-dest-marca">{{ bs.marca | escape }}</span>
+            {%- endif -%}
+            <span class="rt-dest-t rt-serif">{{ bs.titulo | escape }}</span>
+            <span class="rt-dest-linea" aria-hidden="true"></span>
+            <span class="rt-dest-k">{{ bs.kicker | escape }}</span>
+            {%- if p -%}<span class="rt-dest-pr">{{ p.price | money_without_trailing_zeros }}{% if p.compare_at_price > p.price %} <s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{% endif %}</span>{%- endif -%}
+            <span class="rt-btn rt-btn-sm">Ver producto <span aria-hidden="true">→</span></span>
+          </span>
+          <span class="rt-dest-img">
+            {%- if bs.imagen -%}
+              {{ bs.imagen | image_url: width: 900 | image_tag: alt: p.title, loading: 'lazy', widths: '450, 700, 900', sizes: '(max-width: 900px) 70vw, 25vw' }}
+            {%- elsif bs.imagen_tema != blank -%}
+              <img src="{{ bs.imagen_tema | asset_url }}" alt="{{ p.title | escape }}" loading="lazy" width="900" height="600">
+            {%- endif -%}
+          </span>
+        </a>
+      {%- endfor -%}
     </section>
   {%- endif -%}
 
@@ -272,6 +308,20 @@
         { "type": "image_picker", "id": "imagen", "label": "Imagen (opcional)" },
         { "type": "text", "id": "imagen_tema", "label": "Imagen del tema (avanzado)", "default": "rt-marca-adidas.webp" },
         { "type": "url", "id": "enlace", "label": "Enlace (opcional)" }
+      ]
+    },
+    {
+      "type": "destacado", "name": "Par destacado", "limit": 4,
+      "settings": [
+        { "type": "product", "id": "producto", "label": "Producto" },
+        { "type": "text", "id": "marca", "label": "Marca (si no hay logo)" },
+        { "type": "text", "id": "logo_tema", "label": "Logo del tema (avanzado)", "info": "Archivo de assets, p. ej. logo-adidas.png" },
+        { "type": "text", "id": "titulo", "label": "Título", "default": "Destacado" },
+        { "type": "text", "id": "kicker", "label": "Texto pequeño", "default": "Colección especial" },
+        { "type": "color", "id": "fondo", "label": "Color de fondo", "default": "#7A1717" },
+        { "type": "color", "id": "raya", "label": "Color de las rayas", "default": "#F2E6CF" },
+        { "type": "image_picker", "id": "imagen", "label": "Foto del par (fondo transparente)" },
+        { "type": "text", "id": "imagen_tema", "label": "Foto del tema (avanzado)" }
       ]
     },
     {

@@ -530,20 +530,6 @@
             "imagen_tema": "rt-uni-ugg.webp"
           }
         },
-        "col_hombre": {
-          "type": "coleccion",
-          "settings": {
-            "titulo": "Hombre",
-            "coleccion": "hombre"
-          }
-        },
-        "col_mujer": {
-          "type": "coleccion",
-          "settings": {
-            "titulo": "Mujer",
-            "coleccion": "mujer"
-          }
-        },
         "ben_0": {
           "type": "beneficio",
           "settings": {
@@ -599,6 +585,44 @@
             "handle": "timberland",
             "imagen_tema": "rt-uni-timberland.webp"
           }
+        },
+        "dest_timberland": {
+          "type": "destacado",
+          "settings": {
+            "producto": "timberland-premium-6-inch-wheat",
+            "marca": "Timberland",
+            "titulo": "6 Inch Premium",
+            "kicker": "Botas clásicas",
+            "fondo": "#102B20",
+            "raya": "#D99A27",
+            "imagen_tema": "rt-dest-timberland.webp"
+          }
+        },
+        "dest_salomon": {
+          "type": "destacado",
+          "settings": {
+            "producto": "salomon-xt-6",
+            "logo_tema": "logo-salomon.png",
+            "marca": "Salomon",
+            "titulo": "XT-6",
+            "kicker": "Colección outdoor",
+            "fondo": "#4A3626",
+            "raya": "#D99A27",
+            "imagen_tema": "rt-dest-salomon.webp"
+          }
+        },
+        "dest_benito": {
+          "type": "destacado",
+          "settings": {
+            "producto": "adidas-benito-rojo",
+            "logo_tema": "logo-adidas.png",
+            "marca": "Adidas",
+            "titulo": "Benito",
+            "kicker": "Colección especial",
+            "fondo": "#7A1717",
+            "raya": "#F2E6CF",
+            "imagen_tema": "rt-dest-benito.webp"
+          }
         }
       },
       "block_order": [
@@ -609,8 +633,9 @@
         "marca_salomon",
         "marca_ugg",
         "marca_timberland",
-        "col_hombre",
-        "col_mujer",
+        "dest_benito",
+        "dest_salomon",
+        "dest_timberland",
         "ben_0",
         "ben_bogota",
         "ben_1",
