@@ -19,6 +19,13 @@
 
     {%- render 'meta-tags' -%}
     {%- render 'stylesheets' -%}
+    {%- comment -%} COTIDIANO: estilos retro (uno solo, en la cabeza) y fuente Fraunces sin bloquear el pintado {%- endcomment -%}
+    {{ 'cotidiano-retro.css' | asset_url | stylesheet_tag }}
+    <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,700;1,9..144,800&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,700;1,9..144,800&display=swap"></noscript>
+    {%- if template.name == 'index' -%}
+      <link rel="preload" as="image" href="{{ 'rt-hero.webp' | asset_url }}" imagesrcset="{{ 'rt-hero-800.webp' | asset_url }} 800w, {{ 'rt-hero.webp' | asset_url }} 1670w" imagesizes="100vw" fetchpriority="high">
+    {%- endif -%}
     {%- render 'card-hover-effect-styles' -%}
     {%- render 'scripts' -%}
     {%- render 'theme-styles-variables' -%}

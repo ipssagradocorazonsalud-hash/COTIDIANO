@@ -8,7 +8,6 @@
   assign wa = s.whatsapp | remove: '+' | remove: ' '
   assign marcas = 'adidas:Adidas,nike:Nike,new-balance:New Balance,on:On Running,salomon:Salomon,ugg:UGG,timberland:Timberland' | split: ','
 -%}
-{{ 'cotidiano-retro.css' | asset_url | stylesheet_tag }}
 <footer class="rt rt-ft">
   <div class="rt-wrap rt-ft-grid">
     <div class="rt-ft-brand">

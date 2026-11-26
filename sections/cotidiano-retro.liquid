@@ -17,10 +17,6 @@
   assign mcol = s.mas_coleccion | default: collections.all
   assign wa = s.whatsapp | remove: '+' | remove: ' '
 -%}
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;1,9..144,700;1,9..144,800&display=swap" rel="stylesheet">
-{{ 'cotidiano-retro.css' | asset_url | stylesheet_tag }}
 
 <div class="rt">
   {%- comment -%} 1 · Hero {%- endcomment -%}
@@ -30,7 +26,7 @@
       {%- if s.hero_imagen -%}
         {{ s.hero_imagen | image_url: width: 2000 | image_tag: alt: s.hero_titulo, loading: 'eager', fetchpriority: 'high', widths: '750, 1100, 1500, 2000', sizes: '100vw', class: 'rt-hero-img' }}
       {%- else -%}
-        <img class="rt-hero-img" src="{{ 'rt-hero.webp' | asset_url }}" alt="{{ s.hero_titulo | escape }}" width="1670" height="941" fetchpriority="high">
+        <img class="rt-hero-img" src="{{ 'rt-hero.webp' | asset_url }}" srcset="{{ 'rt-hero-800.webp' | asset_url }} 800w, {{ 'rt-hero.webp' | asset_url }} 1670w" sizes="100vw" alt="{{ s.hero_titulo | escape }}" width="1670" height="941" fetchpriority="high" decoding="async">
       {%- endif -%}
       <span class="rt-hero-cta">{{ s.hero_boton | escape }} <span aria-hidden="true">→</span></span>
       <span class="rt-hero-cta-m" aria-hidden="true">{{ s.hero_boton | escape }} →</span>
