@@ -63,7 +63,11 @@
                 {%- if b.settings.imagen -%}
                   {{ b.settings.imagen | image_url: width: 640 | image_tag: alt: b.settings.nombre, loading: 'lazy', widths: '320, 480, 640', sizes: '(max-width: 700px) 46vw, 200px' }}
                 {%- else -%}
-                  <img src="{{ b.settings.imagen_tema | asset_url }}" alt="Explorar {{ b.settings.nombre | escape }}" loading="lazy" width="460" height="1200">
+                  {%- assign img_movil = b.settings.imagen_tema | replace: 'rt-uni-v-', 'rt-uni-' -%}
+                  <picture>
+                    <source media="(max-width: 900px)" srcset="{{ img_movil | asset_url }}">
+                    <img src="{{ b.settings.imagen_tema | asset_url }}" alt="Explorar {{ b.settings.nombre | escape }}" loading="lazy" width="460" height="1200">
+                  </picture>
                 {%- endif -%}
                 <span class="rt-sr">Explorar {{ b.settings.nombre | escape }}</span>
               </a>
