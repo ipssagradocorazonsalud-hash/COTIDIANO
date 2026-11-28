@@ -286,3 +286,7 @@ body{background:var(--rt-blanco)}
   .rt-hero{--rt-hero-alto:calc(100svh - var(--header-group-height,80px) - var(--ct-seg-h,64px) - 24px)}
   .rt-hero-a{max-width:min(1920px,calc(var(--rt-hero-alto) * 1.7747))}
 }
+/* Marca de agua COTIDIANO a los lados del hero (computador), detrás de la imagen */
+@media(min-width:750px){
+  .rt-hero{background:var(--rt-verde) url('rt-hero-patron.webp') center/cover no-repeat}
+}
