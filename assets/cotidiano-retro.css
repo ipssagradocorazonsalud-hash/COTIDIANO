@@ -280,16 +280,6 @@ body{background:var(--rt-blanco)}
 .ct-busq .ct-busq-in,.ct-busq .ct-busq-in:focus{background:transparent!important;border:0!important;box-shadow:none!important;outline:none!important;border-radius:0!important;height:auto!important;min-height:0!important}
 @media(max-width:749px){.ct-busq-esc{display:none!important}}
 @media(min-width:750px) and (max-width:1000px){.ct-busq-esc{min-width:0}.ct-busq-in::placeholder{font-size:.85rem}}
-/* Hero completo en la primera pantalla (computador): la imagen se ajusta al alto disponible
-   (pantalla − barra de beneficios − encabezado − barra de compra segura) y los lados quedan en verde. */
-@media(min-width:750px){
-  .rt-hero{--rt-hero-alto:calc(100svh - var(--header-group-height,80px) - var(--ct-seg-h,64px) - 24px)}
-  .rt-hero-a{max-width:min(1920px,calc(var(--rt-hero-alto) * 1.7747))}
-}
-/* Marca de agua COTIDIANO a los lados del hero (computador), detrás de la imagen */
-@media(min-width:750px){
-  .rt-hero{background:var(--rt-verde) url('rt-hero-marca-agua.webp') center/560px auto repeat}
-}
 /* Universo de Marcas en tarjetas verticales (rt-uni-v-*.webp) */
 .rt-uni-grid.rt-uni-v{display:flex!important;gap:10px;align-items:stretch}
 .rt-uni-v > li{flex:1 1 0;min-width:0;grid-column:auto!important}
@@ -304,13 +294,4 @@ body{background:var(--rt-blanco)}
   .rt-uni-v > li{flex:none!important}
   .rt-uni-v > li:nth-child(7):last-child{grid-column:1/-1;justify-self:center;width:calc(50% - 5px)}
   .rt-uni-v .rt-uni-card img{height:100%;object-fit:cover}
-}
-/* Hero sin bordes: los lados de la imagen se funden con el verde y la marca de agua (computador) */
-@media(min-width:750px){
-  .rt-hero-img{
-    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(0deg,#000 0,#000 96%,transparent 100%);
-    -webkit-mask-composite:source-in;
-    mask-image:linear-gradient(90deg,transparent 0,#000 7%,#000 93%,transparent 100%),linear-gradient(0deg,#000 0,#000 96%,transparent 100%);
-    mask-composite:intersect;
-  }
 }
