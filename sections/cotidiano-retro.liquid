@@ -40,7 +40,7 @@
         <p class="rt-kicker"><span>{{ s.uni_kicker | escape }}</span></p>
         <h2 class="rt-h2 rt-serif" id="rtUni">{{ s.uni_titulo | escape }}</h2>
         <p class="rt-sub">{{ s.uni_sub | escape }}</p>
-        <ul class="rt-uni-grid">
+        <ul class="rt-uni-grid rt-uni-v">
           {%- for b in marcas -%}
             {%- liquid
               assign bh = b.settings.handle | strip | downcase
@@ -63,7 +63,7 @@
                 {%- if b.settings.imagen -%}
                   {{ b.settings.imagen | image_url: width: 640 | image_tag: alt: b.settings.nombre, loading: 'lazy', widths: '320, 480, 640', sizes: '(max-width: 700px) 46vw, 200px' }}
                 {%- else -%}
-                  <img src="{{ b.settings.imagen_tema | asset_url }}" alt="Explorar {{ b.settings.nombre | escape }}" loading="lazy" width="800" height="620">
+                  <img src="{{ b.settings.imagen_tema | asset_url }}" alt="Explorar {{ b.settings.nombre | escape }}" loading="lazy" width="460" height="1200">
                 {%- endif -%}
                 <span class="rt-sr">Explorar {{ b.settings.nombre | escape }}</span>
               </a>

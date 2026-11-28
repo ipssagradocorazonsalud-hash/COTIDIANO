@@ -290,3 +290,16 @@ body{background:var(--rt-blanco)}
 @media(min-width:750px){
   .rt-hero{background:var(--rt-verde) url('rt-hero-marca-agua.webp') center/560px auto repeat}
 }
+/* Universo de Marcas en tarjetas verticales (rt-uni-v-*.webp) */
+.rt-uni-grid.rt-uni-v{display:flex!important;gap:10px;align-items:stretch}
+.rt-uni-v > li{flex:1 1 0;min-width:0;grid-column:auto!important}
+.rt-uni-v > li:nth-child(4){flex:.88 1 0}
+.rt-uni-v > li:nth-child(5){flex:1.15 1 0}
+.rt-uni-v .rt-uni-card{height:100%;border-radius:22px}
+.rt-uni-v .rt-uni-card img{width:100%;height:100%;object-fit:cover;aspect-ratio:auto}
+.rt-uni-v .rt-uni-card:hover{transform:translateY(-8px)}
+@media(max-width:900px){
+  .rt-uni-grid.rt-uni-v{overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px;margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
+  .rt-uni-grid.rt-uni-v::-webkit-scrollbar{display:none}
+  .rt-uni-v > li,.rt-uni-v > li:nth-child(4),.rt-uni-v > li:nth-child(5),.rt-uni-v > li:nth-child(7):last-child{flex:0 0 42vw;width:auto;scroll-snap-align:start;justify-self:auto}
+}
