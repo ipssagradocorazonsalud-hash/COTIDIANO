@@ -623,6 +623,45 @@
             "raya": "#F2E6CF",
             "imagen_tema": "rt-dest-benito.webp"
           }
+        },
+        "dest_on": {
+          "type": "destacado",
+          "settings": {
+            "producto": "on-cloudmonster-3",
+            "logo_tema": "logo-on.png",
+            "marca": "On",
+            "titulo": "Cloudmonster 3",
+            "kicker": "Running",
+            "fondo": "#3E5A2E",
+            "raya": "#D99A27",
+            "imagen_tema": "rt-dest-on.webp"
+          }
+        },
+        "dest_dunk": {
+          "type": "destacado",
+          "settings": {
+            "producto": "dunk-panda",
+            "logo_tema": "logo-nike.png",
+            "marca": "Nike",
+            "titulo": "Dunk Low",
+            "kicker": "Clásico de calle",
+            "fondo": "#171916",
+            "raya": "#D99A27",
+            "imagen_tema": "rt-dest-dunk.webp"
+          }
+        },
+        "dest_newbalance": {
+          "type": "destacado",
+          "settings": {
+            "producto": "new-balance-9060-blanco-crema",
+            "logo_tema": "logo-new-balance.png",
+            "marca": "New Balance",
+            "titulo": "9060",
+            "kicker": "Comodidad urbana",
+            "fondo": "#B94D2D",
+            "raya": "#F2E6CF",
+            "imagen_tema": "rt-dest-newbalance.webp"
+          }
         }
       },
       "block_order": [
@@ -636,6 +675,9 @@
         "dest_benito",
         "dest_salomon",
         "dest_timberland",
+        "dest_newbalance",
+        "dest_dunk",
+        "dest_on",
         "ben_0",
         "ben_bogota",
         "ben_1",

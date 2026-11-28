@@ -1,0 +1,28 @@
+{%- comment -%} COTIDIANO® · Tarjeta de par destacado (sections/cotidiano-retro.liquid). Recibe: b (bloque). {%- endcomment -%}
+    {%- liquid
+      assign bs = b.settings
+      assign p = bs.producto
+      assign url = p.url | default: routes.all_products_collection_url
+    -%}
+    <a class="rt-dest-card" href="{{ url }}" style="--fondo:{{ bs.fondo }};--raya:{{ bs.raya }}" {{ b.shopify_attributes }}>
+      <span class="rt-dest-rayas" aria-hidden="true"></span>
+      <span class="rt-dest-txt">
+        {%- if bs.logo_tema != blank -%}
+          <img class="rt-dest-logo" src="{{ bs.logo_tema | asset_url }}" alt="{{ bs.marca | escape }}" loading="lazy" height="80">
+        {%- elsif bs.marca != blank -%}
+          <span class="rt-dest-marca">{{ bs.marca | escape }}</span>
+        {%- endif -%}
+        <span class="rt-dest-t rt-serif">{{ bs.titulo | escape }}</span>
+        <span class="rt-dest-linea" aria-hidden="true"></span>
+        <span class="rt-dest-k">{{ bs.kicker | escape }}</span>
+        {%- if p -%}<span class="rt-dest-pr">{{ p.price | money_without_trailing_zeros }}{% if p.compare_at_price > p.price %} <s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{% endif %}</span>{%- endif -%}
+        <span class="rt-btn rt-btn-sm">Ver producto <span aria-hidden="true">→</span></span>
+      </span>
+      <span class="rt-dest-img">
+        {%- if bs.imagen -%}
+          {{ bs.imagen | image_url: width: 900 | image_tag: alt: p.title, loading: 'lazy', widths: '450, 700, 900', sizes: '(max-width: 900px) 70vw, 25vw' }}
+        {%- elsif bs.imagen_tema != blank -%}
+          <img src="{{ bs.imagen_tema | asset_url }}" alt="{{ p.title | escape }}" loading="lazy" width="900" height="600">
+        {%- endif -%}
+      </span>
+    </a>

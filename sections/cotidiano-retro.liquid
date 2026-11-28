@@ -108,35 +108,7 @@
   {%- comment -%} 3 · Pares destacados (fotos reales de producto, sin retoque de color) {%- endcomment -%}
   {%- if destacados.size > 0 -%}
     <section class="rt-dest rt-wrap rt-rev" aria-label="Pares destacados">
-      {%- for b in destacados -%}
-        {%- liquid
-          assign bs = b.settings
-          assign p = bs.producto
-          assign url = p.url | default: routes.all_products_collection_url
-        -%}
-        <a class="rt-dest-card" href="{{ url }}" style="--fondo:{{ bs.fondo }};--raya:{{ bs.raya }}" {{ b.shopify_attributes }}>
-          <span class="rt-dest-rayas" aria-hidden="true"></span>
-          <span class="rt-dest-txt">
-            {%- if bs.logo_tema != blank -%}
-              <img class="rt-dest-logo" src="{{ bs.logo_tema | asset_url }}" alt="{{ bs.marca | escape }}" loading="lazy" height="80">
-            {%- elsif bs.marca != blank -%}
-              <span class="rt-dest-marca">{{ bs.marca | escape }}</span>
-            {%- endif -%}
-            <span class="rt-dest-t rt-serif">{{ bs.titulo | escape }}</span>
-            <span class="rt-dest-linea" aria-hidden="true"></span>
-            <span class="rt-dest-k">{{ bs.kicker | escape }}</span>
-            {%- if p -%}<span class="rt-dest-pr">{{ p.price | money_without_trailing_zeros }}{% if p.compare_at_price > p.price %} <s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{% endif %}</span>{%- endif -%}
-            <span class="rt-btn rt-btn-sm">Ver producto <span aria-hidden="true">→</span></span>
-          </span>
-          <span class="rt-dest-img">
-            {%- if bs.imagen -%}
-              {{ bs.imagen | image_url: width: 900 | image_tag: alt: p.title, loading: 'lazy', widths: '450, 700, 900', sizes: '(max-width: 900px) 70vw, 25vw' }}
-            {%- elsif bs.imagen_tema != blank -%}
-              <img src="{{ bs.imagen_tema | asset_url }}" alt="{{ p.title | escape }}" loading="lazy" width="900" height="600">
-            {%- endif -%}
-          </span>
-        </a>
-      {%- endfor -%}
+      {%- for b in destacados limit: 3 -%}{%- render 'cotidiano-dest-tarjeta', b: b -%}{%- endfor -%}
     </section>
   {%- endif -%}
 
@@ -158,31 +130,10 @@
     </section>
   {%- endif -%}
 
-  {%- comment -%} 4 · Producto protagonista (datos reales de Shopify) {%- endcomment -%}
-  {%- if pp != blank and pp.available -%}
-    {%- liquid
-      assign copt = 0
-      assign topt = 1
-      for o in pp.options_with_values
-        assign on = o.name | downcase
-        if on contains 'color'
-          assign copt = forloop.index
-        endif
-        if on contains 'talla' or on contains 'size'
-          assign topt = forloop.index
-        endif
-      endfor
-    -%}
-    <section class="rt-pp rt-rev" aria-label="Producto protagonista: {{ pp.title | escape }}" id="rtPp-sec">
-      <div class="rt-wrap rt-pp-in">
-        <a class="rt-pp-img" href="{{ pp.url }}" aria-label="Ver {{ pp.title | escape }}">
-          {%- if s.pp_imagen -%}
-            {{ s.pp_imagen | image_url: width: 1600 | image_tag: alt: '', loading: 'lazy', widths: '800, 1200, 1600', sizes: '(max-width: 1100px) 100vw, 1100px' }}
-          {%- else -%}
-            <img src="{{ 'rt-xt6.webp' | asset_url }}" alt="" loading="lazy" width="1672" height="941">
-          {%- endif -%}
-        </a>
-      </div>
+  {%- comment -%} 4 · Segunda fila de pares destacados (reemplaza al producto protagonista) {%- endcomment -%}
+  {%- if destacados.size > 3 -%}
+    <section class="rt-dest rt-wrap rt-rev" aria-label="Más pares destacados">
+      {%- for b in destacados offset: 3 -%}{%- render 'cotidiano-dest-tarjeta', b: b -%}{%- endfor -%}
     </section>
   {%- endif -%}
 
@@ -317,7 +268,7 @@
       ]
     },
     {
-      "type": "destacado", "name": "Par destacado", "limit": 4,
+      "type": "destacado", "name": "Par destacado", "limit": 6,
       "settings": [
         { "type": "product", "id": "producto", "label": "Producto" },
         { "type": "text", "id": "marca", "label": "Marca (si no hay logo)" },
