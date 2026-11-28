@@ -303,5 +303,5 @@ body{background:var(--rt-blanco)}
   .rt-uni-grid.rt-uni-v{display:grid!important;grid-template-columns:repeat(2,1fr);gap:10px}
   .rt-uni-v > li{flex:none!important}
   .rt-uni-v > li:nth-child(7):last-child{grid-column:1/-1;justify-self:center;width:calc(50% - 5px)}
-  .rt-uni-v .rt-uni-card img{height:auto}
+  .rt-uni-v .rt-uni-card img{height:100%;object-fit:cover}
 }
