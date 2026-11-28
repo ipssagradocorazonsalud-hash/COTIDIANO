@@ -301,5 +301,5 @@ body{background:var(--rt-blanco)}
 @media(max-width:900px){
   .rt-uni-grid.rt-uni-v{overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 14px;margin-left:-16px;margin-right:-16px;padding-left:16px;padding-right:16px;scrollbar-width:none}
   .rt-uni-grid.rt-uni-v::-webkit-scrollbar{display:none}
-  .rt-uni-v > li,.rt-uni-v > li:nth-child(4),.rt-uni-v > li:nth-child(5),.rt-uni-v > li:nth-child(7):last-child{flex:0 0 42vw;width:auto;scroll-snap-align:start;justify-self:auto}
+  .rt-uni-v > li,.rt-uni-v > li:nth-child(4),.rt-uni-v > li:nth-child(5),.rt-uni-v > li:nth-child(7):last-child{flex:0 0 34vw;width:auto;scroll-snap-align:start;justify-self:auto}
 }
