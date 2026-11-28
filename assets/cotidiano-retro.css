@@ -288,5 +288,5 @@ body{background:var(--rt-blanco)}
 }
 /* Marca de agua COTIDIANO a los lados del hero (computador), detrás de la imagen */
 @media(min-width:750px){
-  .rt-hero{background:var(--rt-verde) url('rt-hero-patron.webp') center/cover no-repeat}
+  .rt-hero{background:var(--rt-verde) url('rt-hero-patron.webp') center/560px auto repeat}
 }
