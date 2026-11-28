@@ -280,3 +280,9 @@ body{background:var(--rt-blanco)}
 .ct-busq .ct-busq-in,.ct-busq .ct-busq-in:focus{background:transparent!important;border:0!important;box-shadow:none!important;outline:none!important;border-radius:0!important;height:auto!important;min-height:0!important}
 @media(max-width:749px){.ct-busq-esc{display:none!important}}
 @media(min-width:750px) and (max-width:1000px){.ct-busq-esc{min-width:0}.ct-busq-in::placeholder{font-size:.85rem}}
+/* Hero completo en la primera pantalla (computador): la imagen se ajusta al alto disponible
+   (pantalla − barra de beneficios − encabezado − barra de compra segura) y los lados quedan en verde. */
+@media(min-width:750px){
+  .rt-hero{--rt-hero-alto:calc(100svh - var(--header-group-height,80px) - var(--ct-seg-h,64px) - 24px)}
+  .rt-hero-a{max-width:min(1920px,calc(var(--rt-hero-alto) * 1.7747))}
+}

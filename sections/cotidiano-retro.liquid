@@ -84,13 +84,18 @@
     <div class="rt-car">
       <button type="button" class="rt-arr rt-arr-p" aria-label="Anteriores" data-rt="-1">←</button>
       <div class="rt-track" id="rtTrack">
-        {%- for p in mcol.products limit: 12 -%}
-          <div class="rt-prod">
-            <a class="rt-prod-img" href="{{ p.url }}" tabindex="-1" aria-hidden="true">{{ p.featured_image | image_url: width: 500 | image_tag: alt: '', loading: 'lazy', widths: '300, 500', sizes: '(max-width: 900px) 45vw, 280px' }}</a>
-            <b><a href="{{ p.url }}">{{ p.title }}</a></b>
-            <span class="pr">{{ p.price | money_without_trailing_zeros }}</span>{%- if p.compare_at_price > p.price -%}<s>{{ p.compare_at_price | money_without_trailing_zeros }}</s>{%- endif -%}
-          </div>
-        {%- endfor -%}
+        {%- if s.mas_lista != blank -%}
+          {%- assign lineas = s.mas_lista | newline_to_br | split: '<br />' -%}
+          {%- for l in lineas -%}
+            {%- assign partes = l | strip | split: '|' -%}
+            {%- assign h = partes[0] | strip -%}
+            {%- assign c = partes[1] | strip -%}
+            {%- assign p = all_products[h] -%}
+            {%- if p.id -%}{%- render 'cotidiano-mb-tarjeta', p: p, col: c -%}{%- endif -%}
+          {%- endfor -%}
+        {%- else -%}
+          {%- for p in mcol.products limit: 12 -%}{%- render 'cotidiano-mb-tarjeta', p: p, col: '' -%}{%- endfor -%}
+        {%- endif -%}
       </div>
       <button type="button" class="rt-arr rt-arr-n" aria-label="Siguientes" data-rt="1">→</button>
     </div>
@@ -289,6 +294,7 @@
     { "type": "header", "content": "Más buscados" },
     { "type": "text", "id": "mas_titulo", "label": "Título", "default": "Más buscados" },
     { "type": "collection", "id": "mas_coleccion", "label": "Colección", "info": "Vacía = todo el catálogo." },
+    { "type": "textarea", "id": "mas_lista", "label": "Pares elegidos (uno por línea)", "info": "Formato: handle-del-producto | Color (el color es opcional). Si está vacío se usa la colección." },
     { "type": "header", "content": "Cierre de marca" },
     { "type": "image_picker", "id": "com_imagen", "label": "Imagen", "info": "Vacía = fachada de la tienda COTIDIANO." },
     { "type": "text", "id": "com_titulo", "label": "Título", "default": "Haz parte de la comunidad" },

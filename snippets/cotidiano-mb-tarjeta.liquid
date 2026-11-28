@@ -1,0 +1,47 @@
+{%- comment -%}
+  COTIDIANO® · Tarjeta de "Más buscados" para un producto y, opcionalmente, un color
+  (foto del color según el texto alternativo de la imagen; enlace con ese color elegido).
+  Recibe: p (producto), col (color o vacío).
+{%- endcomment -%}
+{%- liquid
+  assign img = p.featured_image
+  assign url = p.url
+  assign vref = p.selected_or_first_available_variant
+  assign nombre = p.title
+  if col != blank
+    assign cd = col | downcase
+    assign tcd = p.title | append: ' ' | append: col | downcase
+    for m in p.images
+      assign ad = m.alt | downcase | strip
+      if ad == cd or ad == tcd
+        assign img = m
+        break
+      endif
+    endfor
+    assign vfirst = nil
+    for v in p.variants
+      if v.options contains col
+        if vfirst == nil
+          assign vfirst = v
+        endif
+        if v.available
+          assign vfirst = v
+          break
+        endif
+      endif
+    endfor
+    if vfirst
+      assign vref = vfirst
+      assign url = vfirst.url
+    endif
+    assign td = p.title | downcase
+    unless td contains cd
+      assign nombre = p.title | append: ' ' | append: col
+    endunless
+  endif
+-%}
+<div class="rt-prod">
+  <a class="rt-prod-img" href="{{ url }}" tabindex="-1" aria-hidden="true">{{ img | image_url: width: 500 | image_tag: alt: '', loading: 'lazy', widths: '300, 500', sizes: '(max-width: 900px) 45vw, 280px' }}</a>
+  <b><a href="{{ url }}">{{ nombre | escape }}</a></b>
+  <span class="pr">{{ vref.price | money_without_trailing_zeros }}</span>{%- if vref.compare_at_price > vref.price -%}<s>{{ vref.compare_at_price | money_without_trailing_zeros }}</s>{%- endif -%}
+</div>
